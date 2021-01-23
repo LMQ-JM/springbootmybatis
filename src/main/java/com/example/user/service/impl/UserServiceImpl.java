@@ -6,6 +6,7 @@ import com.example.common.utils.ReturnVo;
 import com.example.common.utils.SHA1Util;
 import com.example.user.dao.UserMapper;
 import com.example.user.entity.AdminUser;
+import com.example.user.entity.User;
 import com.example.user.service.IUserService;
 import com.example.user.vo.UserHtVo;
 import lombok.extern.slf4j.Slf4j;
@@ -35,14 +36,14 @@ public class UserServiceImpl implements IUserService {
 
 
         if(!"undefined".equals(userHtVo.getUserName())){
-                sql+=" and name like '%"+userHtVo.getUserName()+"%'";
+                sql+=" and user_name like '%"+userHtVo.getUserName()+"%'";
         }
 
         Integer integer = userMapper.userCount(sql);
 
         String paging=" limit "+pageNum+","+pageSize+"";
 
-        List<UserHtVo> userHtVos = userMapper.queryAllUserForSql(sql, paging);
+        List<User> userHtVos = userMapper.queryAllUserForSql(sql, paging);
 
         ReturnVo returnVo=new ReturnVo();
         returnVo.setCount(integer);

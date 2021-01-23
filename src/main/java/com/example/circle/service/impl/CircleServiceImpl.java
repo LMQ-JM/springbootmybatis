@@ -72,7 +72,6 @@ public class CircleServiceImpl implements ICircleService {
     @Override
     public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime) throws ParseException {
         String sql="";
-
         Integer pages=(page-1)*limit;
         if(!circle.getTitle().equals("undefined") && !circle.getTitle().equals("")){
             sql+=" and a.title like '%"+circle.getTitle()+"%'";
@@ -84,7 +83,7 @@ public class CircleServiceImpl implements ICircleService {
 
         //将时间格式转换为时间戳
         //开始时间
-        if(!startTime.equals("undefined") && !endTime.equals("undefined") ){
+        if(!startTime.equals("undefined") && !endTime.equals("undefined") && !startTime.equals("null") && !endTime.equals("null")){
             if(!startTime.equals("") && !endTime.equals("")){
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String startTimes=String.valueOf(sdf.parse(startTime).getTime() / 1000);
@@ -93,7 +92,7 @@ public class CircleServiceImpl implements ICircleService {
                 SimpleDateFormat sdftwo = new SimpleDateFormat("yyyy-MM-dd");
                 String endTimes=String.valueOf(sdftwo.parse(endTime).getTime() / 1000);
 
-                if(!"undefined".equals(startTime) && !endTime.equals("undefined") && !startTime.equals("null") && !endTime.equals("null")){
+                if(!"undefined".equals(startTime) && !endTime.equals("undefined") ){
                     sql+="and a.create_at>= "+startTimes+" and a.create_at<="+endTimes+"";
                 }
             }

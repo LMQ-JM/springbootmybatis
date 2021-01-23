@@ -3,13 +3,9 @@ package com.example.user.entity;
 
 import lombok.Data;
 
-/*
- * 创建人：LY
- * 
- * 创建时间：2019 12 16
- * 
- * 名称：用户表
- * */
+/**
+ * @author Administrator
+ */
 @Data
 public class User {
 
@@ -21,11 +17,57 @@ public class User {
 	/**
 	 * 用户表名称
 	 */
-	String  name ;
+	String  userName ;
 
-	String password;
+	/**
+	 * 性别
+	 */
+	String userSex;
 
-	int is_admin;
+	/**
+	 * 生日
+	 */
+	String birthday;
+
+	/**
+	 * 介绍
+	 */
+	String introduce;
+
+	/**
+	 * 用户手机号
+	 */
+	String mobile;
+
+	/**
+	 * 所在省
+	 */
+	String currProvince;
+
+	/**
+	 * 所在市
+	 */
+	String city;
+
+	/**
+	 * 背景图
+	 */
+	String picture;
+
+	/**
+	 * code 标识 唯一 系统生成（加好友  搜好友）
+	 */
+	String mCode;
+
+	/**
+	 * 邮箱
+	 */
+	String email;
+
+	/**
+	 * 用户微信标识
+	 */
+	String openId;
 
 	/**
 	 * 用户表头像
@@ -33,94 +75,18 @@ public class User {
 	String  avatar ;
 
 	/**
-	 *  用户性别（0男  1女）默认男
-	 */
-	int sex;
-
-	/**
-	 *  用户openid
-	 */
-	String  openid ;
-
-	/**
-	 *  用户层级
-	 */
-	String  grade ;
-
-	/**
-	 * 关联分类id
-	 */
-	int  bid;
-
-	/**
-	 * 个人介绍
-	 */
-	String  introduction ;
-
-	/**
 	 * 创建时间
 	 */
-	String create_at ;
+	String createAt;
 
 	/**
-	 *  是否关停账号 0否 1 是
+	 *  是有效（1有效，0无效）默认1
 	 */
-	int  is_delete ;
-
-	/**
-	 * 上次登陆时间
-	 */
-	String login_time;
-
-	/**
-	 * 地址
-	 */
-	String address;
-
-	/**
-	 * 户籍地省
-	 */
-	String domicile_province;
-
-	/**
-	 * 户籍地市
-	 */
-	String domicile_city;
-
-	/**
-	 * 户籍地县
-	 */
-	String domicile_county;
-
-	 /**
-	   * 生日
-	  */
-	  String birthday;
-	  String phone;
-
-	/**
-	 * 后台登录用户名
-	 */
-	String user_name;
-
-	String background_picture;
-
-	int wealth_value;
-
-	/**
-	 * 唯一标识
-	 */
-	String user_key;
+	int  isDelete;
 
 
-	public String getIntroduction() {
-		if(introduction==null){
-			return "暂无介绍";
-		}
-		return introduction;
-	}
 
-	  
+
 	  
 	  
  

@@ -1,7 +1,7 @@
 package com.example.user.dao;
 
 import com.example.user.entity.AdminUser;
-import com.example.user.vo.UserHtVo;
+import com.example.user.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -21,7 +21,7 @@ public interface UserMapper {
      * @param sql
      * @return
      */
-    @Select("select COALESCE(count(*),0) from user where is_show=1 ${sql}")
+    @Select("select COALESCE(count(*),0) from tb_user where is_delete=1 ${sql}")
     Integer userCount(@Param("sql")String sql);
 
     /**
@@ -30,8 +30,8 @@ public interface UserMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select id,name as userName,sex,avatar,create_at as createAt from user where is_show=1 ${sql} order by create_at desc ${paging}")
-    List<UserHtVo> queryAllUserForSql(@Param("sql")String sql, @Param("paging")String paging);
+    @Select("select id,user_name,user_sex,avatar,create_at,m_code  from tb_user where is_delete=1 ${sql} order by create_at desc ${paging}")
+    List<User> queryAllUserForSql(@Param("sql")String sql, @Param("paging")String paging);
 
     /**
      * 查询用户名和密码
