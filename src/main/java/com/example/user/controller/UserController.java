@@ -53,7 +53,6 @@ public class UserController {
     public AdminUser selectUserNamePassword(@RequestParam("userName") String userName, @RequestParam("password") String password) {
         // TODO Auto-generated method stub
         AdminUser useList=iUserService.selectUserNamePassword(userName, password);
-        log.info("{}",useList);
         if(useList!=null){
             return useList;
         }
