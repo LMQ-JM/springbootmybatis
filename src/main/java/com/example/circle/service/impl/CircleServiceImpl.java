@@ -7,7 +7,9 @@ import com.example.circle.service.ICircleService;
 import com.example.circle.vo.CircleLabelVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
+import com.example.home.dao.HomeMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private CircleMapper circleMapper;
+
+    @Autowired
+    private HomeMapper homeMapper;
 
     @Override
     public ReturnVo queryAllCircles() {
@@ -120,5 +125,17 @@ public class CircleServiceImpl implements ICircleService {
             throw new ApplicationException(CodeType.SERVICE_ERROR,"批量删除失败");
         }
         return deletes;
+    }
+
+    @Override
+    public List<Circle> selectPostsBasedTagIdCircle(int id, Paging paging) {
+        Integer pages=(paging.getPage()-1)*paging.getLimit();
+        String pagings=" limit "+pages+","+paging.getLimit()+"";
+        List<Circle> circles = circleMapper.selectPostsBasedTagIdCircle(id, pagings);
+        for (int i=0;i<circles.size();i++){
+            String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+            circles.get(i).setImg(strings);
+        }
+        return circles;
     }
 }

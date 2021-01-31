@@ -3,6 +3,7 @@ package com.example.circle.dao;
 import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.circle.vo.CircleLabelVo;
+import com.example.home.entity.Resources;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -70,4 +71,13 @@ public interface CircleMapper {
      */
     @Update("update tb_circles set is_delete=0  where id = ${id}")
     Integer deletes(@Param("id") int id);
+
+    /**
+     * 根据圈子中的标签id查询帖子
+     * @param id 二级标签id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.* from tb_circles a INNER JOIN tb_tags b on a.tags_two=${id} ${paging}")
+    List<Circle> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
 }

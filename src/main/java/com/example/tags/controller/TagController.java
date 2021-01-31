@@ -27,7 +27,7 @@ public class TagController {
 
 
     /**
-     *
+     *  圈子
      *  查询所有圈子的一级标签
      * @return
      */
@@ -40,7 +40,7 @@ public class TagController {
     }
 
     /**
-     *
+     *  圈子
      *  根据一级标签id查询二级标签
      * @return
      */
@@ -51,4 +51,6 @@ public class TagController {
         List<Tag> tags = iTagService.selectAllTags(tid);
         return tags;
     }
+
+
 }

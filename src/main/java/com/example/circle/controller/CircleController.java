@@ -4,6 +4,7 @@ import com.example.circle.entity.Circle;
 import com.example.circle.service.ICircleService;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
@@ -113,6 +114,25 @@ public class CircleController {
         //批量删除
         Integer deletes = iCircleService.deletes(id);
         return  deletes;
+    }
+
+
+    /**
+     *
+     *  根据圈子中的标签id查询帖子
+     * @return
+     */
+    @ApiOperation(value = "根据圈子中的标签id查询帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectPostsBasedTagIdCircle")
+    public List<Circle> selectPostsBasedTagIdCircle(int id, Paging paging) throws ParseException {
+        if(id==0 || paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+
+
+        List<Circle> circles = iCircleService.selectPostsBasedTagIdCircle(id, paging);
+        return  circles;
     }
 
 

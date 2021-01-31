@@ -1,9 +1,11 @@
 package com.example.circle.service;
 
 import com.example.circle.entity.Circle;
+import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * @author MQ
@@ -41,4 +43,12 @@ public interface ICircleService {
      * @return
      */
     Integer deletes(Integer[] id);
+
+    /**
+     * 根据圈子中的标签id查询帖子
+     * @param id 二级标签id
+     * @param paging 分页
+     * @return List<Circle>
+     */
+    List<Circle> selectPostsBasedTagIdCircle(int id, Paging paging);
 }

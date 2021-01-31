@@ -7,6 +7,7 @@ import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
+import com.example.home.vo.HomeClassificationVo;
 import com.example.posting.vo.PostingVo;
 import com.example.tags.entity.Tag;
 import io.swagger.annotations.Api;
@@ -63,6 +64,35 @@ public class HomeController {
     }
 
 
+    //------------------------资源市场和学习交流接口------------------------
+    /**
+     *
+     *  资源市场和学习交流的接口
+     * @return
+     */
+    @ApiOperation(value = "资源市场和学习交流的接口",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectResourceLearningExchange")
+    public List<HomeClassificationVo> selectResourceLearningExchange(int id, Paging paging)  {
+        return iHomeService.selectResourceLearningExchange(id,paging);
+    }
+
+    /**
+     * 进入单元体的接口
+     * 根据社区分类id查询帖子
+     * @return
+     */
+    @ApiOperation(value = "根据社区分类id查询帖子 ",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectPostsByCommunityCategoryId")
+    public List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging)  {
+        return iHomeService.selectPostsByCommunityCategoryId(id,paging);
+    }
+
+
+    //--------------------------------------------资源合作和人才市场------------------------------
+
+
     /**
      * 根据一级标签id查询二级标签
      * @param id 一级标签id
@@ -75,17 +105,44 @@ public class HomeController {
         return iHomeService.selectFirstLevelLabelResource();
     }
 
+
+
     /**
-     * 根据二级级标签id查询帖子 如果还有第三级标签 先查询出第三级标签
-     * @param id 一级标签id
+     * 根据二级级标签id查询所有帖子
+     * @param id 二级级标签id
      * @return
      */
-    @ApiOperation(value = "根据二级级标签id查询帖子 如果还有第三级标签 先查询出第三级标签",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据二级级标签id查询所有帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
-    @PostMapping("/selectPostingOrLabel")
-    public <T>T selectPostingOrLabel(int id,Paging paging)  {
-        return  (T)iHomeService.selectPostingOrLabel(id,paging);
+    @PostMapping("/selectAllPostsSecondaryTagId")
+    public List<Resources> selectAllPostsSecondaryTagId(int id,Paging paging){
+        return iHomeService.selectAllPostsSecondaryTagId(id,paging);
     }
+
+
+    /**
+     * 进入单元体的接口
+     * 根据社区分类id查询帖子
+     * @return
+     */
+    @ApiOperation(value = "根据社区分类id查询帖子 ",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectPostsByCommunityCategoryIds")
+    public List<Resources> selectPostsByCommunityCategoryIds(int id, Paging paging)  {
+        return iHomeService.selectPostsByCommunityCategoryIds(id,paging);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 根据三级级标签id查询帖子

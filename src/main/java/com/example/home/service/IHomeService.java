@@ -2,7 +2,9 @@ package com.example.home.service;
 
 import com.example.circle.entity.Circle;
 import com.example.common.utils.Paging;
+import com.example.common.utils.ReturnVo;
 import com.example.home.entity.Resources;
+import com.example.home.vo.HomeClassificationVo;
 import com.example.tags.entity.Tag;
 
 import java.util.List;
@@ -28,6 +30,30 @@ public interface IHomeService {
     List<Tag> selectFirstLevelLabelResource();
 
     /**
+     * 资源市场和学习交流的接口
+     * @param id 一级标签id
+     * @param paging 分页
+     * @return
+     */
+    List<HomeClassificationVo> selectResourceLearningExchange(int id, Paging paging);
+
+    /**
+     * 根据社区分类id查询帖子
+     * @param id 社区分类id
+     * @param paging 分页
+     * @return
+     */
+    List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging);
+
+    /**
+     * 根据社区分类id查询帖子
+     * @param id 社区分类id
+     * @param paging 分页
+     * @return
+     */
+    List<Resources> selectPostsByCommunityCategoryIds(int id, Paging paging);
+
+    /**
      * 根据一级标签id查询二级标签
      * @param id 一级标签id
      * @return
@@ -35,12 +61,20 @@ public interface IHomeService {
     List<Tag> selectSecondaryLabel(int id);
 
     /**
+     * 根据二级级标签id查询所有帖子
+     * @param id 二级级标签id
+     * @param paging 分页
+     * @return
+     */
+    List<Resources> selectAllPostsSecondaryTagId(int id,Paging paging);
+
+    /**
      * 根据二级级标签id查询帖子 如果还有第三级标签 先查询出第三级标签
      * @param id 二级级标签id
      * @param paging 分页
      * @return
      */
-    <T>T selectPostingOrLabel(int id,Paging paging);
+    ReturnVo selectPostingOrLabel(int id, Paging paging);
 
     /**
      * 根据三级标签id查询帖子
