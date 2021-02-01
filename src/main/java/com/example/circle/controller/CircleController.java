@@ -130,7 +130,6 @@ public class CircleController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-
         List<Circle> circles = iCircleService.selectPostsBasedTagIdCircle(id, paging);
         return  circles;
     }

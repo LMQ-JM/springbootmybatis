@@ -74,10 +74,10 @@ public interface CircleMapper {
 
     /**
      * 根据圈子中的标签id查询帖子
-     * @param id 二级标签id
+     * @param id 一级标签id
      * @param paging 分页
      * @return
      */
-    @Select("select a.* from tb_circles a INNER JOIN tb_tags b on a.tags_two=${id} ${paging}")
+    @Select("select a.*,b.name,b.id as cId from tb_circles a INNER JOIN tb_classification b on a.tags_two=b.tags_one  where a.tags_one=${id} ${paging}")
     List<Circle> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
 }

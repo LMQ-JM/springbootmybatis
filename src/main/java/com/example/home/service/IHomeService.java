@@ -45,28 +45,8 @@ public interface IHomeService {
      */
     List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging);
 
-    /**
-     * 根据社区分类id查询帖子
-     * @param id 社区分类id
-     * @param paging 分页
-     * @return
-     */
-    List<Resources> selectPostsByCommunityCategoryIds(int id, Paging paging);
 
-    /**
-     * 根据一级标签id查询二级标签
-     * @param id 一级标签id
-     * @return
-     */
-    List<Tag> selectSecondaryLabel(int id);
 
-    /**
-     * 根据二级级标签id查询所有帖子
-     * @param id 二级级标签id
-     * @param paging 分页
-     * @return
-     */
-    List<Resources> selectAllPostsSecondaryTagId(int id,Paging paging);
 
     /**
      * 根据二级级标签id查询帖子 如果还有第三级标签 先查询出第三级标签

@@ -41,7 +41,7 @@ public interface HomeMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,c.name,c.id as cId from tb_resources a INNER JOIN tb_tag b on a.tags_one=b.id INNER JOIN tb_classification c on a.tags_two=c.tags_one where a.tags_one=${id} ${paging}")
+    @Select("select a.*,c.name,c.id as cId from tb_resources a INNER JOIN tb_classification c on a.tags_two=c.tags_one where a.tags_one=${id} ${paging}")
     List<HomeClassificationVo> selectResourceLearningExchange(@Param("id") int id, @Param("paging") String paging);
 
     /**
@@ -53,42 +53,10 @@ public interface HomeMapper {
     @Select("select * from tb_resources where tags_two=${id} ${paging}")
     List<Resources> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging);
 
-    /**
-     * 根据社区分类id查询帖子
-     * @param id 社区分类id
-     * @param paging 分页
-     * @return
-     */
-    @Select("select * from tb_resources where tags_three=${id} ${paging}")
-    List<Resources> selectPostsByCommunityCategoryIds(@Param("id") int id, @Param("paging") String paging);
-
-
-    /**
-     *  根据一级标签id查询二级标签
-     * @param id 一级标签id
-     * @return
-     */
-    @Select("select * from tb_tags where t_id=${id}")
-    List<Tag> selectSecondaryLabel(@Param("id") int id);
-
-   /**
-    * 根据二级级标签id查询所有帖子
-    * @param id 二级级标签id
-    * @param paging 分页
-    * @return
-    */
-   @Select("select a.*,c.name,c.id as cId from tb_resources a  INNER JOIN tb_classification c on a.tags_three=c.tags_one where a.tags_two=${id} ${paging}")
-   List<Resources> selectAllPostsSecondaryTagId(@Param("id") int id,@Param("paging") String paging);
 
 
 
-
-
-
-
-
-
-
+    //准备删除--------------------
 
 
     /**

@@ -61,43 +61,6 @@ public class HomeServiceImpl implements IHomeService {
         return resources;
     }
 
-    @Override
-    public List<Resources> selectPostsByCommunityCategoryIds(int id, Paging paging) {
-        Integer page=(paging.getPage()-1)*paging.getLimit();
-        String pagings="limit "+page+","+paging.getLimit()+"";
-        List<Resources> resources = homeMapper.selectPostsByCommunityCategoryIds(id, pagings);
-        for (int i=0;i<resources.size();i++){
-            //根据帖子id查询出当前帖子图片
-            String[] strings = homeMapper.selectImgByPostId(resources.get(i).getId());
-            resources.get(i).setImg(strings);
-        }
-        return resources;
-    }
-
-
-    @Override
-    public List<Tag> selectSecondaryLabel(int id) {
-        return homeMapper.selectSecondaryLabel(id);
-    }
-
-    @Override
-    public List<Resources> selectAllPostsSecondaryTagId(int id, Paging paging) {
-        Integer page=(paging.getPage()-1)*paging.getLimit();
-        String pagings="limit "+page+","+paging.getLimit()+"";
-        List<Resources> resources = homeMapper.selectAllPostsSecondaryTagId(id, pagings);
-        for (int i=0;i<resources.size();i++){
-            //根据帖子id查询出当前帖子图片
-            String[] strings = homeMapper.selectImgByPostId(resources.get(i).getId());
-            resources.get(i).setImg(strings);
-        }
-        return resources;
-    }
-
-
-
-
-
-
 
 
     @Override
