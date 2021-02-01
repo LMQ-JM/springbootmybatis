@@ -59,31 +59,8 @@ public interface HomeMapper {
     //准备删除--------------------
 
 
-    /**
-     *  根据二级标签id查询三级级标签
-     * @param id 二级标签id
-     * @return
-     */
-    @Select("select * from tb_tagss where t_id=${id}")
-    List<Tag> selectPostingOrLabel(@Param("id") int id);
 
-    /**
-     * 根据二级标签查询出帖子
-     * @param id 二级标签id
-     * @param paging 分页
-     * @return
-     */
-    @Select("select a.* from tb_resources a INNER JOIN tb_tags b on a.tags_two=${id} ${paging}")
-    List<Resources> selectPosting(@Param("id") int id,@Param("paging") String paging);
 
-    /**
-     * 根据三级标签id查询帖子数据
-     * @param id 三级标签id
-     * @param paging 分页
-     * @return
-     */
-    @Select("select a.* from tb_resources a INNER JOIN tb_tagss b on a.tags_three=${id} b.id= ${paging}")
-    List<Resources> selectPostingByThreeLabelId(@Param("id") int id, @Param("paging") Paging paging);
 
     /**
      * 查询单个资源帖子

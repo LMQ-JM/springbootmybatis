@@ -64,40 +64,6 @@ public class HomeServiceImpl implements IHomeService {
 
 
     @Override
-    public ReturnVo selectPostingOrLabel(int id, Paging paging) {
-        //查询第三级标签 如果没有 就根据二级标签查询出帖子数据
-        List<Tag> tags = homeMapper.selectPostingOrLabel(id);
-        ReturnVo returnVo=new ReturnVo();
-
-        if(tags.size()==0 || tags==null){
-            Integer page=(paging.getPage()-1)*paging.getLimit();
-            String pagings="limit "+page+","+paging.getLimit()+"";
-            List<Resources> resources = homeMapper.selectPosting(id, pagings);
-            for (int i=0;i<resources.size();i++){
-                //根据帖子id查询出当前帖子图片
-                String[] strings = homeMapper.selectImgByPostId(resources.get(i).getId());
-                resources.get(i).setImg(strings);
-            }
-
-            returnVo.setList(resources);
-            returnVo.setCount(1);
-        }
-
-        returnVo.setList(tags);
-        returnVo.setCount(2);
-        return returnVo;
-    }
-
-    @Override
-    public List<Resources> selectPostingByThreeLabelId(int id, Paging paging) {
-        Integer page=(paging.getPage()-1)*paging.getLimit();
-        String pagings="limit "+page+","+paging.getLimit()+"";
-
-        List<Resources> resources = homeMapper.selectPostingByThreeLabelId(id, paging);
-        return resources;
-    }
-
-    @Override
     public Resources selectSingleResourcePost(int id) {
         Resources resources = homeMapper.selectSingleResourcePost(id);
         return resources;

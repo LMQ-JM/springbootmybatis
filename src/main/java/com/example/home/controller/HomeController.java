@@ -89,35 +89,6 @@ public class HomeController {
         return iHomeService.selectPostsByCommunityCategoryId(id,paging);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * 预删除
-     * 根据三级级标签id查询帖子
-     * @param id 一级标签id
-     * @return
-     */
-    @ApiOperation(value = "根据二级级标签id查询帖子 如果还有第三级标签 先查询出第三级标签",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/selectPostingByThreeLabelId")
-    public List<Resources> selectPostingByThreeLabelId(int id, Paging paging)  {
-        if(paging.getPage()==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，传1");
-        }
-        List<Resources> resources = iHomeService.selectPostingByThreeLabelId(id, paging);
-        return resources;
-    }
-
     /**
      * 查询单个资源帖子
      * @param id 资源帖子id
