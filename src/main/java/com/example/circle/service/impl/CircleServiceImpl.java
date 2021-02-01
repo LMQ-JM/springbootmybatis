@@ -4,6 +4,7 @@ import com.example.circle.dao.CircleMapper;
 import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.circle.service.ICircleService;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CircleLabelVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
@@ -128,10 +129,10 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public List<Circle> selectPostsBasedTagIdCircle(int id, Paging paging) {
+    public List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging) {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
         String pagings=" limit "+pages+","+paging.getLimit()+"";
-        List<Circle> circles = circleMapper.selectPostsBasedTagIdCircle(id, pagings);
+        List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircle(id, pagings);
         for (int i=0;i<circles.size();i++){
             String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
             circles.get(i).setImg(strings);

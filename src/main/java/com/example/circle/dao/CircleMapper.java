@@ -2,6 +2,7 @@ package com.example.circle.dao;
 
 import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CircleLabelVo;
 import com.example.home.entity.Resources;
 import org.apache.ibatis.annotations.*;
@@ -17,10 +18,11 @@ import java.util.List;
 public interface CircleMapper {
 
     /**
+     *
      * 查询所有圈子的数据
      * @return
      */
-    @Select("SELECT a.id,a.content,b.name,a.img,a.type,a.video,a.favour,a.collect,a.browse FROM tb_circles a inner JOIN tb_tags b on a.tags_two=b.id")
+    @Select("SELECT a.id,a.content,b.tag_name,a.img,a.type,a.video,a.favour,a.collect,a.browse FROM tb_circles a inner JOIN tb_tags b on a.tags_two=b.id")
     List<CircleLabelVo> queryAllCircles();
 
     /**
@@ -78,6 +80,6 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,b.name,b.id as cId from tb_circles a INNER JOIN tb_classification b on a.tags_two=b.tags_one  where a.tags_one=${id} ${paging}")
-    List<Circle> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
+    @Select("select a.*,b.name,b.tags_one as cId from tb_circles a INNER JOIN tb_classification b on a.tags_two=b.tags_one  where a.tags_one=${id} ${paging}")
+    List<CircleClassificationVo> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
 }

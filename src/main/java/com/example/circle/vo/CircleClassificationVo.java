@@ -1,26 +1,57 @@
 package com.example.circle.vo;
 
+import lombok.Data;
+
+/**
+ * @author Administrator
+ */
+@Data
 public class CircleClassificationVo {
 
     /**
-     * id
+     * ID
      */
     private int id;
 
     /**
-     * 内容
+     * 圈子内容
      */
     private String content;
 
     /**
-     * 发帖人
+     * 一级标签ID
+     */
+    private int tagsOne;
+
+    /**
+     * 二级标签ID
+     */
+    private int tagsTwo;
+
+    /**
+     * 图片地址
+     */
+    private String[] img;
+
+    /**
+     *类型（0 图文  1视频）
+     */
+    private int type;
+
+    /**
+     * 用户id
+     */
+    private int uId;
+
+    /**
+     * 用户名称
      */
     private String userName;
 
     /**
-     * 标签名字
+     * 用户头像
      */
-    private String tagName;
+    private String avatar;
 
     /**
      * 标题
@@ -28,19 +59,14 @@ public class CircleClassificationVo {
     private String title;
 
     /**
-     * 图片数组
-     */
-    private String[] img;
-
-    /**
-     * 类型（0 图文  1视频）
-     */
-    private int type;
-
-    /**
-     * 视频
+     * 视频地址
      */
     private String video;
+
+    /**
+     * 封面
+     */
+    private String cover;
 
     /**
      * 点赞数量
@@ -61,6 +87,11 @@ public class CircleClassificationVo {
      * 创建时间
      */
     private String createAt;
+
+    /**
+     * 是否删除(1有效，0无效)
+     */
+    private int isDelete;
 
     /**
      * 社区分类id

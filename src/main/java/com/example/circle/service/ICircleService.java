@@ -1,6 +1,7 @@
 package com.example.circle.service;
 
 import com.example.circle.entity.Circle;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 
@@ -50,5 +51,5 @@ public interface ICircleService {
      * @param paging 分页
      * @return List<Circle>
      */
-    List<Circle> selectPostsBasedTagIdCircle(int id, Paging paging);
+    List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging);
 }

@@ -41,7 +41,7 @@ public interface HomeMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,c.name,c.id as cId from tb_resources a INNER JOIN tb_classification c on a.tags_two=c.tags_one where a.tags_one=${id} ${paging}")
+    @Select("select a.*,c.name,c.tags_one as cId from tb_resources a INNER JOIN tb_classification c on a.tags_two=c.tags_one where a.tags_one=${id} ${paging}")
     List<HomeClassificationVo> selectResourceLearningExchange(@Param("id") int id, @Param("paging") String paging);
 
     /**
@@ -54,27 +54,19 @@ public interface HomeMapper {
     List<Resources> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging);
 
 
-
-
-    //准备删除--------------------
-
-
-
-
-
     /**
      * 查询单个资源帖子
      * @param id 单个资源帖子id
      * @return
      */
-    @Select("select *from tb_resources where id=${id}")
-    Resources selectSingleResourcePost(int id);
+    @Select("select * from tb_resources where id=${id}")
+    Resources selectSingleResourcePost(@Param("id") int id);
 
    /**
     * 根据帖子id查询当前帖子图片
     * @param id
     * @return
     */
-    @Select("select img_url from where z_id=${id}")
+    @Select("select img_url from tb_img where z_id=${id}")
     String[] selectImgByPostId(@Param("id") int id);
 }

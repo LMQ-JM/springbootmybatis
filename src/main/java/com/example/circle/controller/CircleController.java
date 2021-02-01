@@ -2,6 +2,7 @@ package com.example.circle.controller;
 
 import com.example.circle.entity.Circle;
 import com.example.circle.service.ICircleService;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
@@ -36,7 +37,7 @@ public class CircleController {
     private Upload upload;
 
     /**
-     *
+     *  后台
      *  查询所有圈子的数据
      * @return
      */
@@ -80,7 +81,7 @@ public class CircleController {
 
 
     /**
-     *
+     *  后台
      *  查询所有圈子的和资源数据
      * @return
      */
@@ -125,12 +126,12 @@ public class CircleController {
     @ApiOperation(value = "根据圈子中的标签id查询帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectPostsBasedTagIdCircle")
-    public List<Circle> selectPostsBasedTagIdCircle(int id, Paging paging) throws ParseException {
+    public List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging) throws ParseException {
         if(id==0 || paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        List<Circle> circles = iCircleService.selectPostsBasedTagIdCircle(id, paging);
+        List<CircleClassificationVo> circles = iCircleService.selectPostsBasedTagIdCircle(id, paging);
         return  circles;
     }
 
