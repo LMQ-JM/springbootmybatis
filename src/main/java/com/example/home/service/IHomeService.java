@@ -35,7 +35,7 @@ public interface IHomeService {
      * @param paging 分页
      * @return
      */
-    List<HomeClassificationVo> selectResourceLearningExchange(int id, Paging paging);
+    Object selectResourceLearningExchange(int id, Paging paging);
 
     /**
      * 根据社区分类id查询帖子

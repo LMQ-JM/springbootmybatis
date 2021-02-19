@@ -67,13 +67,16 @@ public class HomeController {
 
     /**
      *
-     *  根据一级标签id查询所有下面的数据
+     * 根据一级标签id查询所有下面的数据
      * @return
      */
     @ApiOperation(value = "根据一级标签id查询所有下面的数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectResourceLearningExchange")
-    public List<HomeClassificationVo> selectResourceLearningExchange(int id, Paging paging)  {
+    public Object selectResourceLearningExchange(int id, Paging paging)  {
+        if(paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0");
+        }
         return iHomeService.selectResourceLearningExchange(id,paging);
     }
 

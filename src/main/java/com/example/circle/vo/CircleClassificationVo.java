@@ -2,6 +2,8 @@ package com.example.circle.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author Administrator
  */
