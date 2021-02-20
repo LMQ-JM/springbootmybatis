@@ -1,6 +1,9 @@
 package com.example.home.vo;
 
+import com.example.home.entity.RecruitLabel;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author MQ
@@ -21,21 +24,17 @@ public class RecruitVo {
      */
     private String wageRange;
 
+    /**
+     * 发布人id
+     */
+    private int userId;
+
 
     /**
      * 公司人数
      */
     private String numberCompanies;
 
-    /**
-     * 经验范围
-     */
-    private String rangeExperience;
-
-    /**
-     * 学历范围
-     */
-    private String educationalBackground;
 
     /**
      * 工作地址
@@ -76,4 +75,14 @@ public class RecruitVo {
      * 用户头像
      */
     private String headPortrait;
+
+    /**
+     * 岗位要求标签组
+     */
+    private List<RecruitLabel> recruitLabels;
+
+    /**
+     * 是否有效
+     */
+    private int isDelete;
 }

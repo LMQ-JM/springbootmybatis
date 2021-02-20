@@ -31,20 +31,16 @@ public class Recruit {
      */
     private String numberCompanies;
 
-    /**
-     * 经验范围
-     */
-    private String rangeExperience;
-
-    /**
-     * 学历范围
-     */
-    private String educationalBackground;
 
     /**
      * 工作地址
      */
     private String workAddress;
+
+    /**
+     * 浏览次数
+     */
+    private int viewCount;
 
     /**
      * 职位要求
@@ -65,4 +61,9 @@ public class Recruit {
      * 创建时间
      */
     private String createAt;
+
+    /**
+     * 是否有效
+     */
+    private int isDelete;
 }

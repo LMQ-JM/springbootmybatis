@@ -5,13 +5,16 @@ import com.example.common.utils.Paging;
 import com.example.home.dao.HomeMapper;
 import com.example.home.dao.RecruitMapper;
 import com.example.home.entity.Recruit;
+import com.example.home.entity.RecruitLabel;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.RecruitVo;
 import com.example.tags.entity.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +22,8 @@ import java.util.List;
  * @author Administrator
  */
 @Service
+@Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class HomeServiceImpl implements IHomeService {
 
     @Autowired
@@ -31,8 +36,7 @@ public class HomeServiceImpl implements IHomeService {
     public List<Circle> selectAllSearch(String postingName, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
-        List<Circle> circles = homeMapper.selectAllSearch(postingName, sql);
-        return circles;
+        return homeMapper.selectAllSearch(postingName, sql);
     }
 
     @Override
@@ -48,7 +52,12 @@ public class HomeServiceImpl implements IHomeService {
 
         //点击人才 进入判断 返回人才页面格式的数据
         if(id==14){
-            List<RecruitVo> recruits = recruitMapper.selectAllRecruit(pagings);
+            List<RecruitVo> recruits = recruitMapper.selectAllRecruit(pagings,"ORDER BY a.view_count desc");
+            for (int i=0;i<recruits.size();i++){
+                //得到岗位要求标签组
+                List<RecruitLabel> recruitLabels = recruitMapper.selectRecruitLabelById(recruits.get(i).getId());
+                recruits.get(i).setRecruitLabels(recruitLabels);
+            }
             return recruits;
         }
 
@@ -79,8 +88,7 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public Resources selectSingleResourcePost(int id) {
-        Resources resources = homeMapper.selectSingleResourcePost(id);
-        return resources;
+        return homeMapper.selectSingleResourcePost(id);
     }
 
 

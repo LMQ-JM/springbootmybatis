@@ -4,11 +4,8 @@ import com.example.circle.entity.Circle;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
-import com.example.common.utils.ReturnVo;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
-import com.example.home.vo.HomeClassificationVo;
-import com.example.posting.vo.PostingVo;
 import com.example.tags.entity.Tag;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -45,9 +41,8 @@ public class HomeController {
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
         }
-        List<Circle> circles = iHomeService.selectAllSearch(postingName, paging);
 
-        return circles;
+        return iHomeService.selectAllSearch(postingName, paging);
     }
 
 
@@ -89,6 +84,9 @@ public class HomeController {
     @ResponseBody
     @PostMapping("/selectPostsByCommunityCategoryId")
     public List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging)  {
+        if(paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0");
+        }
         return iHomeService.selectPostsByCommunityCategoryId(id,paging);
     }
 
@@ -101,8 +99,7 @@ public class HomeController {
     @ResponseBody
     @PostMapping("/selectSingleResourcePost")
     public Resources selectSingleResourcePost(int id)  {
-        Resources resources = iHomeService.selectSingleResourcePost(id);
-        return resources;
+        return iHomeService.selectSingleResourcePost(id);
     }
 
 
