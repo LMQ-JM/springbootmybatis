@@ -8,6 +8,7 @@ import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
 import com.example.tags.entity.Tag;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -49,10 +50,18 @@ public interface IHomeService {
 
     /**
      * 查询单个资源帖子
-     * @param id 单个资源帖子id
+     * @param id 帖子id
+     * @param userId 用户id
      * @return
      */
-    ResourcesVo selectSingleResourcePost(int id,int userId);
+    ResourcesVo selectSingleResourcePost(int id,int userId) throws ParseException;
+
+    /**
+     * 根据二级标签id查询推荐数据
+     * @param id
+     * @return
+     */
+    List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id);
 
     /**
      * 增加资源贴

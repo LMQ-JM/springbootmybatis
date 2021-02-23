@@ -3,6 +3,7 @@ package com.example.user.dao;
 import com.example.user.entity.AdminUser;
 import com.example.user.entity.User;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
@@ -49,4 +50,28 @@ public interface UserMapper {
      */
     @Insert("insert into tb_user_admin(account,password,role_id,avatar,create_at,update_at)values(#{adminUser.account},#{adminUser.password},${adminUser.roleId},#{adminUser.avatar},#{adminUser.createAt},#{adminUser.updateAt})")
     int addAdminUser(@Param("adminUser") AdminUser adminUser);
+
+    /**
+     * 根据openid查询用户是否存在
+     * @param openId
+     * @return
+     */
+    @Select("select * from tb_user where openid=#{openId}")
+    User selectUserByOpenId(@Param("openId") String openId);
+
+    /**
+     * 增加用户信息
+     * @param user 用户对象
+     * @return
+     */
+    @Insert("insert into tb_user(user_name,open_id,avatar,create_at)values(#{user.userName},#{user.openId},#{user.avatar},#{user.createAt})")
+    @Options(useGeneratedKeys=true, keyProperty="user.id", keyColumn="id")
+    int addUser(@Param("user") User user);
+
+    /**
+     * 查询用户表中的最大id
+     * @return
+     */
+    @Select("select max(id) from tb_user")
+    int selectMaxId();
 }

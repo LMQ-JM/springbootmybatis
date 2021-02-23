@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.ReturnVo;
 import com.example.common.utils.SHA1Util;
 import com.example.user.dao.UserMapper;
@@ -17,9 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
 
 /**
  * @author MQ
@@ -34,17 +39,113 @@ public class UserServiceImpl implements IUserService {
     private UserMapper userMapper;
 
     @Override
-    public Map<String, Object> wxLogin(String code) {
-        /*String token_url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + WxConfig.APP_ID + "&secret=" + WxConfig.SECRET + "&js_code=" + code + "&grant_type=authorization_code";
-        //JSONObject access_token = httpsRequestToJsonObject(token_url, "GET", null);
-        Map<String,String> requestUrlParam = new HashMap<String, String>(15);
-        requestUrlParam.put( "appid","你的小程序appId" );//小程序appId
-        requestUrlParam.put( "secret","你的小程序appSecret" );
-        requestUrlParam.put( "js_code",wxCode );//小程序端返回的code
-        requestUrlParam.put( "grant_type","authorization_code" );//默认参数
-        JSONObject jsonObject = JSON.parseObject( UrlUtil.sendPost( token_url,requestUrlParam ));*/
-        return null;
+    public User wxLogin(String code,String userName,String avatar,String address,String sex) {
+        //微信登录的code值
+        String wxCode = code;
+
+        //服务器端调用接口的url
+        String requestUrl = "https://api.weixin.qq.com/sns/jscode2session";
+        //封装需要的参数信息
+        Map<String,String> requestUrlParam = new HashMap<String,String>(16);
+        //开发者设置中的appId
+        requestUrlParam.put("appid", ConstantUtil.appid);
+        //开发者设置中的appSecret
+        requestUrlParam.put("secret",ConstantUtil.secret);
+        //小程序调用wx.login返回的code
+        requestUrlParam.put("js_code", wxCode);
+        //默认参数
+        requestUrlParam.put("grant_type", "authorization_code");
+
+        JSONObject jsonObject = JSON.parseObject(sendPost(requestUrl,requestUrlParam));
+
+        String openid = jsonObject.getString("openid");
+
+        User user = userMapper.selectUserByOpenId(openid);
+        if(user!=null){
+            return user;
+        }else{
+            //增加新用户信息
+            User user1=new User();
+            user1.setAvatar(avatar);
+            user1.setOpenId(openid);
+            user1.setUserName(userName);
+            user1.setUserSex(sex);
+            user1.setCreateAt(System.currentTimeMillis()/1000+"");
+
+            int i1 = userMapper.selectMaxId()+1;
+            user1.setMCode("gft"+i1);
+            int i = userMapper.addUser(user1);
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+            return user1;
+        }
     }
+
+
+    /**
+     * 向指定 URL 发送POST方法的请求
+     *
+     * @param url 发送请求的 URL
+     * @return 所代表远程资源的响应结果
+     */
+    public String sendPost(String url, Map<String, ?> paramMap) {
+        PrintWriter out = null;
+        BufferedReader in = null;
+        String result = "";
+
+        String param = "";
+        Iterator<String> it = paramMap.keySet().iterator();
+
+        while(it.hasNext()) {
+            String key = it.next();
+            param += key + "=" + paramMap.get(key) + "&";
+        }
+
+        try {
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            URLConnection conn = realUrl.openConnection();
+            // 设置通用的请求属性
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setRequestProperty("Accept-Charset", "utf-8");
+            conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 发送POST请求必须设置如下两行
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            // 获取URLConnection对象对应的输出流
+            out = new PrintWriter(conn.getOutputStream());
+            // 发送请求参数
+            out.print(param);
+            // flush输出流的缓冲
+            out.flush();
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(in!=null){
+                    in.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public ReturnVo queryAllUserForSql(UserHtVo userHtVo, Integer pageNum, Integer pageSize) throws Exception {

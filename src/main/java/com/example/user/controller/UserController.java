@@ -4,6 +4,7 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ReturnVo;
 import com.example.user.entity.AdminUser;
+import com.example.user.entity.User;
 import com.example.user.service.IUserService;
 import com.example.user.util.Upload;
 import com.example.user.vo.UserHtVo;
@@ -42,12 +43,12 @@ public class UserController {
     @ApiOperation(value = "小程序登陆",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/wxLogin")
-    public Map<String,Object> wxLogin(String code) {
+    public User wxLogin(String code, String userName, String avatar, String address,String sex) {
         if(code==null){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        return iUserService.wxLogin(code);
+        return iUserService.wxLogin(code,userName,avatar,address,sex);
     }
 
 

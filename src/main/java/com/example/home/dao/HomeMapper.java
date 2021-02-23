@@ -46,7 +46,7 @@ public interface HomeMapper {
      * @return
      */
     //保留  @Select("select a.*,c.name,c.tags_one as cId from tb_resources a INNER JOIN tb_classification c on a.tags_two=c.tags_one where a.tags_one=${id} ${paging}")
-    @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${id} order by a.create_at ${paging}")
+    @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${id} order by a.create_at ${paging}")
     List<HomeClassificationVo> selectResourceLearningExchange(@Param("id") int id, @Param("paging") String paging);
 
     /**
@@ -77,12 +77,13 @@ public interface HomeMapper {
     String[] selectImgByPostId(@Param("id") int id);
 
     /**
-     *浏览量加一
+     * 浏览量加一
      * @param id
+     * @param createAt
      * @return
      */
-    @Insert("update tb_resources set browse=browse+1 where id=${id} ")
-    int updateBrowse(@Param("id") int id);
+    @Insert("update tb_resources set browse=browse+1,create_at=#{createAt} where id=${id} ")
+    int updateBrowse(@Param("id") int id,@Param("createAt") String createAt);
 
    /**
     * 增加圈子帖子
@@ -92,6 +93,15 @@ public interface HomeMapper {
    @Insert("insert into tb_resources(content,tags_one,tags_two,type,video,cover,create_at,u_id,user_name,avatar,title)values(#{resources.content},${resources.tagsOne},${resources.tagsTwo},${resources.type},#{resources.video},#{resources.cover},#{resources.createAt},${resources.uId},#{resources.userName},#{resources.avatar},#{resources.title})")
    @Options(useGeneratedKeys=true, keyProperty="resources.id",keyColumn="id")
    int addResourcesPost(@Param("resources") Resources resources);
+
+    /**
+     * 根据二级标签id查询推荐的数据
+     * @param id 二级标签id
+     * @return
+     */
+    @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId " +
+            "from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where  a.id in (SELECT id FROM (SELECT id FROM tb_resources where  tags_two=${id} ORDER BY RAND()  LIMIT 10) t) ")
+   List<HomeClassificationVo> selectRecommendedSecondaryTagId(@Param("id") int id);
 
 
 

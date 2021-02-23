@@ -7,6 +7,7 @@ import com.example.common.utils.Paging;
 import com.example.home.dao.HomeMapper;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
+import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
 import com.example.home.vo.ha;
 import com.example.tags.entity.Tag;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +94,7 @@ public class HomeController {
     @PostMapping("/selectPostsByCommunityCategoryId")
     public List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging)  {
         if(paging.getPage()==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0");
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
         }
         return iHomeService.selectPostsByCommunityCategoryId(id,paging);
     }
@@ -105,9 +107,22 @@ public class HomeController {
     @ApiOperation(value = "查询单个资源帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectSingleResourcePost")
-    public ResourcesVo selectSingleResourcePost(int id,int userId)  {
+    public ResourcesVo selectSingleResourcePost(int id,int userId) throws ParseException {
         return iHomeService.selectSingleResourcePost(id,userId);
     }
+
+    /**
+     * 根据二级标签id查询推荐数据 点进帖子详情 触发
+     * @param id 二级标签id
+     * @return
+     */
+    @ApiOperation(value = "根据二级标签id查询推荐的数据",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectRecommendedSecondaryTagId")
+    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id)  {
+        return iHomeService.selectRecommendedSecondaryTagId(id);
+    }
+
 
     /**
      *

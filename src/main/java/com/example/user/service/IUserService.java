@@ -2,6 +2,7 @@ package com.example.user.service;
 
 import com.example.common.utils.ReturnVo;
 import com.example.user.entity.AdminUser;
+import com.example.user.entity.User;
 import com.example.user.vo.UserHtVo;
 
 import java.util.Map;
@@ -18,7 +19,7 @@ public interface IUserService {
      * @param code 前段获得的code码
      * @return
      */
-    Map<String,Object> wxLogin(String code);
+    User wxLogin(String code, String userName, String avatar, String address,String sex);
 
     /**
      * 后台查询所有后台

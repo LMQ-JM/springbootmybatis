@@ -39,6 +39,11 @@ public class HomeClassificationVo {
     private String title;
 
     /**
+     * 浏览数量
+     */
+    private int browse;
+
+    /**
      * 视频地址
      */
     private String video;
