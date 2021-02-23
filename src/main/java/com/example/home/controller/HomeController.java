@@ -4,8 +4,11 @@ import com.example.circle.entity.Circle;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
+import com.example.home.dao.HomeMapper;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
+import com.example.home.vo.ResourcesVo;
+import com.example.home.vo.ha;
 import com.example.tags.entity.Tag;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +32,9 @@ public class HomeController {
 
     @Autowired
     private IHomeService iHomeService;
+
+    @Autowired
+    private HomeMapper homeMapper;
 
     /**
      *
@@ -98,8 +105,42 @@ public class HomeController {
     @ApiOperation(value = "查询单个资源帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectSingleResourcePost")
-    public Resources selectSingleResourcePost(int id)  {
-        return iHomeService.selectSingleResourcePost(id);
+    public ResourcesVo selectSingleResourcePost(int id,int userId)  {
+        return iHomeService.selectSingleResourcePost(id,userId);
+    }
+
+    /**
+     *
+     *  增加资源帖子
+     * @return
+     */
+    @ApiOperation(value = "增加资源帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/addResourcesPost")
+    public int addResourcesPost(Resources resources) throws Exception {
+        if(resources.getCover()==null || resources.getUId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"封面不能为空");
+        }
+        return iHomeService.addResourcesPost(resources);
+    }
+
+
+
+    @PostMapping("/addimg")
+    public int addimg()  {
+        List<String> list=new ArrayList<>();
+        List<ha> strings = homeMapper.selectImg();
+        for (int i=0;i<strings.size();i++){
+            if(strings.get(i).getImg()==null){
+                continue;
+            }
+            String[] split = strings.get(i).getImg().split(",");
+            for (int a=0;a<split.length;a++){
+                homeMapper.addimg(strings.get(i).getId(),split[a],System.currentTimeMillis()/1000+"");
+            }
+
+        }
+        return 0;
     }
 
 

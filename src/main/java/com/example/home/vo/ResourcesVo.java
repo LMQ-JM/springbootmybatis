@@ -1,34 +1,21 @@
-package com.example.home.entity;
+package com.example.home.vo;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
- * @author Administrator
- */
+ * @author MQ
+ * @create 2021/2/22
+ **/
 @Data
-public class Resources {
+public class ResourcesVo {
 
-    /**
-     * ID
-     */
+
     private int id;
 
     /**
      * 圈子内容
      */
     private String content;
-
-    /**
-     * 一级标签ID
-     */
-    private int tagsOne;
-
-    /**
-     * 二级标签ID
-     */
-    private int tagsTwo;
 
 
     /**
@@ -66,10 +53,6 @@ public class Resources {
      */
     private String video;
 
-    /**
-     * 封面
-     */
-    private String cover;
 
     /**
      * 点赞数量
@@ -92,7 +75,19 @@ public class Resources {
     private String createAt;
 
     /**
-     * 是否删除(1有效，0无效)
+     * 标签名称
      */
-    private int isDelete;
+    private String tagName;
+
+    /**
+     * 标签Id
+     */
+    private int tagId;
+
+    /**
+     * 点过赞人的头像
+     */
+    private String[] giveAvatar;
+
+
 }

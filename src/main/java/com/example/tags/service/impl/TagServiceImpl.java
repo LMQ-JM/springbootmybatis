@@ -32,4 +32,18 @@ public class TagServiceImpl implements ITagService {
         List<Tag> tags = tagMapper.selectAllTags(tid);
         return tags;
     }
+
+    @Override
+    public List<Tag> selectResourcesAllTag() {
+        List<Tag> tags = tagMapper.selectResourcesAllTag();
+        return tags;
+    }
+
+    @Override
+    public List<Tag> selectResourcesAllTags(int tid) {
+        List<Tag> tags = tagMapper.selectResourcesAllTags(tid);
+        return tags;
+    }
+
+
 }

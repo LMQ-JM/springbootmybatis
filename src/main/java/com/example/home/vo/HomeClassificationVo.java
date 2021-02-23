@@ -10,35 +10,8 @@ import java.util.List;
 @Data
 public class HomeClassificationVo {
 
-    /**
-     * ID
-     */
     private int id;
 
-    /**
-     * 圈子内容
-     */
-    private String content;
-
-    /**
-     * 一级标签ID
-     */
-    private int tagsOne;
-
-    /**
-     * 二级标签ID
-     */
-    private int tagsTwo;
-
-    /**
-     * 三级标签id
-     */
-    private int tagsThree;
-
-    /**
-     * 图片地址
-     */
-    private String[] img;
 
     /**
      *类型（0 图文  1视频）
@@ -75,38 +48,16 @@ public class HomeClassificationVo {
      */
     private String cover;
 
-    /**
-     * 点赞数量
-     */
-    private int favour;
 
     /**
-     * 收藏数量
+     * 标签名称
      */
-    private int collect;
+    private String tagName;
 
     /**
-     * 浏览记录
+     * 标签Id
      */
-    private int browse;
+    private int tagId;
 
-    /**
-     * 创建时间
-     */
-    private String createAt;
 
-    /**
-     * 是否删除(1有效，0无效)
-     */
-    private int isDelete;
-
-    /**
-     * 社区名称
-     */
-    private String name;
-
-    /**
-     * 社区id
-     */
-    private int cId;
 }

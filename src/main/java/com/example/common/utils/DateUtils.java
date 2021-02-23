@@ -48,4 +48,40 @@ public class DateUtils {
 
     public static LocalDate parseDate(String date){ return LocalDate.parse(date,dateFormatter); }
 
+    /**
+     * 得到时间
+     * @param hqtime 过去时间戳
+     * @return
+     */
+    public static String getTime(String hqtime){
+        Long s = System.currentTimeMillis()/1000 - Integer.parseInt(hqtime);
+        if(s<60) {
+            return s+"秒前";
+        }else {
+            long minute = s/60;
+            if(minute<60) {
+                return minute+"分钟前";
+            }else {
+                long hour = minute/60;
+                if(hour<24) {
+                    return hour+"时前";
+                }else {
+                    long day = hour/24;
+                    if(day<30) {
+                        return day+"天前";
+                    }else {
+                        long month = day/30;
+                        if(month<12) {
+                            return day+"月前";
+                        }else {
+                            long year = month/12;
+                            return year+"年前";
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
 }

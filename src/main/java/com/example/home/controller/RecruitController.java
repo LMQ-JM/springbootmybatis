@@ -29,14 +29,13 @@ public class RecruitController {
 
     /**
      *
-     *  根据条件查询人才里面的招牌信息
+     * 根据条件查询人才里面的招牌信息
      * @return
      */
     @ApiOperation(value = "根据条件查询人才里面的招牌信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectSignboardInformation")
     public List<RecruitVo> selectSignboardInformation(int typeId, Paging paging,int userId,int orderBy)  {
-        System.out.println(typeId);
         if(paging.getPage()==0 || typeId>5){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1 或者参数错误");
         }

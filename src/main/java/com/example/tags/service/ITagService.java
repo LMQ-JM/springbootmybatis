@@ -16,6 +16,19 @@ public interface ITagService {
     List<Tag> selectAllTag();
 
     /**
+     * 查询所有圈子一级标签
+     * @return
+     */
+    List<Tag> selectResourcesAllTag();
+
+    /**
+     * 根据一级标签id查询二级标签
+     * @param tid 一级标签id
+     * @return
+     */
+    List<Tag> selectResourcesAllTags(int tid);
+
+    /**
      * 根据一级标签id查询二级标签
      * @param tid 一级标签id
      * @return

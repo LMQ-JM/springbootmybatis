@@ -27,7 +27,7 @@ public class TagController {
 
 
     /**
-     *  圈子
+     *  圈子 后台
      *  查询所有圈子的一级标签
      * @return
      */
@@ -36,6 +36,32 @@ public class TagController {
     @PostMapping("/selectAllTag")
     public List<Tag> selectAllTag() {
         List<Tag> tags = iTagService.selectAllTag();
+        return tags;
+    }
+
+    /**
+     * 资源 后台
+     * 查询所有资源的一级标签
+     * @return
+     */
+    @ApiOperation(value = "查询所有资源的一级标签",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectResourcesAllTag")
+    public List<Tag> selectResourcesAllTag() {
+        List<Tag> tags = iTagService.selectResourcesAllTag();
+        return tags;
+    }
+
+    /**
+     *  资源
+     *  根据一级标签id查询二级标签
+     * @return
+     */
+    @ApiOperation(value = "根据一级标签id查询二级标签",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectResourcesAllTags")
+    public List<Tag> selectResourcesAllTags(int tid) {
+        List<Tag> tags = iTagService.selectResourcesAllTags(tid);
         return tags;
     }
 

@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 /**
  * @author MQ
  * @date 2021/1/16 16:18
@@ -30,6 +32,26 @@ public class UserController {
 
     @Autowired
     private Upload upload;
+
+
+    /**
+     *
+     *  小程序登陆
+     * @return
+     */
+    @ApiOperation(value = "小程序登陆",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/wxLogin")
+    public Map<String,Object> wxLogin(String code) {
+        if(code==null){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+
+        return iUserService.wxLogin(code);
+    }
+
+
+
 
     /**
      *
@@ -66,6 +88,7 @@ public class UserController {
     public ReturnVo getImgAddress(@RequestParam("files") MultipartFile file) {
         // TODO Auto-generated method stub
         String upload = this.upload.upload(file);
+        System.out.println("=="+upload);
         ReturnVo returnVo=new ReturnVo();
         returnVo.setList(upload);
         return returnVo;

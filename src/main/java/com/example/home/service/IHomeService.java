@@ -5,6 +5,7 @@ import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
+import com.example.home.vo.ResourcesVo;
 import com.example.tags.entity.Tag;
 
 import java.util.List;
@@ -51,6 +52,13 @@ public interface IHomeService {
      * @param id 单个资源帖子id
      * @return
      */
-    Resources selectSingleResourcePost(int id);
+    ResourcesVo selectSingleResourcePost(int id,int userId);
+
+    /**
+     * 增加资源贴
+     * @param resources
+     * @return
+     */
+    int addResourcesPost(Resources resources);
 
 }

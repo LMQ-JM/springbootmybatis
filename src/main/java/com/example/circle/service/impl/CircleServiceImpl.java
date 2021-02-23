@@ -59,7 +59,7 @@ public class CircleServiceImpl implements ICircleService {
         if(circle.getType()==0) {
             //添加图片组
             Img img = new Img();
-            img.setType(circle.getType());
+            img.setType(1);
             img.setZId(circle.getId());
             img.setCreateAt(System.currentTimeMillis() / 1000 + "");
             for (int i = 0; i < circle.getImg().length; i++) {
