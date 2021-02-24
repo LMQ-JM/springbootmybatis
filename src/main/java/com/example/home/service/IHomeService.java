@@ -7,6 +7,7 @@ import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
 import com.example.tags.entity.Tag;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.util.List;
@@ -64,10 +65,31 @@ public interface IHomeService {
     List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id);
 
     /**
+     * 插叙所有资源数据
+     * @param circle
+     * @param page
+     * @param limit
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    ReturnVo selectResourcesAllPosting(Circle circle, Integer page, Integer limit, String startTime, String endTime) throws Exception;
+
+    /**
+     * 后台
+     * 批量删除
+     * @param id
+     * @return
+     */
+    Integer resourcesDeletes(Integer[] id);
+
+
+    /**
      * 增加资源贴
      * @param resources
      * @return
      */
     int addResourcesPost(Resources resources);
+
 
 }

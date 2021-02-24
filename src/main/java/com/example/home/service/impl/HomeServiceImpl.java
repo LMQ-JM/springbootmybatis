@@ -3,10 +3,12 @@ package com.example.home.service.impl;
 import com.example.circle.dao.CircleMapper;
 import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
+import com.example.circle.vo.CircleLabelVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.DateUtils;
 import com.example.common.utils.Paging;
+import com.example.common.utils.ReturnVo;
 import com.example.common.utils.TimeUtil;
 import com.example.home.dao.BrowseMapper;
 import com.example.home.dao.GiveMapper;
@@ -19,6 +21,7 @@ import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.RecruitVo;
+import com.example.home.vo.ResourcesLabelVo;
 import com.example.home.vo.ResourcesVo;
 import com.example.tags.entity.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -145,6 +149,58 @@ public class HomeServiceImpl implements IHomeService {
     public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id) {
         List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRecommendedSecondaryTagId(id);
         return homeClassificationVos;
+    }
+
+    @Override
+    public ReturnVo selectResourcesAllPosting(Circle circle, Integer page, Integer limit, String startTime, String endTime) throws Exception {
+        String sql="";
+        Integer pages=(page-1)*limit;
+        if(!circle.getTitle().equals("undefined") && !circle.getTitle().equals("")){
+            sql+=" and a.title like '%"+circle.getTitle()+"%'";
+        }
+        //如果发帖人不为空 ，根据发帖人查询帖子
+        if(!circle.getUserName().equals("undefined") && !circle.getUserName().equals("")){
+            sql+="and a.user_name like '%"+circle.getUserName()+"%'";
+        }
+
+        //将时间格式转换为时间戳
+        //开始时间
+        if(!startTime.equals("undefined") && !endTime.equals("undefined") && !startTime.equals("null") && !endTime.equals("null")){
+            if(!startTime.equals("") && !endTime.equals("")){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String startTimes=String.valueOf(sdf.parse(startTime).getTime() / 1000);
+
+                //结束时间
+                SimpleDateFormat sdftwo = new SimpleDateFormat("yyyy-MM-dd");
+                String endTimes=String.valueOf(sdftwo.parse(endTime).getTime() / 1000);
+
+                if(!"undefined".equals(startTime) && !endTime.equals("undefined") ){
+                    sql+="and a.create_at>= "+startTimes+" and a.create_at<="+endTimes+"";
+                }
+            }
+        }
+        String paging=" limit "+pages+","+limit+"";
+        List<ResourcesLabelVo> resourcesLabelVos = homeMapper.selectResourcesAllPosting(sql, paging);
+        //根据不同条件得到不同帖子数量
+        Integer integer = homeMapper.selectResourcesAllPostingCount(sql);
+
+        ReturnVo returnVo=new ReturnVo();
+        returnVo.setCount(integer);
+        returnVo.setList(resourcesLabelVos);
+        return returnVo;
+    }
+
+    @Override
+    public Integer resourcesDeletes(Integer[] id) {
+        Integer deletes=0;
+        for (int i=0; i<id.length;i++){
+            deletes= homeMapper.deletes(id[i]);
+        }
+
+        if(deletes<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"批量删除失败");
+        }
+        return deletes;
     }
 
     @Override

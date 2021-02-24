@@ -82,17 +82,16 @@ public class CircleController {
 
     /**
      *  后台
-     *  查询所有圈子的和资源数据
+     *  查询所有圈子的数据
      * @return
      */
-    @ApiOperation(value = "查询所有圈子的和资源数据",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询所有圈子的数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectAllPosting")
     public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime) throws Exception {
         if(page==null || limit==null){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        System.out.println(circle.getTitle());
         ReturnVo returnVo = iCircleService.selectAllPosting(circle, page, limit, startTime, endTime);
 
         return returnVo;

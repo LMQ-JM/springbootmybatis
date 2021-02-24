@@ -5,13 +5,11 @@ import com.example.circle.entity.Img;
 import com.example.common.utils.Paging;
 import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
+import com.example.home.vo.ResourcesLabelVo;
 import com.example.home.vo.ResourcesVo;
 import com.example.home.vo.ha;
 import com.example.tags.entity.Tag;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -104,7 +102,31 @@ public interface HomeMapper {
    List<HomeClassificationVo> selectRecommendedSecondaryTagId(@Param("id") int id);
 
 
+    /**
+     * 后台
+     * 查询所有资源数据
+     * @param sql 条件
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.id,a.content,b.tag_name,a.type,a.video,a.favour,a.collect,a.browse,a.title,a.avatar,a.create_at,a.user_name from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 ${sql} ORDER BY a.create_at desc ${paging}")
+    List<ResourcesLabelVo> selectResourcesAllPosting(@Param("sql") String sql, @Param("paging") String paging);
 
+    /**
+     * 根据条件统计数量
+     * @param sql
+     * @return
+     */
+    @Select("select COALESCE(count(*),0) from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 ${sql}")
+    Integer selectResourcesAllPostingCount(@Param("sql") String sql);
+
+    /**
+     * 批量删除
+     * @param id
+     * @return
+     */
+    @Update("update tb_resources set is_delete=0  where id = ${id}")
+    Integer deletes(@Param("id") int id);
 
     @Select("select id,img from tb_resources where user_name='徐老师'")
     List<ha> selectImg();

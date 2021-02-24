@@ -1,14 +1,13 @@
-package com.example.circle.vo;
+package com.example.home.vo;
 
 import lombok.Data;
 
 /**
  * @author MQ
- * @date 2021/1/19 17:25
- */
+ * @create 2021/2/24
+ **/
 @Data
-public class CircleLabelVo {
-
+public class ResourcesLabelVo {
     /**
      * id
      */

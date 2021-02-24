@@ -4,6 +4,7 @@ import com.example.circle.entity.Circle;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
+import com.example.common.utils.ReturnVo;
 import com.example.home.dao.HomeMapper;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.midi.Soundbank;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,6 +141,43 @@ public class HomeController {
         return iHomeService.addResourcesPost(resources);
     }
 
+
+
+    /**
+     *  后台
+     *  查询所有资源的数据
+     * @return
+     */
+    @ApiOperation(value = "查询所有资源的数据",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectResourcesAllPosting")
+    public ReturnVo selectResourcesAllPosting(Circle circle, Integer page, Integer limit, String startTime, String endTime) throws Exception {
+        if(page==null || limit==null){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        ReturnVo returnVo = iHomeService.selectResourcesAllPosting(circle, page, limit, startTime, endTime);
+
+        return returnVo;
+    }
+
+
+    /**
+     * 后台
+     * 批量删除帖子
+     * @return
+     */
+    @ApiOperation(value = "批量删除帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/resourcesDeletes")
+    public Integer resourcesDeletes(@RequestParam("id")  Integer[] id) throws ParseException {
+        if(id==null){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+
+        //批量删除
+        Integer deletes = iHomeService.resourcesDeletes(id);
+        return  deletes;
+    }
 
 
     @PostMapping("/addimg")
