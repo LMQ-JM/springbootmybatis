@@ -179,6 +179,27 @@ public class HomeController {
         return  deletes;
     }
 
+    /**
+     * 发布
+     * @return
+     */
+    @ApiOperation(value = "发布",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/issueResourceOrCircle")
+    public Integer issueResourceOrCircle() throws ParseException {
+
+
+        //批量删除
+        //Integer deletes = iHomeService.resourcesDeletes(id);
+        return  null;
+    }
+
+
+
+
+
+
+
 
     @PostMapping("/addimg")
     public int addimg()  {

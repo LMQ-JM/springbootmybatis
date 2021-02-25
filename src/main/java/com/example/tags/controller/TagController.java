@@ -40,6 +40,20 @@ public class TagController {
     }
 
     /**
+     *  圈子
+     *  根据一级标签id查询二级标签
+     * @return
+     */
+    @ApiOperation(value = "根据一级标签id查询二级标签",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectAllTags")
+    public List<Tag> selectAllTags(int tid) {
+        List<Tag> tags = iTagService.selectAllTags(tid);
+        return tags;
+    }
+
+
+    /**
      * 资源 后台
      * 查询所有资源的一级标签
      * @return
@@ -53,6 +67,25 @@ public class TagController {
     }
 
     /**
+     * 资源
+     * 查询所有资源的一级标签
+     * @return
+     */
+    @ApiOperation(value = "查询所有资源的一级标签",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectResourcesTag")
+    public List<Tag> selectResourcesAllTags() {
+        List<Tag> tags = iTagService.selectResourcesAllTag();
+        for (int i=0;i<tags.size();i++){
+            if(tags.get(i).getId()==14){
+                tags.remove(i);
+            }
+        }
+        return tags;
+    }
+
+
+    /**
      *  资源
      *  根据一级标签id查询二级标签
      * @return
@@ -64,19 +97,5 @@ public class TagController {
         List<Tag> tags = iTagService.selectResourcesAllTags(tid);
         return tags;
     }
-
-    /**
-     *  圈子
-     *  根据一级标签id查询二级标签
-     * @return
-     */
-    @ApiOperation(value = "根据一级标签id查询二级标签",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/selectAllTags")
-    public List<Tag> selectAllTags(int tid) {
-        List<Tag> tags = iTagService.selectAllTags(tid);
-        return tags;
-    }
-
 
 }

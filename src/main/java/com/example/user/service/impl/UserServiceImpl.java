@@ -55,11 +55,13 @@ public class UserServiceImpl implements IUserService {
         requestUrlParam.put("js_code", wxCode);
         //默认参数
         requestUrlParam.put("grant_type", "authorization_code");
-
+        //效验
         JSONObject jsonObject = JSON.parseObject(sendPost(requestUrl,requestUrlParam));
 
+        //得到用户的唯一id
         String openid = jsonObject.getString("openid");
 
+        //根据openid查询数据库是否存在
         User user = userMapper.selectUserByOpenId(openid);
         if(user!=null){
             return user;
