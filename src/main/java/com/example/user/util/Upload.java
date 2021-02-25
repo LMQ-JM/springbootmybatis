@@ -28,7 +28,7 @@ public class Upload {
     }
 
     Path path=null;
-    public String upload(MultipartFile files){
+    public synchronized String upload(MultipartFile files){
         String modeFiles=null;
             String modeFile=null;
             String times="";
@@ -49,14 +49,12 @@ public class Upload {
 
                  modeFiles=path.toString();
 
-                if(visbit.equals("img")){
                     //在拿到压缩后的图片  处理后 返回给小程序
                     String mode = modeFiles.replace("file\\", "");
                     String  modes = mode.replace("\\", "/");
                     //FfmpegUtil.getCompressImg(modeFile, modes);
                     modeFiles = modes.replace("e:", "https://www.gofatoo.com");
                     modeFiles=modeFiles.replace("file/", "");
-                }
             }
 
             catch(IOException e){

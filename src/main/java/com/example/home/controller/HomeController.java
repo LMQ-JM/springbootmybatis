@@ -12,13 +12,14 @@ import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
 import com.example.home.vo.ha;
 import com.example.tags.entity.Tag;
+import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.sound.midi.Soundbank;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,9 @@ public class HomeController {
 
     @Autowired
     private HomeMapper homeMapper;
+
+    @Autowired
+    private Upload upload;
 
     /**
      *
@@ -186,15 +190,24 @@ public class HomeController {
     @ApiOperation(value = "发布",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/issueResourceOrCircle")
-    public Integer issueResourceOrCircle() throws ParseException {
+    public void issueResourceOrCircle(Resources resources,String imgUrl,int postType,int whetherCover) throws Exception {
+        if(resources.getUId()==0 || resources.getTagsOne()==0 || resources.getTagsTwo()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        iHomeService.issueResourceOrCircle(resources,imgUrl,postType,whetherCover);
 
-
-        //批量删除
-        //Integer deletes = iHomeService.resourcesDeletes(id);
-        return  null;
     }
 
-
+    @ApiOperation(value = "文件上传", notes = "文件上传")
+    @ResponseBody
+    @PostMapping("/uploadFile")
+    public List<String> uploadFile(@RequestParam("files") MultipartFile file) {
+        // TODO Auto-generated method stub
+        String upload = this.upload.upload(file);
+        List<String> address=new ArrayList<>();
+        address.add(upload);
+        return address;
+    }
 
 
 
@@ -211,7 +224,7 @@ public class HomeController {
             }
             String[] split = strings.get(i).getImg().split(",");
             for (int a=0;a<split.length;a++){
-                homeMapper.addimg(strings.get(i).getId(),split[a],System.currentTimeMillis()/1000+"");
+                //homeMapper.addimg(strings.get(i).getId(),split[a],System.currentTimeMillis()/1000+"");
             }
 
         }

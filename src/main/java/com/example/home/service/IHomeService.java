@@ -7,7 +7,6 @@ import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
 import com.example.tags.entity.Tag;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.util.List;
@@ -90,6 +89,16 @@ public interface IHomeService {
      * @return
      */
     int addResourcesPost(Resources resources);
+
+    /**
+     * 发布
+     * @param resources 对象
+     * @param imgUrl 图片地址
+     * @param postType 帖子类型 （0资源贴，1圈子贴）
+     * @param whetherCover（1自己选的，0系统默认）
+     * @throws Exception
+     */
+    void issueResourceOrCircle(Resources resources,String imgUrl,int postType,int whetherCover) throws Exception;
 
 
 }

@@ -3,19 +3,14 @@ package com.example.home.service.impl;
 import com.example.circle.dao.CircleMapper;
 import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
-import com.example.circle.vo.CircleLabelVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
-import com.example.common.utils.DateUtils;
-import com.example.common.utils.Paging;
-import com.example.common.utils.ReturnVo;
-import com.example.common.utils.TimeUtil;
+import com.example.common.utils.*;
 import com.example.home.dao.BrowseMapper;
 import com.example.home.dao.GiveMapper;
 import com.example.home.dao.HomeMapper;
 import com.example.home.dao.RecruitMapper;
 import com.example.home.entity.Browse;
-import com.example.home.entity.Recruit;
 import com.example.home.entity.RecruitLabel;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
@@ -231,6 +226,61 @@ public class HomeServiceImpl implements IHomeService {
 
         return 1;
     }
+
+    @Override
+    public void issueResourceOrCircle(Resources resources, String imgUrl, int postType, int whetherCover) throws Exception {
+
+        //资源帖子
+        if(postType==0){
+            issue(resources,imgUrl,postType,whetherCover);
+        }
+
+        //圈子帖子
+        if(postType==1){
+            issue(resources,imgUrl,postType,whetherCover);
+        }
+    }
+
+    public void issue(Resources resources, String imgUrl, int postType, int whetherCover)throws Exception{
+        resources.setCreateAt(System.currentTimeMillis()/1000+"");
+
+        String[] split = null;
+
+        //自己选封面
+        if(whetherCover==1){
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                split=imgUrl.split(",");
+            }
+
+        }
+
+        //系统默认封面
+        if(whetherCover==0){
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                split=imgUrl.split(",");
+                resources.setCover(split[0]);
+            }else{
+                String videoCover = FfmpegUtil.getVideoCover(resources.getVideo());
+                resources.setCover(videoCover);
+            }
+        }
+
+        int i = homeMapper.addResourcesPost(resources);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+        if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            int addImg = homeMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
+            if(addImg<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+        }
+
+
+    }
+
+
 
 
 }

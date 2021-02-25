@@ -1,8 +1,6 @@
 package com.example.home.dao;
 
 import com.example.circle.entity.Circle;
-import com.example.circle.entity.Img;
-import com.example.common.utils.Paging;
 import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesLabelVo;
@@ -131,15 +129,23 @@ public interface HomeMapper {
     @Select("select id,img from tb_resources where user_name='徐老师'")
     List<ha> selectImg();
 
-    /*@Insert({
+    /**
+     * 批量增加图片
+     * @param zId 帖子id
+     * @param imgUrl 图片地址
+     * @param createAt 创建时间
+     * @param postType 帖子类型
+     * @return
+     */
+    //@Insert("insert into tb_img(z_id,img_url,type,create_at) values(${zId}, #{imgUrl},0, #{createAt})")
+    @Insert({
          "<script>",
          "insert into tb_img(z_id,img_url,type,create_at) values ",
-         "<foreach collection='list' item='item' index='index' separator=','>",
-         "(${zId}, #{item},0, #{createAt})",
+         "<foreach collection='imgUrl' item='item' index='index' separator=','>",
+         "(${zId}, #{item},${postType}, #{createAt})",
          "</foreach>",
          "</script>"
-    })*/
-    @Insert("insert into tb_img(z_id,img_url,type,create_at) values(${zId}, #{imgUrl},0, #{createAt})")
-    int addimg(@Param("zId") int zId, @Param("imgUrl") String imgUrl,@Param("createAt") String createAt);
+    })
+    int addImg(@Param("zId") int zId, @Param("imgUrl") String[] imgUrl,@Param("createAt") String createAt,@Param("postType") int postType);
 
 }
