@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -202,14 +203,38 @@ public class HomeController {
     @ResponseBody
     @PostMapping("/uploadFile")
     public List<String> uploadFile(@RequestParam("files") MultipartFile file) {
-        // TODO Auto-generated method stub
-        String upload = this.upload.upload(file);
-        List<String> address=new ArrayList<>();
-        address.add(upload);
-        return address;
+        List<String> upload = this.upload.upload(file);
+        return upload;
     }
 
+    @ApiOperation(value = "删除服务器图片", notes = "删除服务器图片")
+    @ResponseBody
+    @PostMapping("/deleteFile")
+    public void deleteFile(int type,String imgUrl) {
+        String substring = imgUrl.substring(imgUrl.lastIndexOf("/"));
 
+        String documentType="";
+        //0代表是图片
+        if(type==0){
+            documentType="img";
+        }
+
+        //1代表是视屏
+        if(type==1){
+            documentType="video";
+        }
+        File file = new File("e://file/"+documentType+""+substring+"");
+        //判断文件是否存在
+        if (file.exists()){
+            boolean delete = file.delete();
+            if(!delete){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"删除服务器文件错误!");
+            }
+        }else{
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"图片不存在!");
+        }
+
+    }
 
 
 

@@ -28,11 +28,11 @@ public class Upload {
     }
 
     Path path=null;
-    public synchronized String upload(MultipartFile files){
+    public synchronized List<String> upload(MultipartFile files){
         String modeFiles=null;
             String modeFile=null;
             String times="";
-
+        List<String> psList=new ArrayList<>();
             try {
                 String fileName = files.getOriginalFilename();
                 String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -48,19 +48,31 @@ public class Upload {
                 Files.write(path,bytes);
 
                  modeFiles=path.toString();
-
+                if (visbit.equals("img")) {
                     //在拿到压缩后的图片  处理后 返回给小程序
                     String mode = modeFiles.replace("file\\", "");
                     String  modes = mode.replace("\\", "/");
                     //FfmpegUtil.getCompressImg(modeFile, modes);
                     modeFiles = modes.replace("e:", "https://www.gofatoo.com");
                     modeFiles=modeFiles.replace("file/", "");
+                    psList.add(modeFiles);
+                }else{
+                    System.out.println("进来");
+                    //得到视屏封面
+                    String videoCover = FfmpegUtil.getVideoCover(path.toString());
+                    String mode = modeFiles.replace("file\\", "");
+                    String modes = mode.replace("\\", "/");
+                    modeFile = modes.replace("e:", "https://www.gofatoo.com");
+                    psList.add(modeFile);
+                    psList.add(videoCover);
+                }
+
             }
 
             catch(IOException e){
 
             }
-        return modeFiles;
+        return psList;
     }
 
     public synchronized List<String> uploads(MultipartFile[]  files) throws Exception {
@@ -91,7 +103,6 @@ public class Upload {
                    String modeFiles = path.toString();
 
                    if (visbit.equals("img")) {
-                       //在拿到压缩后的图片  处理后 返回给小程序
                        String mode = modeFiles.replace("file\\", "");
                        String modes = mode.replace("\\", "/");
                        //FfmpegUtil.getCompressImg(modeFile, modes);

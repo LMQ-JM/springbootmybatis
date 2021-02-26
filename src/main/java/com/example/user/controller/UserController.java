@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author MQ
@@ -88,10 +88,10 @@ public class UserController {
     @PostMapping("/getImgAddress")
     public ReturnVo getImgAddress(@RequestParam("files") MultipartFile file) {
         // TODO Auto-generated method stub
-        String upload = this.upload.upload(file);
-        System.out.println("=="+upload);
+        List<String> upload = this.upload.upload(file);
+        System.out.println("=="+ this.upload);
         ReturnVo returnVo=new ReturnVo();
-        returnVo.setList(upload);
+        returnVo.setList(upload.get(0));
         return returnVo;
     }
 

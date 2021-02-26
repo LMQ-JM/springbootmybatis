@@ -22,13 +22,11 @@ public class FfmpegUtil {
 		   //C:\Users\Administrator\Desktop\ffmpeg-N-99816-g3da35b7cc7-win64-lgpl\bin\\ffmpeg.exe
 		   //本地地址
 		   //D:\\ffmpeg\\ffmpeg-N-99816-g3da35b7cc7-win64-lgpl\\bin\\ffmpeg.exe
-		   /*if(type==1){
-			   return "https://www.gofatoo.com/img/1607304841.png";
-		   }*/
+
 		   String a=System.currentTimeMillis()/1000+""+StringUtil.getlinkNo("a");
 		   String address="";
 		 
-		   commend.add("D:\\ffmpeg\\ffmpeg-N-99816-g3da35b7cc7-win64-lgpl\\bin\\ffmpeg.exe");
+		   commend.add("C:\\Users\\Administrator\\Desktop\\ffmpeg-N-99816-g3da35b7cc7-win64-lgpl\\bin\\ffmpeg.exe");
 		   commend.add("-i");
 		   commend.add(videoUrl);  //视屏地址
 		   commend.add("-r");
