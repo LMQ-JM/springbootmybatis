@@ -4,7 +4,6 @@ import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CircleLabelVo;
-import com.example.home.entity.Resources;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -80,6 +79,6 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,b.name,b.tags_one as cId from tb_circles a INNER JOIN tb_classification b on a.tags_two=b.tags_one  where a.tags_one=${id} ${paging}")
+    @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.tags_one=${id}  ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
 }

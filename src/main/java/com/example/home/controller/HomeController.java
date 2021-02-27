@@ -160,9 +160,8 @@ public class HomeController {
         if(page==null || limit==null){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        ReturnVo returnVo = iHomeService.selectResourcesAllPosting(circle, page, limit, startTime, endTime);
 
-        return returnVo;
+        return iHomeService.selectResourcesAllPosting(circle, page, limit, startTime, endTime);
     }
 
 
@@ -179,9 +178,7 @@ public class HomeController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        //批量删除
-        Integer deletes = iHomeService.resourcesDeletes(id);
-        return  deletes;
+        return  iHomeService.resourcesDeletes(id);
     }
 
     /**
@@ -203,14 +200,21 @@ public class HomeController {
     @ResponseBody
     @PostMapping("/uploadFile")
     public List<String> uploadFile(@RequestParam("files") MultipartFile file) {
-        List<String> upload = this.upload.upload(file);
-        return upload;
+        return this.upload.upload(file);
     }
 
+    /**
+     *
+     * @param type 0 代表是要删除图片  1删除视频
+     * @param imgUrl 图片路劲
+     */
     @ApiOperation(value = "删除服务器图片", notes = "删除服务器图片")
     @ResponseBody
     @PostMapping("/deleteFile")
     public void deleteFile(int type,String imgUrl) {
+        if(type>1){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
         String substring = imgUrl.substring(imgUrl.lastIndexOf("/"));
 
         String documentType="";

@@ -7,7 +7,7 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.*;
 import com.example.home.dao.BrowseMapper;
-import com.example.home.dao.GiveMapper;
+import com.example.home.dao.ResourceGiveMapper;
 import com.example.home.dao.HomeMapper;
 import com.example.home.dao.RecruitMapper;
 import com.example.home.entity.Browse;
@@ -46,7 +46,7 @@ public class HomeServiceImpl implements IHomeService {
     private BrowseMapper browseMapper;
 
     @Autowired
-    private GiveMapper giveMapper;
+    private ResourceGiveMapper resourceGiveMapper;
 
     @Autowired
     private CircleMapper circleMapper;
@@ -101,29 +101,38 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public ResourcesVo selectSingleResourcePost(int id,int userId) throws ParseException {
+
         ResourcesVo resourcesVo = homeMapper.selectSingleResourcePost(id);
 
-        //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
-        long minutesApart = TimeUtil.getMinutesApart(resourcesVo.getCreateAt());
-        if(minutesApart>=1440){
-            //增加浏览记录
-            Browse browse=new Browse();
-            browse.setCreateAt(System.currentTimeMillis()/1000+"");
-            browse.setUId(userId);
-            browse.setZqId(id);
-            browse.setType(0);
-            //增加浏览记录
-            int i = browseMapper.addBrowse(browse);
-            if(i<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"增加浏览记录错误");
-            }
+        //在用户登录的情况下 增加帖子浏览记录
+        if(userId!=0){
+            //得到上一次观看帖子的时间
+            String s = browseMapper.selectCreateAt(id, userId);
 
-            //修改帖子浏览数量
-            int i1 = homeMapper.updateBrowse(id,System.currentTimeMillis()/1000+"");
-            if(i1<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
+            long minutesApart = TimeUtil.getMinutesApart(s);
+            if(minutesApart>=1440){
+                //增加浏览记录
+                Browse browse=new Browse();
+                browse.setCreateAt(System.currentTimeMillis()/1000+"");
+                browse.setUId(userId);
+                browse.setZqId(id);
+                browse.setType(0);
+                //增加浏览记录
+                int i = browseMapper.addBrowse(browse);
+                if(i<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"增加浏览记录错误");
+                }
+
+                //修改帖子浏览数量
+                int i1 = homeMapper.updateBrowse(id);
+                if(i1<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+
             }
         }
+
 
         //得到当前时间戳和过去时间戳比较相隔多少分钟或者多少小时或者都少天或者多少年
         String time = DateUtils.getTime(resourcesVo.getCreateAt());
@@ -134,7 +143,7 @@ public class HomeServiceImpl implements IHomeService {
 
 
         //得到点过赞人的头像
-        String[] strings1 = giveMapper.selectGivePersonAvatar(id);
+        String[] strings1 = resourceGiveMapper.selectResourcesGivePersonAvatar(id);
         resourcesVo.setGiveAvatar(strings1);
 
         return resourcesVo;

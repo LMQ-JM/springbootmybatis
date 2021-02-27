@@ -47,9 +47,9 @@ public interface ICircleService {
 
     /**
      * 根据圈子中的标签id查询帖子
-     * @param id 二级标签id
+     * @param id 一级标签id
      * @param paging 分页
      * @return List<Circle>
      */
-    List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging);
+    List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging,int userId);
 }

@@ -119,18 +119,18 @@ public class CircleController {
 
     /**
      *
-     *  根据圈子中的标签id查询帖子
+     * 根据圈子中的标签id查询帖子
      * @return
      */
     @ApiOperation(value = "根据圈子中的标签id查询帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectPostsBasedTagIdCircle")
-    public List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging) throws ParseException {
+    public List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging,int userId) throws ParseException {
         if(id==0 || paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        List<CircleClassificationVo> circles = iCircleService.selectPostsBasedTagIdCircle(id, paging);
+        List<CircleClassificationVo> circles = iCircleService.selectPostsBasedTagIdCircle(id, paging,userId);
         return  circles;
     }
 

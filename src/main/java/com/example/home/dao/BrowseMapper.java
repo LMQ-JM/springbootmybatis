@@ -3,6 +3,7 @@ package com.example.home.dao;
 import com.example.home.entity.Browse;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,4 +19,13 @@ public interface BrowseMapper {
      */
     @Insert("insert into tb_browse(u_id,zq_id,type,create_at)values(${browse.uId},${browse.zqId},${browse.type},${browse.createAt})")
     int addBrowse(@Param("browse") Browse browse);
+
+    /**
+     * 查询上次观看帖子的时间
+     * @param tid
+     * @param userId
+     * @return
+     */
+    @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} order by create_at desc limit 1")
+    String selectCreateAt(@Param("tid") int tid,@Param("userId") int userId);
 }

@@ -10,30 +10,7 @@ import java.util.List;
 @Data
 public class CircleClassificationVo {
 
-    /**
-     * ID
-     */
     private int id;
-
-    /**
-     * 圈子内容
-     */
-    private String content;
-
-    /**
-     * 一级标签ID
-     */
-    private int tagsOne;
-
-    /**
-     * 二级标签ID
-     */
-    private int tagsTwo;
-
-    /**
-     * 图片地址
-     */
-    private String[] img;
 
     /**
      *类型（0 图文  1视频）
@@ -56,9 +33,19 @@ public class CircleClassificationVo {
     private String avatar;
 
     /**
+     * 图片组
+     */
+    private String[] img;
+
+    /**
      * 标题
      */
     private String title;
+
+    /**
+     * 浏览数量
+     */
+    private int browse;
 
     /**
      * 视频地址
@@ -70,20 +57,16 @@ public class CircleClassificationVo {
      */
     private String cover;
 
-    /**
-     * 点赞数量
-     */
-    private int favour;
 
     /**
-     * 收藏数量
+     * 标签名称
      */
-    private int collect;
+    private String tagName;
 
     /**
-     * 浏览记录
+     * 标签Id
      */
-    private int browse;
+    private int tagId;
 
     /**
      * 创建时间
@@ -91,17 +74,30 @@ public class CircleClassificationVo {
     private String createAt;
 
     /**
-     * 是否删除(1有效，0无效)
+     * 是否点赞 （1点赞 0没有点赞）
      */
-    private int isDelete;
+    private int whetherGive;
 
     /**
-     * 社区分类id
+     * 点赞数量
      */
-    private int cId;
+
+    private int giveNumber;
 
     /**
-     * 社区名称
+     * 点过赞人的头像
      */
-    private String name;
+    private String[] giveAvatar;
+
+    /**
+     * 帖子评论数量
+     */
+    private int numberPosts;
+
+    /**
+     * 评论
+     */
+    private List<CommentUserVo> comments;
+
+
 }

@@ -1,11 +1,14 @@
 package com.example.circle.service.impl;
 
+import com.example.circle.dao.CircleGiveMapper;
 import com.example.circle.dao.CircleMapper;
+import com.example.circle.dao.CommentMapper;
 import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.circle.service.ICircleService;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CircleLabelVo;
+import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
@@ -34,6 +37,12 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private HomeMapper homeMapper;
+
+    @Autowired
+    private CircleGiveMapper circleGiveMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Override
     public ReturnVo queryAllCircles() {
@@ -129,14 +138,47 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging) {
+    public List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging,int userId) {
         Integer pages=(paging.getPage()-1)*paging.getLimit();
         String pagings=" limit "+pages+","+paging.getLimit()+"";
         List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircle(id, pagings);
         for (int i=0;i<circles.size();i++){
+
+            //得到图片组
             String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
             circles.get(i).setImg(strings);
+
+            //得到点过赞人的头像
+            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+            circles.get(i).setGiveAvatar(strings1);
+
+            //得到点赞数量
+            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+            circles.get(i).setGiveNumber(integer1);
+
+            //等于0在用户没有到登录的情况下 直接设置没有点赞
+            if(userId==0){
+                circles.get(i).setWhetherGive(0);
+            }else{
+                //查询是否对帖子点了赞   0没有 1有
+                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                if(integer==0){
+                    circles.get(i).setWhetherGive(0);
+                }else{
+                    circles.get(i).setWhetherGive(1);
+                }
+            }
+
+
+            //得到帖子评论数量
+            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+            circles.get(i).setNumberPosts(integer2);
+
+            //得到评论数据
+            List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+            circles.get(i).setComments(comments);
         }
-        return circles;
+
+             return circles;
     }
 }

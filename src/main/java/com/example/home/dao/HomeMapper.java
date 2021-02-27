@@ -79,7 +79,7 @@ public interface HomeMapper {
      * @return
      */
     @Insert("update tb_resources set browse=browse+1,create_at=#{createAt} where id=${id} ")
-    int updateBrowse(@Param("id") int id,@Param("createAt") String createAt);
+    int updateBrowse(@Param("id") int id);
 
    /**
     * 增加圈子帖子

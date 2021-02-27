@@ -74,13 +74,8 @@ public class TagController {
     @ApiOperation(value = "查询所有资源的一级标签",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectResourcesTag")
-    public List<Tag> selectResourcesAllTags() {
+    public List<Tag> selectResourcesTag() {
         List<Tag> tags = iTagService.selectResourcesAllTag();
-        for (int i=0;i<tags.size();i++){
-            if(tags.get(i).getId()==14){
-                tags.remove(i);
-            }
-        }
         return tags;
     }
 

@@ -39,4 +39,9 @@ public class Tag {
      */
     private int isDelete;
 
+    /**
+     * 图标地址
+     */
+    private String imgUrl;
+
 }
