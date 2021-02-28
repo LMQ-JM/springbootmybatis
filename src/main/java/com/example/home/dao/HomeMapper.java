@@ -75,10 +75,9 @@ public interface HomeMapper {
     /**
      * 浏览量加一
      * @param id
-     * @param createAt
      * @return
      */
-    @Insert("update tb_resources set browse=browse+1,create_at=#{createAt} where id=${id} ")
+    @Insert("update tb_resources set browse=browse+1 where id=${id} ")
     int updateBrowse(@Param("id") int id);
 
    /**

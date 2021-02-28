@@ -2,8 +2,6 @@ package com.example.home.entity;
 
 import lombok.Data;
 
-import java.util.List;
-
 /**
  * @author Administrator
  */
@@ -16,7 +14,7 @@ public class Resources {
     private int id;
 
     /**
-     * 圈子内容
+     * 资源内容
      */
     private String content;
 

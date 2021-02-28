@@ -107,13 +107,10 @@ public class HomeServiceImpl implements IHomeService {
         //在用户登录的情况下 增加帖子浏览记录
         if(userId!=0){
             //得到上一次观看帖子的时间
+            Browse browse = new Browse();
             String s = browseMapper.selectCreateAt(id, userId);
-
-            //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
-            long minutesApart = TimeUtil.getMinutesApart(s);
-            if(minutesApart>=1440){
+            if(s==null){
                 //增加浏览记录
-                Browse browse=new Browse();
                 browse.setCreateAt(System.currentTimeMillis()/1000+"");
                 browse.setUId(userId);
                 browse.setZqId(id);
@@ -129,8 +126,30 @@ public class HomeServiceImpl implements IHomeService {
                 if(i1<=0){
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
                 }
+            }else{
+                //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
+                long minutesApart = TimeUtil.getMinutesApart(s);
+                if(minutesApart>=1440){
+                    //增加浏览记录
+                    browse.setCreateAt(System.currentTimeMillis()/1000+"");
+                    browse.setUId(userId);
+                    browse.setZqId(id);
+                    browse.setType(0);
+                    //增加浏览记录
+                    int i = browseMapper.addBrowse(browse);
+                    if(i<=0){
+                        throw new ApplicationException(CodeType.SERVICE_ERROR,"增加浏览记录错误");
+                    }
 
+                    //修改帖子浏览数量
+                    int i1 = homeMapper.updateBrowse(id);
+                    if(i1<=0){
+                        throw new ApplicationException(CodeType.SERVICE_ERROR);
+                    }
+
+                }
             }
+
         }
 
 

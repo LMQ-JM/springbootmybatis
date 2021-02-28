@@ -30,7 +30,7 @@ import java.util.List;
  * @author Administrator
  */
 @Api(tags = "首页API")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 100000)
 @RestController
 @Slf4j
 @RequestMapping("/HomeController")
