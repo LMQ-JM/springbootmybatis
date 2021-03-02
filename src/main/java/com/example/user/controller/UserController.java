@@ -4,7 +4,9 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ReturnVo;
 import com.example.user.entity.AdminUser;
+import com.example.user.entity.LoginTag;
 import com.example.user.entity.User;
+import com.example.user.entity.UserTag;
 import com.example.user.service.IUserService;
 import com.example.user.util.Upload;
 import com.example.user.vo.UserHtVo;
@@ -102,7 +104,46 @@ public class UserController {
         // TODO Auto-generated method stub
         int i = iUserService.addAdminUser(adminUser);
         return i;
+    }
 
+    @ApiOperation(value = "查询所有标签", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/selectAllUserLabel")
+    public List<LoginTag> selectAllUserLabel() {
+        // TODO Auto-generated method stub
+        return iUserService.selectAllUserLabel();
+    }
+
+    @ApiOperation(value = "增加用户选中的标签关系", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/addUserAndLabel")
+    public int addUserAndLabel(UserTag userTag) {
+        if(userTag.getUId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iUserService.addUserAndLabel(userTag);
+    }
+
+    @ApiOperation(value = "修改用户选中的标签关系", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/updateUserAndLabel")
+    public int updateUserAndLabel(UserTag userTag) {
+        if(userTag.getUId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iUserService.updateUserAndLabel(userTag);
+    }
+
+
+
+    @ApiOperation(value = "根据用户id查询是否有登录进来的时候选中过标签", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/selectWhetherHaveLabel")
+    public int selectWhetherHaveLabel(int userId) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iUserService.selectWhetherHaveLabel(userId);
     }
 
 

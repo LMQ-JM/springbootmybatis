@@ -6,11 +6,11 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.home.dao.HomeMapper;
+import com.example.home.entity.Collection;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
-import com.example.home.vo.ha;
 import com.example.tags.entity.Tag;
 import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -241,25 +240,23 @@ public class HomeController {
     }
 
 
-
-
-    @PostMapping("/addimg")
-    public int addimg()  {
-        List<String> list=new ArrayList<>();
-        List<ha> strings = homeMapper.selectImg();
-        for (int i=0;i<strings.size();i++){
-            if(strings.get(i).getImg()==null){
-                continue;
-            }
-            String[] split = strings.get(i).getImg().split(",");
-            for (int a=0;a<split.length;a++){
-                //homeMapper.addimg(strings.get(i).getId(),split[a],System.currentTimeMillis()/1000+"");
-            }
-
-        }
-        return 0;
+    @ApiOperation(value = "查询推荐的帖子", notes = "成功返回集合")
+    @ResponseBody
+    @PostMapping("/selectRecommendPost")
+    public List<HomeClassificationVo> selectRecommendPost(int userId,Paging paging) {
+            return iHomeService.selectRecommendPost(userId, paging);
     }
 
+
+    @ApiOperation(value = "收藏帖子", notes = "成功返回集合")
+    @ResponseBody
+    @PostMapping("/collectionPost")
+    public int collectionPost(Collection collection) {
+        if(collection.getUId()==0 || collection.getTId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iHomeService.collectionPost(collection);
+    }
 
 
 }

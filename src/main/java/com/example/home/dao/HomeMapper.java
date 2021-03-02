@@ -5,8 +5,8 @@ import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesLabelVo;
 import com.example.home.vo.ResourcesVo;
-import com.example.home.vo.ha;
 import com.example.tags.entity.Tag;
+import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -125,8 +125,6 @@ public interface HomeMapper {
     @Update("update tb_resources set is_delete=0  where id = ${id}")
     Integer deletes(@Param("id") int id);
 
-    @Select("select id,img from tb_resources where user_name='徐老师'")
-    List<ha> selectImg();
 
     /**
      * 批量增加图片
@@ -136,7 +134,6 @@ public interface HomeMapper {
      * @param postType 帖子类型
      * @return
      */
-    //@Insert("insert into tb_img(z_id,img_url,type,create_at) values(${zId}, #{imgUrl},0, #{createAt})")
     @Insert({
          "<script>",
          "insert into tb_img(z_id,img_url,type,create_at) values ",
@@ -146,5 +143,39 @@ public interface HomeMapper {
          "</script>"
     })
     int addImg(@Param("zId") int zId, @Param("imgUrl") String[] imgUrl,@Param("createAt") String createAt,@Param("postType") int postType);
+
+    /**
+     * 查询合作 资源 学习的帖子
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
+            " tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one in (12,13,15) ORDER BY browse desc ${paging}")
+    List<HomeClassificationVo>  selectRandom(@Param("paging") String paging);
+
+
+    /**
+     * 查询自己的标签
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select *from tb_user_tag where u_id=${userId}")
+    UserTag selectOneselfLabel(@Param("userId") int userId);
+
+   /**
+    * 根据资源的一级的标签id查询贴
+    * @param list
+    * @param sql 分页
+    * @return
+    */
+    @Select({
+         "<script>" +
+                 "select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
+                 "  tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one in"+
+                 "<foreach item = 'item' index = 'index' collection = 'list' open='(' separator=',' close=')'>" +
+                 "#{item}" +
+                 "</foreach> ORDER BY a.create_at desc ${sql}" +
+                 "</script>"})
+    List<HomeClassificationVo> selectPostByTagOne(@Param("list") List<Integer> list,@Param("sql") String sql);
 
 }

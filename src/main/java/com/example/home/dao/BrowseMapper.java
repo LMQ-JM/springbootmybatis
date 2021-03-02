@@ -28,4 +28,12 @@ public interface BrowseMapper {
      */
     @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} order by create_at desc limit 1")
     String selectCreateAt(@Param("tid") int tid,@Param("userId") int userId);
+
+    /**
+     * 统计帖子的浏览量
+     * @param tid 帖子id
+     * @return
+     */
+    @Select("select COALESCE(count(*),0) from tb_browse where zq_id=${tid}")
+    int countPostNum(@Param("tid")  int tid);
 }

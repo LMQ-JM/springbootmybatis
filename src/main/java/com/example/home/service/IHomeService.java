@@ -3,6 +3,7 @@ package com.example.home.service;
 import com.example.circle.entity.Circle;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
+import com.example.home.entity.Collection;
 import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
@@ -100,5 +101,21 @@ public interface IHomeService {
      */
     void issueResourceOrCircle(Resources resources,String imgUrl,int postType,int whetherCover) throws Exception;
 
+
+    /**
+     * 查询推荐的帖子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    List<HomeClassificationVo> selectRecommendPost(int userId,Paging paging);
+
+
+    /**
+     * 收藏帖子
+     * @param collection 收藏对象
+     * @return
+     */
+    int collectionPost(Collection collection);
 
 }

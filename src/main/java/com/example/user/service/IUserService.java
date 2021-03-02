@@ -2,10 +2,12 @@ package com.example.user.service;
 
 import com.example.common.utils.ReturnVo;
 import com.example.user.entity.AdminUser;
+import com.example.user.entity.LoginTag;
 import com.example.user.entity.User;
+import com.example.user.entity.UserTag;
 import com.example.user.vo.UserHtVo;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author MQ
@@ -45,4 +47,33 @@ public interface IUserService {
      * @return
      */
     int addAdminUser(AdminUser adminUser);
+
+    /**
+     * 查询所以标签
+     * @return
+     */
+    List<LoginTag> selectAllUserLabel();
+
+    /**
+     * 增加用户选中的标签关系
+     * @param userTag 标签对象
+     * @return
+     */
+    int addUserAndLabel(UserTag userTag);
+
+    /**
+     * 修改用户选中的标签关系
+     * @param userTag 标签对象
+     * @return
+     */
+    int updateUserAndLabel(UserTag userTag);
+
+
+
+    /**
+     * 根据用户id查询是否有登录进来的时候选中过标签
+     * @param userId
+     * @return
+     */
+    int selectWhetherHaveLabel(int userId);
 }

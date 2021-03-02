@@ -6,26 +6,24 @@ import com.example.circle.entity.Img;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.*;
-import com.example.home.dao.BrowseMapper;
-import com.example.home.dao.ResourceGiveMapper;
-import com.example.home.dao.HomeMapper;
-import com.example.home.dao.RecruitMapper;
+import com.example.home.dao.*;
 import com.example.home.entity.Browse;
+import com.example.home.entity.Collection;
 import com.example.home.entity.RecruitLabel;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
-import com.example.home.vo.HomeClassificationVo;
-import com.example.home.vo.RecruitVo;
-import com.example.home.vo.ResourcesLabelVo;
-import com.example.home.vo.ResourcesVo;
+import com.example.home.vo.*;
 import com.example.tags.entity.Tag;
+import com.example.user.entity.UserTag;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +48,9 @@ public class HomeServiceImpl implements IHomeService {
 
     @Autowired
     private CircleMapper circleMapper;
+
+    @Autowired
+    private CollectionMapper collectionMapper;
 
     @Override
     public List<Circle> selectAllSearch(String postingName, Paging paging) {
@@ -165,6 +166,12 @@ public class HomeServiceImpl implements IHomeService {
         String[] strings1 = resourceGiveMapper.selectResourcesGivePersonAvatar(id);
         resourcesVo.setGiveAvatar(strings1);
 
+        //得到这个帖子的观看数量
+        int browse = browseMapper.countPostNum(id);
+        resourcesVo.setBrowse(browse);
+
+        //查看自否收藏
+
         return resourcesVo;
     }
 
@@ -267,6 +274,67 @@ public class HomeServiceImpl implements IHomeService {
         if(postType==1){
             issue(resources,imgUrl,postType,whetherCover);
         }
+    }
+
+    @Override
+    public List<HomeClassificationVo> selectRecommendPost(int userId, Paging paging) {
+        int page=(paging.getPage()-1)*paging.getLimit();
+
+        String sql="limit "+page+","+paging.getLimit()+"";
+
+        //没有登录的情况下 随机给出数据
+        if(userId==0){
+            List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRandom(sql);
+            return homeClassificationVos;
+        }
+
+        List<Integer> idArr=new ArrayList<Integer>();
+
+        //查询出自己选中的标签
+        UserTag userTag=homeMapper.selectOneselfLabel(userId);
+        JSONArray  j= JSONArray.fromObject(userTag.getTab());
+        List<LabelVo> list = JSONArray.toList(j, LabelVo.class);
+        for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getChecked()=="true"){
+                idArr.add(list.get(i).getTagId());
+            }
+        }
+
+        List<HomeClassificationVo> homeClassificationVos = homeMapper.selectPostByTagOne(idArr,sql);
+        return homeClassificationVos;
+    }
+
+    @Override
+    public int collectionPost(Collection collection) {
+        collection.setCreateAt(System.currentTimeMillis()/1000+"");
+        System.out.println(collection.getTId()+"=="+collection.getUId());
+        //查看是否有数据存在
+        Collection collection1 = collectionMapper.selectCountWhether(collection.getUId(),collection.getTId());
+        //如果不存在
+        if(collection1==null){
+            //添加收藏信息
+            int i1 = collectionMapper.addCollection(collection);
+            if(i1<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"添加收藏信息错误");
+            }
+        }
+        int i =0;
+        //如果当前状态是1 那就改为0 取消收藏
+        if(collection1.getIsDelete()==1){
+             i=collectionMapper.updateCollectionStatus(collection1.getId(), 0);
+        }
+
+        //如果当前状态是0 那就改为1 为收藏状态
+        if(collection1.getIsDelete()==0){
+             i = collectionMapper.updateCollectionStatus(collection1.getId(), 1);
+        }
+
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+
+        return i;
     }
 
     public void issue(Resources resources, String imgUrl, int postType, int whetherCover)throws Exception{

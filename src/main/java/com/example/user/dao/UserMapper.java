@@ -1,11 +1,10 @@
 package com.example.user.dao;
 
 import com.example.user.entity.AdminUser;
+import com.example.user.entity.LoginTag;
 import com.example.user.entity.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import com.example.user.entity.UserTag;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -74,4 +73,37 @@ public interface UserMapper {
      */
     @Select("select max(id) from tb_user")
     int selectMaxId();
+
+    /**
+     * 查询所有标签
+     * @return
+     */
+    @Select("select * from tb_login_tag ")
+    List<LoginTag> selectAllUserLabel();
+
+
+
+    /**
+     * 增加用户和标签的关系
+     * @param userTag
+     * @return
+     */
+    @Insert("insert into tb_user_tag(u_id,tab,create_at)values(${userTag.uId},#{userTag.tab},#{userTag.createAt})")
+    int addUserAndLabel(@Param("userTag") UserTag userTag);
+
+    /**
+     * 删除用户选中的标签
+     * @param uId
+     * @return
+     */
+    @Update("delete  from tb_user_tag where u_id=${uId}")
+    int deleteUserAndLabel(@Param("uId") int uId);
+
+    /**
+     * 根据用户id查询是否有登录进来的时候选中过标签
+     * @param uId
+     * @return
+     */
+    @Select("select COALESCE(count(*),0) from tb_user_tag where u_id=${uId}")
+    int selectWhetherHaveLabel(@Param("uId") int uId);
 }

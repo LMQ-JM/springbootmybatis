@@ -9,10 +9,11 @@ import com.example.common.utils.ReturnVo;
 import com.example.common.utils.SHA1Util;
 import com.example.user.dao.UserMapper;
 import com.example.user.entity.AdminUser;
+import com.example.user.entity.LoginTag;
 import com.example.user.entity.User;
+import com.example.user.entity.UserTag;
 import com.example.user.service.IUserService;
 import com.example.user.vo.UserHtVo;
-import com.sun.jndi.toolkit.url.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -191,6 +195,42 @@ public class UserServiceImpl implements IUserService {
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"增加系统账号错误");
         }
+        return i;
+    }
+
+    @Override
+    public List<LoginTag> selectAllUserLabel() {
+        return userMapper.selectAllUserLabel();
+    }
+
+    @Override
+    public int addUserAndLabel(UserTag userTag) {
+        userTag.setCreateAt(System.currentTimeMillis()/1000+"");
+        return userMapper.addUserAndLabel(userTag);
+    }
+
+    @Override
+    public int updateUserAndLabel(UserTag userTag) {
+        //删除用户之前选中的标签
+        int i = userMapper.deleteUserAndLabel(userTag.getUId());
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除失败");
+        }
+
+        //增加新的用户与标签关系
+        userTag.setCreateAt(System.currentTimeMillis()/1000+"");
+        int i1 = userMapper.addUserAndLabel(userTag);
+        if(i1<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+        return i1;
+    }
+
+
+
+    @Override
+    public int selectWhetherHaveLabel(int userId) {
+        int i = userMapper.selectWhetherHaveLabel(userId);
         return i;
     }
 }
