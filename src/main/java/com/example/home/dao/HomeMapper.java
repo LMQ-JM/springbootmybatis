@@ -1,6 +1,5 @@
 package com.example.home.dao;
 
-import com.example.circle.entity.Circle;
 import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesLabelVo;
@@ -20,12 +19,12 @@ public interface HomeMapper {
 
     /**
      * 搜索数据接口
-     * @param postingName
-     * @param paging
+     * @param postingName 内容
+     * @param paging 分页
      * @return
      */
-    @Select("select * from tb_circles where is_delete=1 and title=#{postingName} ${paging}")
-   List<Circle> selectAllSearch(@Param("postingName") String postingName,@Param("paging") String paging);
+    @Select("select * from tb_resources where title like '%#{postingName}%' and is_delete=1  ${paging}")
+   List<Resources> selectAllSearch(@Param("postingName") String postingName,@Param("paging") String paging);
 
 
     /**

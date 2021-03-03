@@ -5,12 +5,13 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
-import com.example.home.dao.HomeMapper;
 import com.example.home.entity.Collection;
 import com.example.home.entity.Resources;
 import com.example.home.service.IHomeService;
+import com.example.home.vo.CommunityVo;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
+import com.example.home.vo.SearchRecordsUserCircleVo;
 import com.example.tags.entity.Tag;
 import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
@@ -38,8 +39,6 @@ public class HomeController {
     @Autowired
     private IHomeService iHomeService;
 
-    @Autowired
-    private HomeMapper homeMapper;
 
     @Autowired
     private Upload upload;
@@ -52,12 +51,28 @@ public class HomeController {
     @ApiOperation(value = "搜索数据接口",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectAllSearch")
-    public List<Circle> selectAllSearch(String postingName, Paging paging)  {
+    public List<Resources> selectAllSearch(String postingName, Paging paging)  {
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
         }
 
         return iHomeService.selectAllSearch(postingName, paging);
+    }
+
+    /**
+     *
+     *  查询搜索记录和其他相关信息
+     * @return
+     */
+    @ApiOperation(value = "查询搜索记录和其他相关信息",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/querySearchRecords")
+    public List<SearchRecordsUserCircleVo> querySearchRecords(int userId)  {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
+        }
+
+        return iHomeService.querySearchRecords(userId);
     }
 
 
@@ -103,6 +118,18 @@ public class HomeController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
         }
         return iHomeService.selectPostsByCommunityCategoryId(id,paging);
+    }
+
+    /**
+     * 进入单元体的接口
+     * 根据社区分类id查询圈子信息
+     * @return
+     */
+    @ApiOperation(value = "根据社区分类id查询圈子信息 ",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectCommunityCategoryId")
+    public CommunityVo selectCommunityCategoryId(int id)  {
+        return iHomeService.selectCommunityCategoryId(id);
     }
 
     /**

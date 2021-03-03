@@ -24,12 +24,23 @@ public interface CollectionMapper {
     Collection selectCountWhether(@Param("userId") int userId,@Param("tid") int tid);
 
     /**
-     * 添加收藏信息
-     * @param collection 收藏对象
+     * 根据用户id和帖子id查看是否收藏着帖子
+     * @param userId 用户id
+     * @param tid 帖子id
      * @return
      */
-    @Insert("insert into tb_user_collection(u_id,t_id,create_at,remarks)values(${collection.uId},${collection.tId},#{collection.createAt},#{collection.remarks})")
-    int addCollection(@Param("collection") Collection collection);
+    @Select("select COALESCE(count(*),0) from tb_user_collection where u_id=${userId} and t_id=${tid} and is_delete=1")
+    int selectWhetherCollection(@Param("userId") int userId,@Param("tid") int tid);
+
+    /**
+     * 添加收藏信息
+     * @param uId 用户id
+     * @param tId 贴子id
+     * @param createAt 创建时间
+     * @return
+     */
+    @Insert("insert into tb_user_collection(u_id,t_id,create_at,remarks) values(${uId},${tId},#{createAt},#{remarks})")
+    int addCollectionPost(@Param("uId") int uId,@Param("tId") int tId,@Param("createAt") String createAt,@Param("remarks") String remarks);
 
     /**
      * 修改帖子收藏的状态

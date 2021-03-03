@@ -50,6 +50,8 @@ public interface ICircleService {
      * @param id 一级标签id
      * @param paging 分页
      * @return List<Circle>
+     * @param userId 用户id
+     * @return
      */
     List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging,int userId);
 }

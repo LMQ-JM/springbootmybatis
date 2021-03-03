@@ -7,10 +7,7 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.*;
 import com.example.home.dao.*;
-import com.example.home.entity.Browse;
-import com.example.home.entity.Collection;
-import com.example.home.entity.RecruitLabel;
-import com.example.home.entity.Resources;
+import com.example.home.entity.*;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.*;
 import com.example.tags.entity.Tag;
@@ -44,19 +41,50 @@ public class HomeServiceImpl implements IHomeService {
     private BrowseMapper browseMapper;
 
     @Autowired
-    private ResourceGiveMapper resourceGiveMapper;
-
-    @Autowired
     private CircleMapper circleMapper;
 
     @Autowired
     private CollectionMapper collectionMapper;
 
+    @Autowired
+    private CommunityMapper communityMapper;
+
+    @Autowired
+    private SearchRecordMapper searchRecordMapper;
+
     @Override
-    public List<Circle> selectAllSearch(String postingName, Paging paging) {
+    public List<Resources> selectAllSearch(String postingName, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
+
+        //增加搜索记录
+        int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "");
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"增加历史记录错误");
+        }
+
         return homeMapper.selectAllSearch(postingName, sql);
+    }
+
+    @Override
+    public List<SearchRecordsUserCircleVo> querySearchRecords(int userId) {
+        //根据用户id查询历史记录
+        List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);
+
+        //查询出自己选中的标签
+        UserTag userTag=homeMapper.selectOneselfLabel(userId);
+
+        List<Integer> idArr=new ArrayList<>();
+
+        JSONArray  j= JSONArray.fromObject(userTag.getTab());
+        List<LabelVo> list = JSONArray.toList(j, LabelVo.class);
+        for (int i = 0; i < list.size(); i++) {
+            if(list.get(i).getChecked()=="true"){
+                idArr.add(list.get(i).getTagId());
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -95,9 +123,24 @@ public class HomeServiceImpl implements IHomeService {
             String[] strings = homeMapper.selectImgByPostId(resources.get(i).getId());
             resources.get(i).setImg(strings);
         }
+
+
         return resources;
     }
 
+    @Override
+    public CommunityVo selectCommunityCategoryId(int id) {
+        //查询圈子信息
+        CommunityVo communityVo = communityMapper.selectCommunityCategoryId(id);
+        //得到圈子总人数
+        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId());
+        communityVo.setTotalNumberCircles(i);
+
+        //查询圈子的用户头像
+        String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId());
+        communityVo.setAvatar(strings);
+        return communityVo;
+    }
 
 
     @Override
@@ -107,6 +150,12 @@ public class HomeServiceImpl implements IHomeService {
 
         //在用户登录的情况下 增加帖子浏览记录
         if(userId!=0){
+            //查看是否收藏
+            int selectWhetherCollection = collectionMapper.selectWhetherCollection(userId, id);
+            if(selectWhetherCollection>0){
+                resourcesVo.setWhetherCollection(1);
+            }
+
             //得到上一次观看帖子的时间
             Browse browse = new Browse();
             String s = browseMapper.selectCreateAt(id, userId);
@@ -162,15 +211,14 @@ public class HomeServiceImpl implements IHomeService {
         resourcesVo.setCreateAt(String.valueOf(time));
 
 
-        //得到点过赞人的头像
-        String[] strings1 = resourceGiveMapper.selectResourcesGivePersonAvatar(id);
-        resourcesVo.setGiveAvatar(strings1);
-
+        //得到浏览过人的头像
+        String[] strings1 = browseMapper.selectBrowseAvatar(id);
+        resourcesVo.setBrowseAvatar(strings1);
         //得到这个帖子的观看数量
         int browse = browseMapper.countPostNum(id);
         resourcesVo.setBrowse(browse);
 
-        //查看自否收藏
+
 
         return resourcesVo;
     }
@@ -283,7 +331,9 @@ public class HomeServiceImpl implements IHomeService {
         String sql="limit "+page+","+paging.getLimit()+"";
 
         //没有登录的情况下 随机给出数据
+
         if(userId==0){
+            //查询出浏览量最多的帖子
             List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRandom(sql);
             return homeClassificationVos;
         }
@@ -292,6 +342,12 @@ public class HomeServiceImpl implements IHomeService {
 
         //查询出自己选中的标签
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
+        //如果用户没有选中标签就查询出浏览量最多的帖子
+        if(userTag==null){
+            List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRandom(sql);
+            return homeClassificationVos;
+        }
+
         JSONArray  j= JSONArray.fromObject(userTag.getTab());
         List<LabelVo> list = JSONArray.toList(j, LabelVo.class);
         for (int i = 0; i < list.size(); i++) {
@@ -306,18 +362,23 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public int collectionPost(Collection collection) {
+
+        System.out.println(collection.toString());
         collection.setCreateAt(System.currentTimeMillis()/1000+"");
-        System.out.println(collection.getTId()+"=="+collection.getUId());
         //查看是否有数据存在
         Collection collection1 = collectionMapper.selectCountWhether(collection.getUId(),collection.getTId());
+
+
         //如果不存在
         if(collection1==null){
             //添加收藏信息
-            int i1 = collectionMapper.addCollection(collection);
-            if(i1<=0){
+            int addCollection = collectionMapper.addCollectionPost(collection.getUId(),collection.getTId(),collection.getCreateAt(),collection.getRemarks());
+            if(addCollection<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"添加收藏信息错误");
             }
+            return addCollection;
         }
+
         int i =0;
         //如果当前状态是1 那就改为0 取消收藏
         if(collection1.getIsDelete()==1){

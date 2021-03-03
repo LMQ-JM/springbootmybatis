@@ -26,7 +26,7 @@ public interface BrowseMapper {
      * @param userId
      * @return
      */
-    @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} order by create_at desc limit 1")
+    @Select("select create_at from tb_browse where zq_id=${tid} and u_id=${userId} and type=0 order by create_at desc limit 1")
     String selectCreateAt(@Param("tid") int tid,@Param("userId") int userId);
 
     /**
@@ -34,6 +34,15 @@ public interface BrowseMapper {
      * @param tid 帖子id
      * @return
      */
-    @Select("select COALESCE(count(*),0) from tb_browse where zq_id=${tid}")
+    @Select("select COALESCE(count(*),0) from tb_browse where zq_id=${tid} and type=0")
     int countPostNum(@Param("tid")  int tid);
+
+
+    /**
+     * 根据帖子查询观看过人的头像
+     * @param tId
+     * @return
+     */
+    @Select("select b.avatar from tb_browse a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${tId} and a.type=0 GROUP BY b.id")
+    String[] selectBrowseAvatar(@Param("tId") int tId);
 }

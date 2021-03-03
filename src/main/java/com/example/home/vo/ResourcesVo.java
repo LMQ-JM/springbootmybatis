@@ -90,4 +90,13 @@ public class ResourcesVo {
     private String[] giveAvatar;
 
 
+    /**
+     * 是否收藏 （1收藏，0没有）
+     */
+    private int whetherCollection;
+
+    /**
+     * 观看过人的头像
+     */
+    private String[] browseAvatar;
 }
