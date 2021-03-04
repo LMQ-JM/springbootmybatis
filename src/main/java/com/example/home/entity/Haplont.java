@@ -4,25 +4,23 @@ import lombok.Data;
 
 /**
  * @author MQ
- * @date 2021/3/3 16:33
+ * @date 2021/3/4 9:52
+ * 单元体实体类
  */
 @Data
-public class SearchHistory {
+public class Haplont {
 
-    /**
-     * 历史内容id
-     */
     private int id;
 
     /**
-     * 历史内容
+     * 名称
      */
-    private String historicalContent;
+    private String hName;
 
     /**
-     * 用户id
+     * 备注
      */
-    private int userId;
+    private String remark;
 
     /**
      * 创建时间
@@ -30,7 +28,7 @@ public class SearchHistory {
     private String createAt;
 
     /**
-     * 是否有效（1有效 0无效） 默认1
+     * 是有有效（1有效 0无效 ）默认1
      */
     private int isDelete;
 }

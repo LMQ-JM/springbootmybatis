@@ -36,6 +36,8 @@ public class CircleController {
     @Autowired
     private Upload upload;
 
+
+
     /**
      *  后台
      *  查询所有圈子的数据
@@ -134,6 +136,20 @@ public class CircleController {
         return  circles;
     }
 
+    /**
+     *
+     * 点赞
+     * @return
+     */
+    @ApiOperation(value = "点赞",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/givePost")
+    public int givePost(int id,int userId){
+        if(id==0 || userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return  iCircleService.givePost(id, userId);
+    }
 
 
 

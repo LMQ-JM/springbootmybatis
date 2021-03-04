@@ -106,4 +106,13 @@ public interface UserMapper {
      */
     @Select("select COALESCE(count(*),0) from tb_user_tag where u_id=${uId}")
     int selectWhetherHaveLabel(@Param("uId") int uId);
+
+
+    /**
+     * 随机查询
+     * @return
+     */
+    @Select("select * from tb_user where is_delete=1 limit 5")
+    List<User> selectRandom();
 }
+

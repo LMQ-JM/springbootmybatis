@@ -23,7 +23,7 @@ public interface HomeMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select * from tb_resources where title like '%#{postingName}%' and is_delete=1  ${paging}")
+    @Select("select * from tb_resources where title like CONCAT('%',#{postingName},'%') and is_delete=1  ${paging}")
    List<Resources> selectAllSearch(@Param("postingName") String postingName,@Param("paging") String paging);
 
 

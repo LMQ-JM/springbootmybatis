@@ -8,11 +8,11 @@ import com.example.home.entity.Resources;
 import com.example.home.vo.CommunityVo;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
-import com.example.home.vo.SearchRecordsUserCircleVo;
 import com.example.tags.entity.Tag;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Administrator
@@ -26,14 +26,14 @@ public interface IHomeService {
      * @param paging
      * @return
      */
-    List<Resources> selectAllSearch(String postingName, Paging paging);
+    List<Resources> selectAllSearch(String postingName,int userId, Paging paging);
 
     /**
      * 查询搜索记录和其他相关信息
      * @param userId 用户id
      * @return
      */
-    List<SearchRecordsUserCircleVo> querySearchRecords(int userId);
+    Map<String,Object> querySearchRecords(int userId);
 
     /**
      *  查询资源的第一级标签

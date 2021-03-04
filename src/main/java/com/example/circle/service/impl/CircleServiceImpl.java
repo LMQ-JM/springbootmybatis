@@ -4,6 +4,7 @@ import com.example.circle.dao.CircleGiveMapper;
 import com.example.circle.dao.CircleMapper;
 import com.example.circle.dao.CommentMapper;
 import com.example.circle.entity.Circle;
+import com.example.circle.entity.Give;
 import com.example.circle.entity.Img;
 import com.example.circle.service.ICircleService;
 import com.example.circle.vo.CircleClassificationVo;
@@ -156,6 +157,7 @@ public class CircleServiceImpl implements ICircleService {
             Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
             circles.get(i).setGiveNumber(integer1);
 
+
             //等于0在用户没有到登录的情况下 直接设置没有点赞
             if(userId==0){
                 circles.get(i).setWhetherGive(0);
@@ -181,4 +183,36 @@ public class CircleServiceImpl implements ICircleService {
 
              return circles;
     }
+
+    @Override
+    public int givePost(int id, int userId) {
+        Give give = circleGiveMapper.selectCountWhether(userId, id);
+        if(give==null){
+            int i = circleGiveMapper.givePost(id, userId, System.currentTimeMillis() / 1000 + "");
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+            return i;
+        }
+
+        int i =0;
+        //如果当前状态是1 那就改为0 取消收藏
+        if(give.getGiveCancel()==1){
+            i=circleGiveMapper.updateGiveStatus(give.getId(), 0);
+        }
+
+        //如果当前状态是0 那就改为1 为收藏状态
+        if(give.getGiveCancel()==0){
+            i = circleGiveMapper.updateGiveStatus(give.getId(), 1);
+        }
+
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+
+        return i;
+    }
+
+
 }

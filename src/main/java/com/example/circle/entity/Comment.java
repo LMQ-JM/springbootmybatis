@@ -36,7 +36,7 @@ public class Comment {
     /**
      * 评论点赞状态（0没有，1点赞）
      */
-    private int giveNum;
+    private int giveStatus;
 
     /**
      * 创建时间

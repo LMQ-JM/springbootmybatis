@@ -11,7 +11,6 @@ import com.example.home.service.IHomeService;
 import com.example.home.vo.CommunityVo;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesVo;
-import com.example.home.vo.SearchRecordsUserCircleVo;
 import com.example.tags.entity.Tag;
 import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
@@ -24,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -51,12 +51,12 @@ public class HomeController {
     @ApiOperation(value = "搜索数据接口",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectAllSearch")
-    public List<Resources> selectAllSearch(String postingName, Paging paging)  {
+    public List<Resources> selectAllSearch(String postingName,int userId, Paging paging)  {
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
         }
 
-        return iHomeService.selectAllSearch(postingName, paging);
+        return iHomeService.selectAllSearch(postingName,userId, paging);
     }
 
     /**
@@ -67,11 +67,7 @@ public class HomeController {
     @ApiOperation(value = "查询搜索记录和其他相关信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/querySearchRecords")
-    public List<SearchRecordsUserCircleVo> querySearchRecords(int userId)  {
-        if(userId==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
-        }
-
+    public Map<String,Object> querySearchRecords(int userId)  {
         return iHomeService.querySearchRecords(userId);
     }
 

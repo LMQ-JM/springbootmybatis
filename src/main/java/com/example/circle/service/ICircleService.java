@@ -54,4 +54,14 @@ public interface ICircleService {
      * @return
      */
     List<CircleClassificationVo> selectPostsBasedTagIdCircle(int id, Paging paging,int userId);
+
+    /**
+     * 点赞
+     * @param id 帖子id
+     * @param userId 用户id
+     * @return
+     */
+    int givePost(int id,int userId);
+
+
 }

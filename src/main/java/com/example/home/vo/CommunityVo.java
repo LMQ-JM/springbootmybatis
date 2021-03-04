@@ -1,6 +1,9 @@
 package com.example.home.vo;
 
+import com.example.home.entity.Haplont;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author MQ
@@ -60,4 +63,6 @@ public class CommunityVo {
      * 圈子中的用户头像
      */
     private String[] avatar;
+
+    private List<Haplont> haplontList;
 }

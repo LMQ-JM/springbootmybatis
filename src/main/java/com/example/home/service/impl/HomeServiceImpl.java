@@ -11,6 +11,8 @@ import com.example.home.entity.*;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.*;
 import com.example.tags.entity.Tag;
+import com.example.user.dao.UserMapper;
+import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
@@ -21,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Administrator
@@ -52,29 +56,49 @@ public class HomeServiceImpl implements IHomeService {
     @Autowired
     private SearchRecordMapper searchRecordMapper;
 
+    @Autowired
+    private HaplontMapper haplontMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
-    public List<Resources> selectAllSearch(String postingName, Paging paging) {
+    public List<Resources> selectAllSearch(String postingName,int userId, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
-
-        //增加搜索记录
-        int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "");
-        if(i<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"增加历史记录错误");
+        if(userId!=0){
+            //增加搜索记录
+            int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "",userId);
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"增加历史记录错误");
+            }
         }
+
 
         return homeMapper.selectAllSearch(postingName, sql);
     }
 
     @Override
-    public List<SearchRecordsUserCircleVo> querySearchRecords(int userId) {
+    public Map<String,Object> querySearchRecords(int userId) {
+        Map<String,Object> map=new HashMap<>(15);
+
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);
+
+        if(userId==0){
+            List<User> users = userMapper.selectRandom();
+            map.put("users",users);
+            map.put("searchHistories",searchHistories);
+            return map;
+        }
+
+
+
 
         //查询出自己选中的标签
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
 
-        List<Integer> idArr=new ArrayList<>();
+        /*List<Integer> idArr=new ArrayList<>();
 
         JSONArray  j= JSONArray.fromObject(userTag.getTab());
         List<LabelVo> list = JSONArray.toList(j, LabelVo.class);
@@ -82,9 +106,11 @@ public class HomeServiceImpl implements IHomeService {
             if(list.get(i).getChecked()=="true"){
                 idArr.add(list.get(i).getTagId());
             }
-        }
-
-        return null;
+        }*/
+        List<User> users = userMapper.selectRandom();
+        map.put("searchHistories",searchHistories);
+        map.put("users",users);
+        return map;
     }
 
     @Override
@@ -139,6 +165,11 @@ public class HomeServiceImpl implements IHomeService {
         //查询圈子的用户头像
         String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId());
         communityVo.setAvatar(strings);
+
+        //得到单元体导航栏
+        List<Haplont> haplonts = haplontMapper.selectHaplontByTagId(id);
+        communityVo.setHaplontList(haplonts);
+
         return communityVo;
     }
 
@@ -149,9 +180,11 @@ public class HomeServiceImpl implements IHomeService {
         ResourcesVo resourcesVo = homeMapper.selectSingleResourcePost(id);
 
         //在用户登录的情况下 增加帖子浏览记录
+        System.out.println(userId);
         if(userId!=0){
             //查看是否收藏
             int selectWhetherCollection = collectionMapper.selectWhetherCollection(userId, id);
+            System.out.println(selectWhetherCollection);
             if(selectWhetherCollection>0){
                 resourcesVo.setWhetherCollection(1);
             }
@@ -209,6 +242,10 @@ public class HomeServiceImpl implements IHomeService {
         String[] strings = homeMapper.selectImgByPostId(resourcesVo.getId());
         resourcesVo.setImg(strings);
         resourcesVo.setCreateAt(String.valueOf(time));
+
+        //得到收藏数量
+        int i = collectionMapper.selectCollectNumber(id);
+        resourcesVo.setCollect(i);
 
 
         //得到浏览过人的头像
@@ -363,7 +400,6 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public int collectionPost(Collection collection) {
 
-        System.out.println(collection.toString());
         collection.setCreateAt(System.currentTimeMillis()/1000+"");
         //查看是否有数据存在
         Collection collection1 = collectionMapper.selectCountWhether(collection.getUId(),collection.getTId());

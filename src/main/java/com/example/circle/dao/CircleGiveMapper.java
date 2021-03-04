@@ -1,7 +1,10 @@
 package com.example.circle.dao;
 
+import com.example.circle.entity.Give;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +19,7 @@ public interface CircleGiveMapper {
      * @param zqId
      * @return
      */
-    @Select("select b.avatar as giveAvatar from tb_circles_give a INNER JOIN tb_user b on a.u_id=b.id where zq_id=${zqId}")
+    @Select("select b.avatar as giveAvatar from tb_circles_give a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${zqId} order by a.create_at limit 8")
     String[] selectCirclesGivePersonAvatar(@Param("zqId") int zqId);
 
     /**
@@ -35,4 +38,32 @@ public interface CircleGiveMapper {
      */
     @Select("select COALESCE(count(*)) from tb_circles_give where zq_id=${tid}")
     Integer selectGiveNumber(@Param("tid") int tid);
+
+    /**
+     **增加点赞信息
+     *@param id 帖子id
+     *@param userId 用户id
+     *@param createAt 创建时间
+     * @return
+     */
+    @Insert("insert into tb_circles_give(zq_id,u_id,create_at,give_cancel)values(${id},${userId},#{createAt},1)")
+    int givePost(@Param("id")int id,@Param("userId") int userId,@Param("createAt") String createAt);
+
+    /**
+     * 查询数据库是否存在该条数据
+     * @param userId 用户id
+     * @param tid 帖子id
+     * @return
+     */
+    @Select("select * from tb_circles_give where u_id=${userId} and zq_id=${tid}")
+    Give selectCountWhether(@Param("userId") int userId, @Param("tid") int tid);
+
+    /**
+     * 修改点赞状态
+     * @param id 点赞id
+     * @param status 状态id
+     * @return
+     */
+    @Update("update tb_circles_give set give_cancel=${status} where id=${id}")
+    int updateGiveStatus(@Param("id") int id,@Param("status") int status);
 }

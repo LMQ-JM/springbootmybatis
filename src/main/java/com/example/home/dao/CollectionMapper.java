@@ -50,4 +50,12 @@ public interface CollectionMapper {
      */
     @Update("update tb_user_collection set is_delete=${status} where id=${id}")
     int updateCollectionStatus(@Param("id") int id,@Param("status") int status);
+
+    /**
+     * 得到帖子的收藏数量
+     * @param id 帖子id
+     * @return
+     */
+    @Select("select COALESCE(count(*),0) from tb_user_collection where t_id=${id} and is_delete=1")
+    int selectCollectNumber(@Param("id") int id);
 }

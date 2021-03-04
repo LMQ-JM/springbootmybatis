@@ -1,0 +1,34 @@
+package com.example.circle.dao;
+
+import com.example.circle.entity.PostReply;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * @author MQ
+ * @date 2021/3/4 14:49
+ */
+@Component
+public interface PostReplyMapper {
+
+    /**
+     * 添加二级评论
+     * @param postReply 二级评论对象
+     * @return
+     */
+    @Insert("insert into tb_post_reply(c_id,h_id,bh_id,h_image,h_content,h_voice,create_at,reply_give_status)values" +
+            "(${postReply.cId},${postReply.hId},${postReply.bhId},#{postReply.hImage},#{postReply.hContent},#{postReply.hVoice},#{postReply.createAt},${postReply.replyGiveStatus})")
+    int addSecondLevelComment(@Param("postReply")PostReply postReply);
+
+    /**
+     * 根据一级评论id查询二级评论id
+     * @param cId 一级评论id
+     * @return
+     */
+    @Select("select * from tb_post_reply where c_id=${cId}")
+    List<PostReply> queryPostReplyComment(@Param("cId") int cId);
+}

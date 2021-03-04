@@ -22,14 +22,14 @@ public interface SearchRecordMapper {
      * @param createAt
      * @return
      */
-    @Insert("insert into tb_search_history(historical_content,create_at)values(#{historicalContent},#{createAt})")
-    int addSearchRecord(@Param("historicalContent") String historicalContent,@Param("createAt") String createAt);
+    @Insert("insert into tb_search_history(historical_content,create_at,user_id)values(#{historicalContent},#{createAt},${userId})")
+    int addSearchRecord(@Param("historicalContent") String historicalContent,@Param("createAt") String createAt,@Param("userId") int userId);
 
     /**
      * 根据用户id查询历史记录
      * @param userId
      * @return
      */
-    @Select("select * from tb_search_history where u_id=${userId} order by create_at desc limit 4")
+    @Select("select *,count(distinct historical_content) from tb_search_history where user_id=${userId} order by create_at desc limit 4")
     List<SearchHistory> selectSearchRecordByUserId(@Param("userId") int userId);
 }
