@@ -63,5 +63,13 @@ public interface ICircleService {
      */
     int givePost(int id,int userId);
 
+    /**
+     * 查询单个圈子的帖子
+     * @param id 圈子id
+     * @param userId 用户id
+     * @return
+     */
+    CircleClassificationVo querySingleCircle(int id,int userId);
+
 
 }

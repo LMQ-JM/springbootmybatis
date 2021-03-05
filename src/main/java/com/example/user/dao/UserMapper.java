@@ -59,6 +59,14 @@ public interface UserMapper {
     User selectUserByOpenId(@Param("openId") String openId);
 
     /**
+     * 根据id查询用户
+     * @param Id
+     * @return
+     */
+    @Select("select * from tb_user where id=#{Id}")
+    User selectUserById(@Param("Id") int Id);
+
+    /**
      * 增加用户信息
      * @param user 用户对象
      * @return

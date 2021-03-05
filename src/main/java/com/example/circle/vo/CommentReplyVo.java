@@ -1,6 +1,5 @@
 package com.example.circle.vo;
 
-import com.example.circle.entity.PostReply;
 import lombok.Data;
 
 import java.util.List;
@@ -47,5 +46,10 @@ public class CommentReplyVo {
     /**
      * 二级评论集合
      */
-    List<PostReply> postReplyList;
+    List<PostReplyVo> postReplyList;
+
+    /**
+     * 二级评论数量
+     */
+    private int commentSize;
 }

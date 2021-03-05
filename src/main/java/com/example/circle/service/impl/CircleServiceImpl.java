@@ -214,5 +214,47 @@ public class CircleServiceImpl implements ICircleService {
         return i;
     }
 
+    @Override
+    public CircleClassificationVo querySingleCircle(int id, int userId) {
+        CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
+        //得到图片组
+        String[] strings = homeMapper.selectImgByPostId(circleClassificationVo.getId());
+        circleClassificationVo.setImg(strings);
+
+        //得到点过赞人的头像
+        String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circleClassificationVo.getId());
+        circleClassificationVo.setGiveAvatar(strings1);
+
+        //得到点赞数量
+        Integer integer1 = circleGiveMapper.selectGiveNumber(circleClassificationVo.getId());
+        circleClassificationVo.setGiveNumber(integer1);
+
+
+        //等于0在用户没有到登录的情况下 直接设置没有点赞
+        if(userId==0){
+            circleClassificationVo.setWhetherGive(0);
+        }else{
+            //查询是否对帖子点了赞   0没有 1有
+            Integer integer = circleGiveMapper.whetherGive(userId, circleClassificationVo.getId());
+            if(integer==0){
+                circleClassificationVo.setWhetherGive(0);
+            }else{
+                circleClassificationVo.setWhetherGive(1);
+            }
+        }
+
+
+        //得到帖子评论数量
+        Integer integer2 = commentMapper.selectCommentNumber(circleClassificationVo.getId());
+        circleClassificationVo.setNumberPosts(integer2);
+
+        //得到评论数据
+        List<CommentUserVo> comments = commentMapper.selectComment(circleClassificationVo.getId());
+        circleClassificationVo.setComments(comments);
+
+
+        return circleClassificationVo;
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package com.example.circle.dao;
 
 import com.example.circle.entity.PostReply;
+import com.example.circle.vo.PostReplyVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -29,6 +30,6 @@ public interface PostReplyMapper {
      * @param cId 一级评论id
      * @return
      */
-    @Select("select * from tb_post_reply where c_id=${cId}")
-    List<PostReply> queryPostReplyComment(@Param("cId") int cId);
+    @Select("select a.bh_id,a.h_content,a.reply_give_status,b.avatar,b.id as userId,b.user_name from tb_post_reply a INNER JOIN tb_user b on a.h_id=b.id where c_id=${cId}")
+    List<PostReplyVo> queryPostReplyComment(@Param("cId") int cId);
 }
