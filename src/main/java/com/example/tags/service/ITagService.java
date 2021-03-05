@@ -9,17 +9,13 @@ import java.util.List;
  * @date 2021/1/21 16:08
  */
 public interface ITagService {
-    /**
-     * 查询所有圈子一级标签
-     * @return
-     */
-    List<Tag> selectAllTag();
+
 
     /**
      * 查询所有圈子一级标签
      * @return
      */
-    List<Tag> selectResourcesAllTag();
+    List<Tag> selectResourcesAllTag(int type);
 
     /**
      * 根据一级标签id查询二级标签
@@ -28,10 +24,5 @@ public interface ITagService {
      */
     List<Tag> selectResourcesAllTags(int tid);
 
-    /**
-     * 根据一级标签id查询二级标签
-     * @param tid 一级标签id
-     * @return
-     */
-    List<Tag> selectAllTags(int tid);
+
 }

@@ -187,6 +187,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public int addAdminUser(AdminUser adminUser) {
+
+
+        AdminUser adminUser1 = userMapper.selectUserByUserName(adminUser.getAccount());
+        if(adminUser1!=null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"用户名已存在");
+        }
+
         String password = SHA1Util.encode(adminUser.getPassword());
         adminUser.setPassword(password);
         adminUser.setCreateAt(System.currentTimeMillis()/1000+"");

@@ -10,6 +10,7 @@ import com.example.home.dao.*;
 import com.example.home.entity.*;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.*;
+import com.example.tags.dao.TagMapper;
 import com.example.tags.entity.Tag;
 import com.example.user.dao.UserMapper;
 import com.example.user.entity.User;
@@ -61,6 +62,9 @@ public class HomeServiceImpl implements IHomeService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private TagMapper tagMapper;
 
     @Override
     public List<Resources> selectAllSearch(String postingName,int userId, Paging paging) {
@@ -115,7 +119,7 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public List<Tag> selectFirstLevelLabelResource() {
-        return homeMapper.selectFirstLevelLabelResource();
+        return tagMapper.selectFirstLevelLabelResource(0);
     }
 
     @Override
@@ -361,6 +365,45 @@ public class HomeServiceImpl implements IHomeService {
         }
     }
 
+    public void issue(Resources resources, String imgUrl, int postType, int whetherCover)throws Exception{
+        resources.setCreateAt(System.currentTimeMillis()/1000+"");
+
+        String[] split = null;
+
+        //自己选封面
+        if(whetherCover==1){
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                split=imgUrl.split(",");
+            }
+
+        }
+
+        //系统默认封面
+        if(whetherCover==0){
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                split=imgUrl.split(",");
+                resources.setCover(split[0]);
+            }else{
+                String videoCover = FfmpegUtil.getVideoCover(resources.getVideo());
+                resources.setCover(videoCover);
+            }
+        }
+
+        int i = homeMapper.addResourcesPost(resources);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+        if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            int addImg = homeMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
+            if(addImg<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+        }
+
+
+    }
+
     @Override
     public List<HomeClassificationVo> selectRecommendPost(int userId, Paging paging) {
         int page=(paging.getPage()-1)*paging.getLimit();
@@ -434,44 +477,7 @@ public class HomeServiceImpl implements IHomeService {
         return i;
     }
 
-    public void issue(Resources resources, String imgUrl, int postType, int whetherCover)throws Exception{
-        resources.setCreateAt(System.currentTimeMillis()/1000+"");
 
-        String[] split = null;
-
-        //自己选封面
-        if(whetherCover==1){
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
-                split=imgUrl.split(",");
-            }
-
-        }
-
-        //系统默认封面
-        if(whetherCover==0){
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
-                split=imgUrl.split(",");
-                resources.setCover(split[0]);
-            }else{
-                String videoCover = FfmpegUtil.getVideoCover(resources.getVideo());
-                resources.setCover(videoCover);
-            }
-        }
-
-        int i = homeMapper.addResourcesPost(resources);
-        if(i<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-
-        if(imgUrl!=null || !"undefined".equals(imgUrl)){
-            int addImg = homeMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
-            if(addImg<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR);
-            }
-        }
-
-
-    }
 
 
 

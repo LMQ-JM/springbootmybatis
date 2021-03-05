@@ -71,5 +71,13 @@ public interface ICircleService {
      */
     CircleClassificationVo querySingleCircle(int id,int userId);
 
-
+    /**
+     * 发布
+     * @param circle 对象
+     * @param imgUrl 图片地址
+     * @param postType 帖子类型 （0资源贴，1圈子贴）
+     * @param whetherCover（1自己选的，0系统默认）
+     * @throws Exception
+     */
+    void issueResourceOrCircle(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception ;
 }

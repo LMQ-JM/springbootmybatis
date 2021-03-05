@@ -64,6 +64,11 @@ public class CircleClassificationVo {
     private String tagName;
 
     /**
+     * 内容
+     */
+    private String content;
+
+    /**
      * 标签Id
      */
     private int tagId;

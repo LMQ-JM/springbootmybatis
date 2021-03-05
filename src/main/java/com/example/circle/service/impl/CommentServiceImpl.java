@@ -68,7 +68,9 @@ public class CommentServiceImpl implements ICommentService {
         for (CommentReplyVo s : commentReplyVos){
 
             List<PostReplyVo> postReplies = postReplyMapper.queryPostReplyComment(s.getId());
+            //得到每个一级评论下面的二级评论数量
             s.setCommentSize(postReplies.size());
+
             for (PostReplyVo a :postReplies){
                 String userName = userMapper.selectUserById(a.getBhId()).getUserName();
                 if(userName==null){

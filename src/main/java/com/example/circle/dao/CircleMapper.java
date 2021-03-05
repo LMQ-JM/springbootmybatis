@@ -79,7 +79,7 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.tags_one=${id}  ${paging}")
+    @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.tags_one=${id} order by a.create_at desc  ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
 
     /**

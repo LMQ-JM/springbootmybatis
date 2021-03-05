@@ -4,7 +4,6 @@ import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesLabelVo;
 import com.example.home.vo.ResourcesVo;
-import com.example.tags.entity.Tag;
 import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
@@ -27,12 +26,7 @@ public interface HomeMapper {
    List<Resources> selectAllSearch(@Param("postingName") String postingName,@Param("paging") String paging);
 
 
-    /**
-     * 查询资源的第一级标签
-     * @return
-     */
-    @Select("select * from tb_tag where type=0")
-    List<Tag> selectFirstLevelLabelResource();
+
 
     /**
      * 资源市场和学习交流的接口
@@ -80,7 +74,7 @@ public interface HomeMapper {
     int updateBrowse(@Param("id") int id);
 
    /**
-    * 增加圈子帖子
+    * 增加资源帖子
     * @param resources
     * @return
     */

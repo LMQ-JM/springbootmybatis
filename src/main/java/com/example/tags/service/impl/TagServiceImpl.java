@@ -21,23 +21,12 @@ public class TagServiceImpl implements ITagService {
     @Autowired
     private TagMapper tagMapper;
 
-    @Override
-    public List<Tag> selectAllTag() {
-        List<Tag> tags = tagMapper.selectAllTag();
-        return tags;
-    }
 
     @Override
-    public List<Tag> selectAllTags(int tid) {
-        List<Tag> tags = tagMapper.selectAllTags(tid);
-        return tags;
-    }
-
-    @Override
-    public List<Tag> selectResourcesAllTag() {
-        List<Tag> tags = tagMapper.selectResourcesAllTag();
+    public List<Tag> selectResourcesAllTag(int type) {
+        List<Tag> tags = tagMapper.selectResourcesAllTag(type);
         for (int i=0;i<tags.size();i++){
-            if(tags.get(i).getId()==14){
+            if("人才".equals(tags.get(i).getTagName())){
                 tags.remove(i);
             }
         }

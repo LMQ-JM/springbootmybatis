@@ -12,9 +12,11 @@ import com.example.circle.vo.CircleLabelVo;
 import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.FfmpegUtil;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.home.dao.HomeMapper;
+import com.example.tags.dao.TagMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,9 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private CommentMapper commentMapper;
+
+    @Autowired
+    private TagMapper tagMapper;
 
     @Override
     public ReturnVo queryAllCircles() {
@@ -254,6 +259,59 @@ public class CircleServiceImpl implements ICircleService {
 
 
         return circleClassificationVo;
+    }
+
+    @Override
+    public void issueResourceOrCircle(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception {
+
+        //资源帖子
+        if(postType==0){
+            issue(circle,imgUrl,postType,whetherCover);
+        }
+
+        //圈子帖子
+        if(postType==1){
+            issue(circle,imgUrl,postType,whetherCover);
+        }
+    }
+
+    public void issue(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception{
+        circle.setCreateAt(System.currentTimeMillis()/1000+"");
+
+        String[] split = null;
+
+        //自己选封面
+        if(whetherCover==1){
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                split=imgUrl.split(",");
+            }
+
+        }
+
+        //系统默认封面
+        if(whetherCover==0){
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                split=imgUrl.split(",");
+                circle.setCover(split[0]);
+            }else{
+                String videoCover = FfmpegUtil.getVideoCover(circle.getVideo());
+                circle.setCover(videoCover);
+            }
+        }
+
+        int i = circleMapper.addCirclePost(circle);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
+        if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            int addImg = homeMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
+            if(addImg<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+        }
+
+
     }
 
 

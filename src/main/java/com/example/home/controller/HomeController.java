@@ -215,7 +215,6 @@ public class HomeController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         iHomeService.issueResourceOrCircle(resources,imgUrl,postType,whetherCover);
-
     }
 
     @ApiOperation(value = "文件上传", notes = "文件上传")

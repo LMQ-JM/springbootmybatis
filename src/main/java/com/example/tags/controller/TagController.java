@@ -27,61 +27,19 @@ public class TagController {
 
 
     /**
-     *  圈子 后台
-     *  查询所有圈子的一级标签
+     * 根据参数类型查询不同类型的标签
      * @return
      */
-    @ApiOperation(value = " 查询所有圈子的一级标签",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/selectAllTag")
-    public List<Tag> selectAllTag() {
-        List<Tag> tags = iTagService.selectAllTag();
-        return tags;
-    }
-
-    /**
-     *  圈子
-     *  根据一级标签id查询二级标签
-     * @return
-     */
-    @ApiOperation(value = "根据一级标签id查询二级标签",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/selectAllTags")
-    public List<Tag> selectAllTags(int tid) {
-        List<Tag> tags = iTagService.selectAllTags(tid);
-        return tags;
-    }
-
-
-    /**
-     * 资源 后台
-     * 查询所有资源的一级标签
-     * @return
-     */
-    @ApiOperation(value = "查询所有资源的一级标签",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/selectResourcesAllTag")
-    public List<Tag> selectResourcesAllTag() {
-        List<Tag> tags = iTagService.selectResourcesAllTag();
-        return tags;
-    }
-
-    /**
-     * 资源
-     * 查询所有资源的一级标签
-     * @return
-     */
-    @ApiOperation(value = "查询所有资源的一级标签",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据参数类型查询不同类型的标签",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectResourcesTag")
-    public List<Tag> selectResourcesTag() {
-        List<Tag> tags = iTagService.selectResourcesAllTag();
+    public List<Tag> selectResourcesTag(int type) {
+        List<Tag> tags = iTagService.selectResourcesAllTag(type);
         return tags;
     }
 
 
     /**
-     *  资源
      *  根据一级标签id查询二级标签
      * @return
      */

@@ -67,6 +67,14 @@ public interface UserMapper {
     User selectUserById(@Param("Id") int Id);
 
     /**
+     * 根据用户名查询用户是否存在
+     * @param userName
+     * @return
+     */
+    @Select("select * from tb_user_admin where user_name=#{userName}")
+    AdminUser selectUserByUserName(@Param("userName") String userName);
+
+    /**
      * 增加用户信息
      * @param user 用户对象
      * @return

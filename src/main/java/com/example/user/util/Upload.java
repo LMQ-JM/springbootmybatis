@@ -57,7 +57,6 @@ public class Upload {
                     modeFiles=modeFiles.replace("file/", "");
                     psList.add(modeFiles);
                 }else{
-                    System.out.println("进来");
                     //得到视屏封面
                     String videoCover = FfmpegUtil.getVideoCover(path.toString());
                     String mode = modeFiles.replace("file\\", "");

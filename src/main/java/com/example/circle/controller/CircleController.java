@@ -168,6 +168,19 @@ public class CircleController {
     }
 
 
+    /**
+     * 发布
+     * @return
+     */
+    @ApiOperation(value = "发布",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/issueResourceOrCircle")
+    public void issueResourceOrCircle(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception {
+        if(circle.getUId()==0 || circle.getTagsOne()==0 || circle.getTagsTwo()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        iCircleService.issueResourceOrCircle(circle,imgUrl,postType,whetherCover);
+    }
 
 
 }
