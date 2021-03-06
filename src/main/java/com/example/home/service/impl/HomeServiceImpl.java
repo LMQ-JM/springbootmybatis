@@ -184,11 +184,9 @@ public class HomeServiceImpl implements IHomeService {
         ResourcesVo resourcesVo = homeMapper.selectSingleResourcePost(id);
 
         //在用户登录的情况下 增加帖子浏览记录
-        System.out.println(userId);
         if(userId!=0){
             //查看是否收藏
             int selectWhetherCollection = collectionMapper.selectWhetherCollection(userId, id);
-            System.out.println(selectWhetherCollection);
             if(selectWhetherCollection>0){
                 resourcesVo.setWhetherCollection(1);
             }

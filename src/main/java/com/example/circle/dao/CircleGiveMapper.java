@@ -19,7 +19,7 @@ public interface CircleGiveMapper {
      * @param zqId
      * @return
      */
-    @Select("select b.avatar as giveAvatar from tb_circles_give a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${zqId} order by a.create_at limit 8")
+    @Select("select b.avatar as giveAvatar from tb_circles_give a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${zqId} and a.give_cancel=1 order by a.create_at limit 8")
     String[] selectCirclesGivePersonAvatar(@Param("zqId") int zqId);
 
     /**
@@ -28,7 +28,7 @@ public interface CircleGiveMapper {
      * @param tid 帖子id
      * @return
      */
-    @Select("select COALESCE(count(*)) from tb_circles_give where u_id=${userId} and zq_id=${tid}")
+    @Select("select COALESCE(count(*)) from tb_circles_give where u_id=${userId} and zq_id=${tid} and give_cancel=1")
     Integer whetherGive(@Param("userId") int userId,@Param("tid") int tid);
 
     /**
@@ -36,7 +36,7 @@ public interface CircleGiveMapper {
      * @param tid 帖子id
      * @return
      */
-    @Select("select COALESCE(count(*)) from tb_circles_give where zq_id=${tid}")
+    @Select("select COALESCE(count(*)) from tb_circles_give where zq_id=${tid} and give_cancel=1")
     Integer selectGiveNumber(@Param("tid") int tid);
 
     /**

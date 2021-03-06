@@ -35,7 +35,7 @@ public interface HomeMapper {
      * @return
      */
     //保留  @Select("select a.*,c.name,c.tags_one as cId from tb_resources a INNER JOIN tb_classification c on a.tags_two=c.tags_one where a.tags_one=${id} ${paging}")
-    @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${id} order by a.create_at desc ${paging}")
+    @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${id} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<HomeClassificationVo> selectResourceLearningExchange(@Param("id") int id, @Param("paging") String paging);
 
     /**
@@ -44,7 +44,7 @@ public interface HomeMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select * from tb_resources where tags_two=${id} ${paging}")
+    @Select("select * from tb_resources where tags_two=${id} and is_delete=1 ${paging}")
     List<Resources> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging);
 
 
@@ -88,7 +88,7 @@ public interface HomeMapper {
      * @return
      */
     @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId " +
-            "from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where  a.id in (SELECT id FROM (SELECT id FROM tb_resources where  tags_two=${id} ORDER BY RAND()  LIMIT 10) t) ")
+            "from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where  a.id in (SELECT id FROM (SELECT id FROM tb_resources where  tags_two=${id} and is_delete=1 ORDER BY RAND()  LIMIT 10) t) ")
    List<HomeClassificationVo> selectRecommendedSecondaryTagId(@Param("id") int id);
 
 

@@ -29,6 +29,17 @@ public class CommentReplyVo {
     private String createAt;
 
     /**
+     * 一级评论点赞数量
+     */
+    private int commentGiveNum;
+
+    /**
+     * 一级评论是否点赞
+     */
+    private int commentGiveStatus=0;
+
+
+    /**
      * 用户id
      */
     private int userId;

@@ -18,7 +18,7 @@ public class CircleClassificationVo {
     private int type;
 
     /**
-     * 用户id
+     * 发帖人id
      */
     private int uId;
 
@@ -82,6 +82,12 @@ public class CircleClassificationVo {
      * 是否点赞 （1点赞 0没有点赞）
      */
     private int whetherGive;
+
+
+    /**
+     * 是否关注 （1关注 0没有关注）
+     */
+    private int whetherAttention;
 
     /**
      * 点赞数量

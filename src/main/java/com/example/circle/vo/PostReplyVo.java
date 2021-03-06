@@ -10,6 +10,12 @@ import lombok.Data;
 public class PostReplyVo {
 
     /**
+     * 二级评论id
+     */
+    private int id;
+
+
+    /**
      * 回复人id
      */
     private int userId;
@@ -28,6 +34,16 @@ public class PostReplyVo {
      *评论内容
      */
     private String hContent;
+
+    /**
+     * 二级评论点赞数量
+     */
+    private int twoCommentGiveNum;
+
+    /**
+     * 二级评论是否点赞
+     */
+    private int twoCommentGiveStatus=0;
 
     /**
      * 评论点赞状态（0没有，1点赞）

@@ -42,4 +42,9 @@ public class Comment {
      * 创建时间
      */
     private String createAt;
+
+    /**
+     * 是否有效
+     */
+    private int isDelete;
 }

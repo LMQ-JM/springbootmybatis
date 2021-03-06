@@ -1,6 +1,7 @@
 package com.example.circle.service;
 
 import com.example.circle.entity.Comment;
+import com.example.circle.entity.CommentGive;
 import com.example.circle.entity.PostReply;
 import com.example.circle.vo.CommentReplyVo;
 
@@ -31,5 +32,12 @@ public interface ICommentService {
      * @param tId 帖子id
      * @return
      */
-    List<CommentReplyVo> queryComments(int tId);
+    List<CommentReplyVo> queryComments(int tId,int userId);
+
+    /**
+     * 评论点赞
+     * @param commentGive
+     * @return
+     */
+    int addCommentGive(CommentGive commentGive);
 }

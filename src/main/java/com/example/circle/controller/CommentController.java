@@ -1,6 +1,7 @@
 package com.example.circle.controller;
 
 import com.example.circle.entity.Comment;
+import com.example.circle.entity.CommentGive;
 import com.example.circle.entity.PostReply;
 import com.example.circle.service.ICommentService;
 import com.example.circle.vo.CommentReplyVo;
@@ -52,6 +53,7 @@ public class CommentController {
     @ResponseBody
     @PostMapping("/addSecondLevelComment")
     public int addSecondLevelComment(PostReply postReply){
+        System.out.println("===="+postReply.getHContent());
         if(postReply.getBhId()==0 || postReply.getHId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
@@ -66,10 +68,26 @@ public class CommentController {
     @ApiOperation(value = "根据帖子id查询评论",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryComments")
-    public List<CommentReplyVo> queryComments(int tId){
+    public List<CommentReplyVo> queryComments(int tId,int userId){
         if(tId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCommentService.queryComments(tId);
+        return  iCommentService.queryComments(tId,userId);
+    }
+
+
+    /**
+     *
+     * 评论点赞
+     * @return
+     */
+    @ApiOperation(value = "评论点赞",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/addCommentGive")
+    public int addCommentGive(CommentGive commentGive){
+        if(commentGive.getDId()==0 || commentGive.getBdId()==0 || commentGive.getType()>1){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return  iCommentService.addCommentGive(commentGive);
     }
 }
