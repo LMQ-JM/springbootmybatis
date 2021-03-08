@@ -16,7 +16,11 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.FfmpegUtil;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
+import com.example.home.dao.CommunityMapper;
+import com.example.home.dao.HaplontMapper;
 import com.example.home.dao.HomeMapper;
+import com.example.home.entity.Haplont;
+import com.example.home.vo.CommunityVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +53,12 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private AttentionMapper attentionMapper;
+
+    @Autowired
+    private CommunityMapper communityMapper;
+
+    @Autowired
+    private HaplontMapper haplontMapper;
 
     @Override
     public ReturnVo queryAllCircles() {
@@ -286,6 +296,78 @@ public class CircleServiceImpl implements ICircleService {
         if(postType==1){
             issue(circle,imgUrl,postType,whetherCover);
         }
+    }
+
+    @Override
+    public List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging) {
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pagings="limit "+page+","+paging.getLimit()+"";
+        System.out.println(123);
+
+        List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircleTwo(id, pagings);
+        for (int i=0;i<circles.size();i++){
+            //得到图片组
+            String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+            circles.get(i).setImg(strings);
+
+            //得到点过赞人的头像
+            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+            circles.get(i).setGiveAvatar(strings1);
+
+            //得到点赞数量
+            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+            circles.get(i).setGiveNumber(integer1);
+
+
+            //等于0在用户没有到登录的情况下 直接设置没有点赞
+            if(userId==0){
+                circles.get(i).setWhetherGive(0);
+                circles.get(i).setWhetherAttention(0);
+            }else{
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                if(i1>0){
+                    circles.get(i).setWhetherAttention(1);
+                }
+
+                //查询是否对帖子点了赞   0没有 1有
+                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                if(integer>0){
+                    circles.get(i).setWhetherGive(1);
+                }
+            }
+
+
+            //得到帖子评论数量
+            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+            circles.get(i).setNumberPosts(integer2);
+
+            //得到评论数据
+            List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+            circles.get(i).setComments(comments);
+        }
+        return circles;
+    }
+
+    @Override
+    public CommunityVo selectCommunityCategoryId(int id) {
+        //查询圈子信息
+        CommunityVo communityVo = circleMapper.selectCommunityCategoryId(id);
+        if(communityVo==null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"没有该圈子");
+        }
+        //得到圈子总人数
+        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId(),1);
+        communityVo.setTotalNumberCircles(i);
+
+        //查询圈子的用户头像
+        String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId(),1);
+        communityVo.setAvatar(strings);
+
+        //得到单元体导航栏
+        List<Haplont> haplonts = haplontMapper.selectHaplontByTagId(id);
+        communityVo.setHaplontList(haplonts);
+        return communityVo;
     }
 
     public void issue(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception{

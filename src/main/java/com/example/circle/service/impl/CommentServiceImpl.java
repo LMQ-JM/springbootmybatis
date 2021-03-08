@@ -67,7 +67,6 @@ public class CommentServiceImpl implements ICommentService {
         List<CommentReplyVo> commentReplyVos = commentMapper.queryComment(tId);
         //根据一级评论id查询二级评论
         for (CommentReplyVo s : commentReplyVos){
-            System.out.println("一级"+s.getId());
             //得到评论点赞数量
             int i = commentMapper.queryCommentGiveNum(s.getId(), 0);
             s.setCommentGiveNum(i);
@@ -90,10 +89,8 @@ public class CommentServiceImpl implements ICommentService {
             s.setCommentSize(postReplies.size());
 
             for (PostReplyVo a :postReplies){
-                System.out.println("二级"+a.getId());
                 //得到二级评论评论点赞数量
                 int i1 = commentMapper.queryCommentGiveNum(a.getId(), 1);
-                System.out.println("===="+i1);
                 a.setTwoCommentGiveNum(i1);
 
                 //查看二级评论是否点赞
@@ -129,14 +126,12 @@ public class CommentServiceImpl implements ICommentService {
         //添加一级评论点赞信息
         if(commentGive.getType()==0){
             commentGive.setType(0);
-            System.out.println(commentGive.getDId()+"===="+commentGive.getCommentId());
             commentGive1= commentMapper.queryWhetherGive(commentGive.getDId(), 0, commentGive.getCommentId());
-            System.out.println(commentGive1);
+
             if(commentGive1!=null){
-                System.out.println("kkj9oiw");
                 //如果等于1就是点赞的状态 在进去就是取消点赞 状态改为0
                 if(commentGive1.getGiveStatus()==1){
-                     i = commentMapper.updateCommentGiveStatus(0, commentGive.getDId(), commentGive.getCommentId(), 0);
+                    i = commentMapper.updateCommentGiveStatus(0, commentGive.getDId(), commentGive.getCommentId(), 0);
                     if(i<=0){
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
                     }
@@ -144,12 +139,11 @@ public class CommentServiceImpl implements ICommentService {
 
                 if(commentGive1.getGiveStatus()==0){
                      i = commentMapper.updateCommentGiveStatus(1, commentGive.getDId(), commentGive.getCommentId(), 0);
-                    if(i<=0){
+                     if(i<=0){
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
-                    }
+                     }
                 }
             }else{
-                System.out.println("kkj9oiwr3t34t");
                  i = commentMapper.addCommentGive(commentGive);
                 if(i<=0){
                     throw new ApplicationException(CodeType.SERVICE_ERROR,"评论失败");
@@ -175,9 +169,9 @@ public class CommentServiceImpl implements ICommentService {
 
                 if(commentGive1.getGiveStatus()==0){
                      i = commentMapper.updateCommentGiveStatus(1, commentGive.getDId(), commentGive.getCommentId(), 1);
-                    if(i<=0){
+                     if(i<=0){
                         throw new ApplicationException(CodeType.SERVICE_ERROR);
-                    }
+                     }
                 }
             }else{
                  i = commentMapper.addCommentGive(commentGive);

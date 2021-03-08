@@ -7,6 +7,7 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
+import com.example.home.vo.CommunityVo;
 import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -180,6 +181,34 @@ public class CircleController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         iCircleService.issueResourceOrCircle(circle,imgUrl,postType,whetherCover);
+    }
+
+
+    /**
+     * 进入单元体的接口
+     * 根据社区分类id查询帖子
+     * @return
+     */
+    @ApiOperation(value = "根据社区分类id查询帖子 ",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectPostsByCommunityCategoryId")
+    public List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging)  {
+        if(paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
+        }
+        return iCircleService.selectPostsByCommunityCategoryId(id,userId,paging);
+    }
+
+    /**
+     * 进入单元体的接口
+     * 根据社区分类id查询圈子信息
+     * @return
+     */
+    @ApiOperation(value = "根据社区分类id查询圈子信息 ",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/selectCommunityCategoryId")
+    public CommunityVo selectCommunityCategoryId(int id)  {
+        return iCircleService.selectCommunityCategoryId(id);
     }
 
 

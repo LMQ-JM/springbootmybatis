@@ -1,12 +1,15 @@
 package com.example.circle.dao;
 
 import com.example.circle.entity.Attention;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.user.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author MQ
@@ -48,7 +51,7 @@ public interface AttentionMapper {
      * @return
      */
     @Select("select b.id,b.avatar,b.user_name from tb_user_attention a INNER JOIN tb_user b on a.bg_id=b.id where a.gu_id=${guId} and a.is_delete=1")
-    User queryPeopleFollow(@Param("guId") int guId);
+    List<User> queryPeopleFollow(@Param("guId") int guId);
 
     /**
      * 修改关注状态
@@ -59,4 +62,13 @@ public interface AttentionMapper {
      */
     @Update("Update tb_user_attention set is_delete=${isDelete}  where gu_id=${guId} and bg_id=${bgId} ")
     int updatePostingFollow(@Param("isDelete") int isDelete,@Param("guId") int guId,@Param("bgId") int bgId);
+
+
+    /**
+     * 查询我关注的人发的帖子
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select a.id,a.content,a.tags_one,a.tags_two,a.type,a.u_id,a.user_name,a.avatar,a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId from tb_circles a INNER JOIN tb_user_attention b on a.u_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 order by a.create_at desc")
+    List<CircleClassificationVo> queryAttentionPerson(@Param("userId") int userId);
 }

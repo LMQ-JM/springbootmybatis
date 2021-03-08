@@ -7,6 +7,7 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.*;
 import com.example.home.dao.*;
+import com.example.home.entity.Collection;
 import com.example.home.entity.*;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.*;
@@ -23,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Administrator
@@ -86,35 +84,72 @@ public class HomeServiceImpl implements IHomeService {
     public Map<String,Object> querySearchRecords(int userId) {
         Map<String,Object> map=new HashMap<>(15);
 
+        //查询用户表所有数据
+        List<User> users = userMapper.selectRandom();
+
+        //从list集合随机冲去5条数据
+        List<User> randomList = getRandomList(users, 5);
+
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);
 
+        //如果用户id等于0随机推荐用户数据
         if(userId==0){
-            List<User> users = userMapper.selectRandom();
-            map.put("users",users);
+            map.put("users",randomList);
             map.put("searchHistories",searchHistories);
             return map;
         }
 
 
-
-
-        //查询出自己选中的标签
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
+        if(userTag==null){
+            map.put("users",randomList);
+            map.put("searchHistories",searchHistories);
+            return map;
+        }
 
-        /*List<Integer> idArr=new ArrayList<>();
+        List<Integer> idArr=new ArrayList<>();
 
-        JSONArray  j= JSONArray.fromObject(userTag.getTab());
-        List<LabelVo> list = JSONArray.toList(j, LabelVo.class);
-        for (int i = 0; i < list.size(); i++) {
-            if(list.get(i).getChecked()=="true"){
-                idArr.add(list.get(i).getTagId());
+        if(userTag!=null){
+            JSONArray j= JSONArray.fromObject(userTag.getTab());
+            List<LabelVo> list = JSONArray.toList(j, LabelVo.class);
+            for (int i = 0; i < list.size(); i++) {
+                if(list.get(i).getChecked()=="true"){
+                    idArr.add(list.get(i).getTagId());
+                }
             }
-        }*/
-        List<User> users = userMapper.selectRandom();
+        }
+        //根据标签id多表联查出用户数据
+        List<User> users1 = homeMapper.selectUserByTagOne(idArr);
+
+        //从list集合随机冲去5条数据
+        List<User> randomList1 = getRandomList(users1, 5);
+
         map.put("searchHistories",searchHistories);
-        map.put("users",users);
+        map.put("users",randomList1);
+
         return map;
+    }
+
+
+    /**
+     * @Description list 随机取数据
+     * @params     list    list集合
+     *           num     随机取多少条
+     **/
+    public static List<User> getRandomList(List<User> list, int num) {
+        List<User> olist = new ArrayList<>();
+        if (list.size() <= num) {
+            return list;
+        } else {
+            Random random = new Random();
+            for (int i = 0 ;i<num;i++){
+                int intRandom = random.nextInt(list.size() - 1);
+                olist.add(list.get(intRandom));
+                list.remove(list.get(intRandom));
+            }
+            return olist;
+        }
     }
 
     @Override
@@ -162,12 +197,15 @@ public class HomeServiceImpl implements IHomeService {
     public CommunityVo selectCommunityCategoryId(int id) {
         //查询圈子信息
         CommunityVo communityVo = communityMapper.selectCommunityCategoryId(id);
+        if(communityVo==null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
         //得到圈子总人数
-        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId());
+        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId(),0);
         communityVo.setTotalNumberCircles(i);
 
         //查询圈子的用户头像
-        String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId());
+        String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId(),0);
         communityVo.setAvatar(strings);
 
         //得到单元体导航栏
@@ -409,7 +447,6 @@ public class HomeServiceImpl implements IHomeService {
         String sql="limit "+page+","+paging.getLimit()+"";
 
         //没有登录的情况下 随机给出数据
-
         if(userId==0){
             //查询出浏览量最多的帖子
             List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRandom(sql);
@@ -420,6 +457,7 @@ public class HomeServiceImpl implements IHomeService {
 
         //查询出自己选中的标签
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
+
         //如果用户没有选中标签就查询出浏览量最多的帖子
         if(userTag==null){
             List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRandom(sql);

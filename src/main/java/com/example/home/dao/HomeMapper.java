@@ -4,6 +4,7 @@ import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesLabelVo;
 import com.example.home.vo.ResourcesVo;
+import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
@@ -27,14 +28,12 @@ public interface HomeMapper {
 
 
 
-
     /**
-     * 资源市场和学习交流的接口
+     * 根据一级标签id查询所有下面的数据
      * @param id 一级标签id
      * @param paging 分页
      * @return
      */
-    //保留  @Select("select a.*,c.name,c.tags_one as cId from tb_resources a INNER JOIN tb_classification c on a.tags_two=c.tags_one where a.tags_one=${id} ${paging}")
     @Select("select a.id,a.u_id,a.user_name,a.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${id} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<HomeClassificationVo> selectResourceLearningExchange(@Param("id") int id, @Param("paging") String paging);
 
@@ -170,5 +169,22 @@ public interface HomeMapper {
                  "</foreach> ORDER BY a.create_at desc ${sql}" +
                  "</script>"})
     List<HomeClassificationVo> selectPostByTagOne(@Param("list") List<Integer> list,@Param("sql") String sql);
+
+
+
+    /**
+     * 根据标签id多表联查出用户数据
+     * @param list
+     * @return
+     */
+    @Select({
+            "<script>" +
+                    "select b.id,b.user_name,b.avatar from" +
+                    "  tb_resources a INNER JOIN tb_user b on a.u_id=b.id where a.tags_one in"+
+                    "<foreach item = 'item' index = 'index' collection = 'list' open='(' separator=',' close=')'>" +
+                    "#{item}" +
+                    "</foreach> GROUP BY  b.id" +
+                    "</script>"})
+    List<User> selectUserByTagOne(@Param("list") List<Integer> list);
 
 }

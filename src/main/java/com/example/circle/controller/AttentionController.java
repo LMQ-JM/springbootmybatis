@@ -2,6 +2,7 @@ package com.example.circle.controller;
 
 import com.example.circle.entity.Attention;
 import com.example.circle.service.IAttentionService;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.user.entity.User;
@@ -10,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author MQ
@@ -46,14 +49,31 @@ public class AttentionController {
      * 查询我关注的人
      * @return
      */
-    @ApiOperation(value = "查询我关注的人",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = " 查询我关注的人和关注人发的帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
-    @PostMapping("/queryPeopleFollow")
-    public User queryPeopleFollow(int userId){
+    @PostMapping("/queryAttentionPerson")
+    public List<User> queryAttentionPerson(int userId){
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return iAttentionService.queryPeopleFollow(userId);
+        return iAttentionService.queryAttentionPerson(userId);
+    }
+
+
+
+    /**
+     *
+     * 查询我关注的人发的帖子
+     * @return
+     */
+    @ApiOperation(value = " 查询我关注的人和关注人发的帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryPostsPeopleFollow")
+    public List<CircleClassificationVo> queryPostsPeopleFollow(int userId){
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iAttentionService.queryPostsPeopleFollow(userId);
     }
 
     /**
@@ -64,7 +84,7 @@ public class AttentionController {
     @ApiOperation(value = " 查询推荐用户数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryRecommendedUserData")
-    public User queryRecommendedUserData(int userId){
+    public List<User> queryRecommendedUserData(int userId){
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }

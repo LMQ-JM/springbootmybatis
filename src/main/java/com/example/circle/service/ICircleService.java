@@ -4,6 +4,7 @@ import com.example.circle.entity.Circle;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
+import com.example.home.vo.CommunityVo;
 
 import java.text.ParseException;
 import java.util.List;
@@ -80,4 +81,8 @@ public interface ICircleService {
      * @throws Exception
      */
     void issueResourceOrCircle(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception ;
+
+    List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging);
+
+    CommunityVo selectCommunityCategoryId(int id);
 }

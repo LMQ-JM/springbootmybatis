@@ -4,6 +4,7 @@ import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CircleLabelVo;
+import com.example.home.vo.CommunityVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -82,6 +83,16 @@ public interface CircleMapper {
     @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.tags_one=${id} order by a.create_at desc  ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
 
+
+    /**
+     * 根据圈子中二级标签id查询帖子
+     * @param id 二级标签id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.tags_two=${id} order by a.create_at desc  ${paging}")
+    List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
+
     /**
      * 查询单个圈子的帖子
      * @param id 帖子id
@@ -89,4 +100,21 @@ public interface CircleMapper {
      */
     @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.id=${id}")
     CircleClassificationVo querySingleCircle(@Param("id") int id);
+
+    /**
+     * 根据社区分类id查询帖子
+     * @param id 社区分类id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select * from tb_circles where tags_two=${id} and is_delete=1 ${paging}")
+    List<Circle> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging);
+
+    /**
+     * 根据圈子id查询圈子信息
+     * @param id 标签id
+     * @return
+     */
+    @Select("select a.*,b.user_name,b.id as userId from tb_community a INNER JOIN tb_user b on a.user_id=b.id where a.tag_id=${id} and a.type=1")
+    CommunityVo selectCommunityCategoryId(@Param("id") int id);
 }

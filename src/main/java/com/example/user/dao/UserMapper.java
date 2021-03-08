@@ -128,7 +128,7 @@ public interface UserMapper {
      * 随机查询
      * @return
      */
-    @Select("select * from tb_user where is_delete=1 limit 5")
+    @Select("select * from tb_user where is_delete=1")
     List<User> selectRandom();
 }
 

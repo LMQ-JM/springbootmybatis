@@ -48,7 +48,7 @@ public interface CommentMapper {
      * @param tId 帖子id
      * @return
      */
-    @Select("select a.*,b.id as userId,b.user_name,b.avatar from tb_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tId} and a.is_delete=1")
+    @Select("select a.*,b.id as userId,b.user_name,b.avatar from tb_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tId} and a.is_delete=1 order by a.create_at desc")
     List<CommentReplyVo> queryComment(@Param("tId") int tId);
 
     /**
