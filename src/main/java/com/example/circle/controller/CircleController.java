@@ -7,6 +7,7 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
+import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
 import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
@@ -84,18 +85,18 @@ public class CircleController {
 
 
     /**
-     *  后台
-     *  查询所有圈子的数据
+     * 后台
+     * 查询所有圈子的数据
      * @return
      */
     @ApiOperation(value = "查询所有圈子的数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectAllPosting")
-    public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime) throws Exception {
+    public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime,String userName) throws Exception {
         if(page==null || limit==null){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        ReturnVo returnVo = iCircleService.selectAllPosting(circle, page, limit, startTime, endTime);
+        ReturnVo returnVo = iCircleService.selectAllPosting(circle, page, limit, startTime, endTime,userName);
 
         return returnVo;
     }
@@ -103,7 +104,7 @@ public class CircleController {
 
     /**
      *
-     *  批量删除帖子
+     * 批量删除帖子
      * @return
      */
     @ApiOperation(value = "批量删除帖子",notes = "成功返回数据 反则为空")
@@ -186,10 +187,10 @@ public class CircleController {
 
     /**
      * 进入单元体的接口
-     * 根据社区分类id查询帖子
+     * 根据标签id查询帖子
      * @return
      */
-    @ApiOperation(value = "根据社区分类id查询帖子 ",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据标签id查询帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectPostsByCommunityCategoryId")
     public List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging)  {
@@ -210,6 +211,21 @@ public class CircleController {
     public CommunityVo selectCommunityCategoryId(int id)  {
         return iCircleService.selectCommunityCategoryId(id);
     }
+
+    /**
+     * 加入圈子
+     * @return
+     */
+    @ApiOperation(value = "加入圈子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/joinCircle")
+    public int joinCircle(CommunityUser communityUser)  {
+        return iCircleService.joinCircle(communityUser);
+    }
+
+
+
+
 
 
 }

@@ -50,6 +50,11 @@ public class User {
 	String city;
 
 	/**
+	 * 所在县
+	 */
+	String county;
+
+	/**
 	 * 背景图
 	 */
 	String picture;

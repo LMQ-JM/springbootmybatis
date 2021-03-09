@@ -15,7 +15,7 @@ public class LabelVo {
 	/**
 	 * 标签表名称
 	 */
-	String bName;
+	String tagName;
 
 	/**
 	 * 是否默认选中

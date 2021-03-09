@@ -69,6 +69,6 @@ public interface AttentionMapper {
      * @param userId 用户id
      * @return
      */
-    @Select("select a.id,a.content,a.tags_one,a.tags_two,a.type,a.u_id,a.user_name,a.avatar,a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId from tb_circles a INNER JOIN tb_user_attention b on a.u_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 order by a.create_at desc")
+    @Select("select a.id,a.content,a.tags_one,a.tags_two,a.type,d.id as uId,d.user_name,d.avatar,a.video,a.cover,a.browse,a.create_at,c.tag_name,c.id as tagId from tb_circles a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_user_attention b on a.u_id=b.bg_id INNER JOIN tb_tags c on a.tags_two=c.id where b.gu_id=${userId} and b.is_delete=1 order by a.create_at desc")
     List<CircleClassificationVo> queryAttentionPerson(@Param("userId") int userId);
 }

@@ -1,7 +1,6 @@
 package com.example.home.service.impl;
 
 import com.example.circle.dao.CircleMapper;
-import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
@@ -307,15 +306,15 @@ public class HomeServiceImpl implements IHomeService {
     }
 
     @Override
-    public ReturnVo selectResourcesAllPosting(Circle circle, Integer page, Integer limit, String startTime, String endTime) throws Exception {
+    public ReturnVo selectResourcesAllPosting(Resources resources, Integer page, Integer limit, String startTime, String endTime,String userName) throws Exception {
         String sql="";
         Integer pages=(page-1)*limit;
-        if(!circle.getTitle().equals("undefined") && !circle.getTitle().equals("")){
-            sql+=" and a.title like '%"+circle.getTitle()+"%'";
+        if(!resources.getTitle().equals("undefined") && !resources.getTitle().equals("")){
+            sql+=" and a.title like '%"+resources.getTitle()+"%'";
         }
         //如果发帖人不为空 ，根据发帖人查询帖子
-        if(!circle.getUserName().equals("undefined") && !circle.getUserName().equals("")){
-            sql+="and a.user_name like '%"+circle.getUserName()+"%'";
+        if(userName.equals("undefined") && !userName.equals("")){
+            sql+="and c.user_name like '%"+userName+"%'";
         }
 
         //将时间格式转换为时间戳

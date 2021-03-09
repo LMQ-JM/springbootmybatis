@@ -19,6 +19,7 @@ import com.example.common.utils.ReturnVo;
 import com.example.home.dao.CommunityMapper;
 import com.example.home.dao.HaplontMapper;
 import com.example.home.dao.HomeMapper;
+import com.example.home.entity.CommunityUser;
 import com.example.home.entity.Haplont;
 import com.example.home.vo.CommunityVo;
 import lombok.extern.slf4j.Slf4j;
@@ -101,15 +102,16 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime) throws ParseException {
+    public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime,String userName) throws ParseException {
         String sql="";
         Integer pages=(page-1)*limit;
         if(!circle.getTitle().equals("undefined") && !circle.getTitle().equals("")){
             sql+=" and a.title like '%"+circle.getTitle()+"%'";
         }
+
         //如果发帖人不为空 ，根据发帖人查询帖子
-        if(!circle.getUserName().equals("undefined") && !circle.getUserName().equals("")){
-            sql+="and a.user_name like '%"+circle.getUserName()+"%'";
+        if(!userName.equals("undefined") && !userName.equals("")){
+            sql+="and c.user_name like '%"+userName+"%'";
         }
 
         //将时间格式转换为时间戳
@@ -302,7 +304,6 @@ public class CircleServiceImpl implements ICircleService {
     public List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pagings="limit "+page+","+paging.getLimit()+"";
-        System.out.println(123);
 
         List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircleTwo(id, pagings);
         for (int i=0;i<circles.size();i++){
@@ -368,6 +369,16 @@ public class CircleServiceImpl implements ICircleService {
         List<Haplont> haplonts = haplontMapper.selectHaplontByTagId(id);
         communityVo.setHaplontList(haplonts);
         return communityVo;
+    }
+
+    @Override
+    public int joinCircle(CommunityUser communityUser) {
+        communityUser.setCreateAt(System.currentTimeMillis()/1000+"");
+        int i = circleMapper.joinCircle(communityUser);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"加入圈子失败!");
+        }
+        return i;
     }
 
     public void issue(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception{

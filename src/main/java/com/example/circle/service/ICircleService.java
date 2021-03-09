@@ -4,6 +4,7 @@ import com.example.circle.entity.Circle;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
+import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
 
 import java.text.ParseException;
@@ -37,7 +38,7 @@ public interface ICircleService {
      * @return
      * @throws ParseException
      */
-    ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime) throws ParseException;
+    ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime,String userName) throws ParseException;
 
     /**
      * 批量删除帖子
@@ -82,7 +83,30 @@ public interface ICircleService {
      */
     void issueResourceOrCircle(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception ;
 
+    /**
+     * 根据标签id查询帖子
+     * @param id 二级标签id
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
     List<CircleClassificationVo> selectPostsByCommunityCategoryId(int id,int userId, Paging paging);
 
+    /**
+     * 根据社区分类id查询圈子信息
+     * @param id 二级标签id
+     * @return
+     */
     CommunityVo selectCommunityCategoryId(int id);
+
+    /**
+     * 加入圈子
+     * @param communityUser
+     * @return
+     */
+    int joinCircle(CommunityUser communityUser);
+
+
+
+
 }

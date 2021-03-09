@@ -1,6 +1,5 @@
 package com.example.home.service;
 
-import com.example.circle.entity.Circle;
 import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.home.entity.Collection;
@@ -82,14 +81,14 @@ public interface IHomeService {
 
     /**
      * 插叙所有资源数据
-     * @param circle
+     * @param resources
      * @param page
      * @param limit
      * @param startTime
      * @param endTime
      * @return
      */
-    ReturnVo selectResourcesAllPosting(Circle circle, Integer page, Integer limit, String startTime, String endTime) throws Exception;
+    ReturnVo selectResourcesAllPosting(Resources resources , Integer page, Integer limit, String startTime, String endTime,String userName) throws Exception;
 
     /**
      * 后台
@@ -133,5 +132,6 @@ public interface IHomeService {
      * @return
      */
     int collectionPost(Collection collection);
+
 
 }

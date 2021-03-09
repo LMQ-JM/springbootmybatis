@@ -45,15 +45,6 @@ public class Circle {
      */
     private int uId;
 
-    /**
-     * 用户名称
-     */
-    private String userName;
-
-    /**
-     * 用户头像
-     */
-    private String avatar;
 
     /**
      * 标题

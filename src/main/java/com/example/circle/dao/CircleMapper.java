@@ -4,6 +4,7 @@ import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CircleLabelVo;
+import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public interface CircleMapper {
      * @param circle
      * @return
      */
-    @Insert("insert into tb_circles(content,tags_one,tags_two,type,video,cover,create_at,u_id,user_name,avatar,title)values(#{circle.content},${circle.tagsOne},${circle.tagsTwo},${circle.type},#{circle.video},#{circle.cover},#{circle.createAt},${circle.uId},#{circle.userName},#{circle.avatar},#{circle.title})")
+    @Insert("insert into tb_circles(content,tags_one,tags_two,type,video,cover,create_at,u_id,title)values(#{circle.content},${circle.tagsOne},${circle.tagsTwo},${circle.type},#{circle.video},#{circle.cover},#{circle.createAt},${circle.uId},#{circle.title})")
     @Options(useGeneratedKeys=true, keyProperty="circle.id",keyColumn="id")
     int addCirclePost(@Param("circle") Circle circle);
 
@@ -55,7 +56,9 @@ public interface CircleMapper {
      * @param paging 分页拼接
      * @return
      */
-    @Select("select a.id,a.content,b.tag_name,a.type,a.video,a.favour,a.collect,a.browse,a.title,a.avatar,a.create_at,a.user_name from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 ${sql} ORDER BY a.create_at desc ${paging}")
+    @Select("select a.id,a.content,b.tag_name,a.type,a.video,a.favour,a.collect,a.browse,a.title,a.create_at,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id " +
+            "where a.is_delete=1 ${sql} ORDER BY a.create_at desc ${paging}")
     List<CircleLabelVo> selectAllPosting(@Param("sql") String sql,@Param("paging") String paging);
 
     /**
@@ -80,7 +83,9 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.tags_one=${id} order by a.create_at desc  ${paging}")
+    @Select("select a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.tags_one=${id} order by a.create_at desc  ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircle(@Param("id") int id, @Param("paging") String paging);
 
 
@@ -90,7 +95,9 @@ public interface CircleMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.tags_two=${id} order by a.create_at desc  ${paging}")
+    @Select("select a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.tags_two=${id} order by a.create_at desc  ${paging}")
     List<CircleClassificationVo> selectPostsBasedTagIdCircleTwo(@Param("id") int id, @Param("paging") String paging);
 
     /**
@@ -98,16 +105,18 @@ public interface CircleMapper {
      * @param id 帖子id
      * @return
      */
-    @Select("select a.*,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id  where a.id=${id}")
+    @Select("select a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.id=${id}")
     CircleClassificationVo querySingleCircle(@Param("id") int id);
 
     /**
-     * 根据社区分类id查询帖子
+     * 根据标签id查询帖子
      * @param id 社区分类id
      * @param paging 分页
      * @return
      */
-    @Select("select * from tb_circles where tags_two=${id} and is_delete=1 ${paging}")
+    @Select("select a.*,b.id as uId,b.avatar,b.user_name from tb_circles a INNER JOIN tb_user b on a.u_id=b.id where a.tags_two=${id} and a.is_delete=1 ${paging}")
     List<Circle> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging);
 
     /**
@@ -117,4 +126,13 @@ public interface CircleMapper {
      */
     @Select("select a.*,b.user_name,b.id as userId from tb_community a INNER JOIN tb_user b on a.user_id=b.id where a.tag_id=${id} and a.type=1")
     CommunityVo selectCommunityCategoryId(@Param("id") int id);
+
+
+    /**
+     * 加入圈子
+     * @param communityUser
+     * @return
+     */
+    @Insert("insert into tb_community_user(community_id,user_id,type)values(${communityUser.communityId},${communityUser.userId},${communityUser.type})")
+    int joinCircle(@Param("communityUser") CommunityUser communityUser);
 }

@@ -1,6 +1,5 @@
 package com.example.home.controller;
 
-import com.example.circle.entity.Circle;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
@@ -178,12 +177,12 @@ public class HomeController {
     @ApiOperation(value = "查询所有资源的数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectResourcesAllPosting")
-    public ReturnVo selectResourcesAllPosting(Circle circle, Integer page, Integer limit, String startTime, String endTime) throws Exception {
+    public ReturnVo selectResourcesAllPosting(Resources resources, Integer page, Integer limit, String startTime, String endTime,String userName) throws Exception {
         if(page==null || limit==null){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        return iHomeService.selectResourcesAllPosting(circle, page, limit, startTime, endTime);
+        return iHomeService.selectResourcesAllPosting(resources, page, limit, startTime, endTime,userName);
     }
 
 

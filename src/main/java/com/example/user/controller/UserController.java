@@ -147,4 +147,14 @@ public class UserController {
     }
 
 
+    @ApiOperation(value = "根据id查询用户", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/selectUserById")
+    public User selectUserById(int userId) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iUserService.selectUserById(userId);
+    }
+
 }

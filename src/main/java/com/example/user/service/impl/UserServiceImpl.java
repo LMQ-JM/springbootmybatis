@@ -240,4 +240,9 @@ public class UserServiceImpl implements IUserService {
         int i = userMapper.selectWhetherHaveLabel(userId);
         return i;
     }
+
+    @Override
+    public User selectUserById(int userId) {
+        return userMapper.selectUserById(userId);
+    }
 }

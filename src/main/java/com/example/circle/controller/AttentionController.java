@@ -78,10 +78,10 @@ public class AttentionController {
 
     /**
      *
-     * 查询推荐用户数据
+     * 查询你可能感兴趣的人
      * @return
      */
-    @ApiOperation(value = " 查询推荐用户数据",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询你可能感兴趣的人",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryRecommendedUserData")
     public List<User> queryRecommendedUserData(int userId){

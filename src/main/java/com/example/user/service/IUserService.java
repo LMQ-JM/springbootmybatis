@@ -76,4 +76,11 @@ public interface IUserService {
      * @return
      */
     int selectWhetherHaveLabel(int userId);
+
+    /**
+     * 根据id查询
+     * @param userId 用户id
+     * @return
+     */
+    User selectUserById(int userId);
 }
