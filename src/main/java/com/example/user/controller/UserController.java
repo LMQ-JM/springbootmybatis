@@ -75,9 +75,9 @@ public class UserController {
     @ApiOperation(value = "查询用户名密码", notes = "查询用户名密码")
     @ResponseBody
     @GetMapping("/selectUserNamePassword")
-    public AdminUser selectUserNamePassword(@RequestParam("userName") String userName, @RequestParam("password") String password) {
+    public User selectUserNamePassword(@RequestParam("userName") String userName, @RequestParam("password") String password) {
         // TODO Auto-generated method stub
-        AdminUser useList=iUserService.selectUserNamePassword(userName, password);
+        User useList=iUserService.selectUserNamePassword(userName, password);
         if(useList!=null){
             return useList;
         }

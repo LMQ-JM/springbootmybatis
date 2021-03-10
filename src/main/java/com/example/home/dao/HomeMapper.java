@@ -45,8 +45,8 @@ public interface HomeMapper {
      * @return
      */
     @Select("select a.*,b.id as uId,b.avatar,b.user_name from tb_resources a INNER JOIN tb_user b on a.u_id=b.id " +
-            " where a.tags_two=${id} and a.is_delete=1 ${paging}")
-    List<Resources> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging);
+            " where a.tags_two=${id} and a.is_delete=1 ${sql} ${paging}")
+    List<HomeClassificationVo> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging,@Param("sql") String sql);
 
 
     /**
@@ -110,7 +110,7 @@ public interface HomeMapper {
      * @param sql
      * @return
      */
-    @Select("select COALESCE(count(*),0) from tb_resources a INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 ${sql}")
+    @Select("select COALESCE(count(*),0) from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 ${sql}")
     Integer selectResourcesAllPostingCount(@Param("sql") String sql);
 
     /**
@@ -190,5 +190,14 @@ public interface HomeMapper {
                     "</foreach> GROUP BY  b.id" +
                     "</script>"})
     List<User> selectUserByTagOne(@Param("list") List<Integer> list);
+
+    /**
+     * 根据三级标签查询资源数据
+     * @param haplontType
+     * @return
+     */
+    @Select("select select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
+            "tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.create_at desc ${paging}")
+    List<HomeClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType,@Param("paging") String paging);
 
 }

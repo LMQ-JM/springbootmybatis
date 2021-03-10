@@ -108,7 +108,7 @@ public class HomeController {
     @ApiOperation(value = "根据社区分类id查询帖子 ",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectPostsByCommunityCategoryId")
-    public List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging)  {
+    public List<HomeClassificationVo> selectPostsByCommunityCategoryId(int id, Paging paging)  {
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
         }
@@ -277,6 +277,13 @@ public class HomeController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return iHomeService.collectionPost(collection);
+    }
+
+    @ApiOperation(value = "单元体导航栏点击查询", notes = "成功返回集合")
+    @ResponseBody
+    @PostMapping("/queryClickUnitNavigationBar")
+    public Object queryClickUnitNavigationBar(int type,int postType,int userId,int tagId,Paging paging) {
+        return iHomeService.queryClickUnitNavigationBar(type,postType,userId,tagId,paging);
     }
 
 

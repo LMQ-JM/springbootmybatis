@@ -178,11 +178,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public AdminUser selectUserNamePassword(String userName, String password) {
-         password = SHA1Util.encode(password);
-        AdminUser useList=userMapper.selectUserNamePassword(userName, password);
-        log.info("{}",useList);
-        return useList;
+    public User selectUserNamePassword(String userName, String password) {
+         //password = SHA1Util.encode(password);
+        User user = userMapper.selectUserNamePassword(userName, password);
+        log.info("{}",user);
+        return user;
     }
 
     @Override

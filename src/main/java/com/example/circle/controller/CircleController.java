@@ -208,8 +208,8 @@ public class CircleController {
     @ApiOperation(value = "根据社区分类id查询圈子信息 ",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectCommunityCategoryId")
-    public CommunityVo selectCommunityCategoryId(int id)  {
-        return iCircleService.selectCommunityCategoryId(id);
+    public CommunityVo selectCommunityCategoryId(int id,int userId)  {
+        return iCircleService.selectCommunityCategoryId(id,userId);
     }
 
     /**
@@ -224,7 +224,16 @@ public class CircleController {
     }
 
 
-
+    /**
+     * 内层发布
+     * @return
+     */
+    @ApiOperation(value = "内层发布",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/internalRelease")
+    public int internalRelease(Circle circle, String imgUrl, int postType, int whetherCover)  {
+        return iCircleService.internalRelease(circle,imgUrl,postType,whetherCover);
+    }
 
 
 

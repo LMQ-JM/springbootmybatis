@@ -2,6 +2,7 @@ package com.example.home.service.impl;
 
 import com.example.circle.dao.CircleMapper;
 import com.example.circle.entity.Img;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.*;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -178,15 +180,16 @@ public class HomeServiceImpl implements IHomeService {
     }
 
     @Override
-    public List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging) {
+    public List<HomeClassificationVo> selectPostsByCommunityCategoryId(int id, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pagings="limit "+page+","+paging.getLimit()+"";
-        List<Resources> resources = homeMapper.selectPostsByCommunityCategoryId(id, pagings);
-        for (int i=0;i<resources.size();i++){
+        String str="order by a.create_at desc";
+        List<HomeClassificationVo> resources = homeMapper.selectPostsByCommunityCategoryId(id, pagings,str);
+        /*for (int i=0;i<resources.size();i++){
             //根据帖子id查询出当前帖子图片
             String[] strings = homeMapper.selectImgByPostId(resources.get(i).getId());
             resources.get(i).setImg(strings);
-        }
+        }*/
 
 
         return resources;
@@ -199,13 +202,12 @@ public class HomeServiceImpl implements IHomeService {
         if(communityVo==null){
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
-        //得到圈子总人数
-        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId(),0);
-        communityVo.setTotalNumberCircles(i);
 
-        //查询圈子的用户头像
-        String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId(),0);
+        //根据圈子id查询这个圈子有哪些人参加了讨论
+        String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId());
         communityVo.setAvatar(strings);
+        //得到用户圈子里面的讨论人数
+        communityVo.setTotalNumberCircles(strings.length);
 
         //得到单元体导航栏
         List<Haplont> haplonts = haplontMapper.selectHaplontByTagId(id);
@@ -308,12 +310,14 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public ReturnVo selectResourcesAllPosting(Resources resources, Integer page, Integer limit, String startTime, String endTime,String userName) throws Exception {
         String sql="";
+        System.out.println("jinlai");
         Integer pages=(page-1)*limit;
         if(!resources.getTitle().equals("undefined") && !resources.getTitle().equals("")){
             sql+=" and a.title like '%"+resources.getTitle()+"%'";
         }
         //如果发帖人不为空 ，根据发帖人查询帖子
-        if(userName.equals("undefined") && !userName.equals("")){
+        if(!userName.equals("undefined") && !userName.equals("")){
+            System.out.println("erw");
             sql+="and c.user_name like '%"+userName+"%'";
         }
 
@@ -333,8 +337,10 @@ public class HomeServiceImpl implements IHomeService {
                 }
             }
         }
+        System.out.println(sql);
         String paging=" limit "+pages+","+limit+"";
         List<ResourcesLabelVo> resourcesLabelVos = homeMapper.selectResourcesAllPosting(sql, paging);
+        System.out.println(resourcesLabelVos.size());
         //根据不同条件得到不同帖子数量
         Integer integer = homeMapper.selectResourcesAllPostingCount(sql);
 
@@ -444,11 +450,11 @@ public class HomeServiceImpl implements IHomeService {
         int page=(paging.getPage()-1)*paging.getLimit();
 
         String sql="limit "+page+","+paging.getLimit()+"";
-
+        List<HomeClassificationVo> homeClassificationVos=null;
         //没有登录的情况下 随机给出数据
         if(userId==0){
             //查询出浏览量最多的帖子
-            List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRandom(sql);
+             homeClassificationVos = homeMapper.selectRandom(sql);
             return homeClassificationVos;
         }
 
@@ -459,7 +465,7 @@ public class HomeServiceImpl implements IHomeService {
 
         //如果用户没有选中标签就查询出浏览量最多的帖子
         if(userTag==null){
-            List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRandom(sql);
+            homeClassificationVos= homeMapper.selectRandom(sql);
             return homeClassificationVos;
         }
 
@@ -471,8 +477,12 @@ public class HomeServiceImpl implements IHomeService {
             }
         }
 
-        List<HomeClassificationVo> homeClassificationVos = homeMapper.selectPostByTagOne(idArr,sql);
-        return homeClassificationVos;
+         homeClassificationVos = homeMapper.selectPostByTagOne(idArr,sql);
+
+         //使用stream流筛选不等于当前用户id的数据
+         List<HomeClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
+
+        return collect;
     }
 
     @Override
@@ -512,9 +522,114 @@ public class HomeServiceImpl implements IHomeService {
         return i;
     }
 
+    @Override
+    public Object queryClickUnitNavigationBar(int type, int postType, int userId,int tagId,Paging paging) {
+        int page=(paging.getPage()-1)*paging.getLimit();
+
+        String sql="limit "+page+","+paging.getLimit()+"";
+
+        String str="";
+        //资源
+        if(postType==0){
+            //查询最新的数据
+            if(type==1){
+                str="order by a.create_at desc";
+                List<HomeClassificationVo> resources = homeMapper.selectPostsByCommunityCategoryId(tagId, sql,str);
+                return resources;
+            }
+
+            //查询最热的数据
+            if(type==2){
+                str="order by a.browse desc";
+                List<HomeClassificationVo> resources = homeMapper.selectPostsByCommunityCategoryId(tagId, sql,str);
+                return resources;
+            }
+
+            //查询找货数据
+            if(type==3){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==4){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==5){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==6){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==7){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==8){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==9){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==10){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+            //查询找货数据
+            if(type==11){
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                return homeClassificationVos;
+            }
+
+        }
+
+        if(postType==1){
+            if(type==1){
+                str="order by a.create_at desc";
+                List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
+                return circles;
+            }
+
+            if(type==2){
+                str="order by a.favour desc";
+                List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
+                return circles;
+            }
+
+            if(type==5){
+                List<CircleClassificationVo> circles = circleMapper.queryPostByHaplontType(type,sql);
+                return circles;
+            }
+
+            if(type==6){
+                List<CircleClassificationVo> circles = circleMapper.queryPostByHaplontType(type,sql);
+                return circles;
+            }
+
+        }
 
 
 
+        return null;
+    }
 
 
 }

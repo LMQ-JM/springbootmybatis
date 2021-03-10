@@ -22,10 +22,6 @@ public class CommunityUser {
      */
     private int userId;
 
-    /**
-     * 0资源，1圈子
-     */
-    private int type;
 
     /**
      * 创建时间

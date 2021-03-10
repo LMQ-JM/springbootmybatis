@@ -39,8 +39,8 @@ public interface UserMapper {
      * @param password
      * @return
      */
-    @Select("select *from tb_user_admin where `account`=#{userName} and password=#{password} and is_status=1")
-    AdminUser selectUserNamePassword(@Param("userName")String userName, @Param("password")String password);
+    @Select("select *from tb_user where `user_name`=#{userName} and m_code=#{password} and is_delete=1")
+    User selectUserNamePassword(@Param("userName")String userName, @Param("password")String password);
 
     /**
      * 增加系统用户

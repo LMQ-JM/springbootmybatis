@@ -39,7 +39,7 @@ public interface IUserService {
      * @param password 密码
      * @return
      */
-    AdminUser selectUserNamePassword(String userName, String password);
+    User selectUserNamePassword(String userName, String password);
 
     /**
      * 增加系统用户

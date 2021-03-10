@@ -54,7 +54,7 @@ public interface IHomeService {
      * @param paging 分页
      * @return
      */
-    List<Resources> selectPostsByCommunityCategoryId(int id, Paging paging);
+    List<HomeClassificationVo> selectPostsByCommunityCategoryId(int id, Paging paging);
 
     /**
      * 根据社区分类id查询圈子信息
@@ -132,6 +132,16 @@ public interface IHomeService {
      * @return
      */
     int collectionPost(Collection collection);
+
+
+    /**
+     * 单元体导航栏点击查询
+     * @param type
+     * @param postType 0 资源 1圈子
+     * @param userId 用户id
+     * @return
+     */
+    Object queryClickUnitNavigationBar(int type,int postType,int userId,int tagId,Paging paging);
 
 
 }

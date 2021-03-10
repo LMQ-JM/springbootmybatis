@@ -65,4 +65,9 @@ public class CommunityVo {
     private String[] avatar;
 
     private List<Haplont> haplontList;
+
+    /**
+     * 是否存在这个圈子 1存在 0不存在
+     */
+    private int  whetherThere;
 }

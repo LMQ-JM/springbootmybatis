@@ -97,7 +97,7 @@ public interface ICircleService {
      * @param id 二级标签id
      * @return
      */
-    CommunityVo selectCommunityCategoryId(int id);
+    CommunityVo selectCommunityCategoryId(int id,int userId);
 
     /**
      * 加入圈子
@@ -106,7 +106,15 @@ public interface ICircleService {
      */
     int joinCircle(CommunityUser communityUser);
 
-
+    /**
+     * 内层发布
+     * @param circle 对象
+     * @param imgUrl 图片地址
+     * @param postType 帖子类型 （0资源贴，1圈子贴）
+     * @param whetherCover（1自己选的，0系统默认）
+     * @return
+     */
+    int internalRelease(Circle circle, String imgUrl, int postType, int whetherCover);
 
 
 }

@@ -351,19 +351,26 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public CommunityVo selectCommunityCategoryId(int id) {
+    public CommunityVo selectCommunityCategoryId(int id,int userId) {
         //查询圈子信息
         CommunityVo communityVo = circleMapper.selectCommunityCategoryId(id);
         if(communityVo==null){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"没有该圈子");
         }
         //得到圈子总人数
-        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId(),1);
+        int i = communityMapper.selectTotalNumberCirclesById(communityVo.getId());
         communityVo.setTotalNumberCircles(i);
 
         //查询圈子的用户头像
-        String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId(),1);
+        String[] strings = communityMapper.selectCirclesAvatars(communityVo.getId());
         communityVo.setAvatar(strings);
+
+
+        List<CommunityUser> communities = communityMapper.queryCommunityById(communityVo.getId());
+        //匹配是否存在这个圈子
+        communities.stream().filter(u->u.getUserId()==userId).forEach(u->{
+                communityVo.setWhetherThere(1);
+        });
 
         //得到单元体导航栏
         List<Haplont> haplonts = haplontMapper.selectHaplontByTagId(id);
@@ -374,11 +381,28 @@ public class CircleServiceImpl implements ICircleService {
     @Override
     public int joinCircle(CommunityUser communityUser) {
         communityUser.setCreateAt(System.currentTimeMillis()/1000+"");
+
+        //查询是否存在圈子里面 如果存在在调用接口就是退出圈子
+        int i1 = communityMapper.queryWhetherThereCircle(communityUser.getCommunityId(), communityUser.getUserId());
+        if(i1>0){
+            //退出圈子
+            int i = communityMapper.exitGroupChat(communityUser.getCommunityId(), communityUser.getUserId());
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"退出圈子失败");
+            }
+            return i;
+        }
+
         int i = circleMapper.joinCircle(communityUser);
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"加入圈子失败!");
         }
         return i;
+    }
+
+    @Override
+    public int internalRelease(Circle circle, String imgUrl, int postType, int whetherCover) {
+        return 0;
     }
 
     public void issue(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception{

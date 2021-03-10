@@ -133,6 +133,10 @@ public interface CircleMapper {
      * @param communityUser
      * @return
      */
-    @Insert("insert into tb_community_user(community_id,user_id,type)values(${communityUser.communityId},${communityUser.userId},${communityUser.type})")
+    @Insert("insert into tb_community_user(community_id,user_id)values(${communityUser.communityId},${communityUser.userId})")
     int joinCircle(@Param("communityUser") CommunityUser communityUser);
+
+    @Select("select select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
+            "tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType,@Param("paging") String paging);
 }

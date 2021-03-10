@@ -62,6 +62,11 @@ public class Circle {
     private String cover;
 
     /**
+     * 单元体类型
+     */
+    private int haplontType;
+
+    /**
      * 点赞数量
      */
     private int favour;
