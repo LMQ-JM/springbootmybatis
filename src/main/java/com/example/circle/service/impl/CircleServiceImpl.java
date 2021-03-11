@@ -21,8 +21,11 @@ import com.example.home.dao.HaplontMapper;
 import com.example.home.dao.HomeMapper;
 import com.example.home.entity.CommunityUser;
 import com.example.home.entity.Haplont;
+import com.example.home.entity.Resources;
 import com.example.home.vo.CommunityVo;
+import com.example.tags.dao.TagMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +63,9 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private HaplontMapper haplontMapper;
+
+    @Autowired
+    private TagMapper tagMapper;
 
     @Override
     public ReturnVo queryAllCircles() {
@@ -241,6 +247,10 @@ public class CircleServiceImpl implements ICircleService {
     @Override
     public CircleClassificationVo querySingleCircle(int id, int userId) {
         CircleClassificationVo circleClassificationVo = circleMapper.querySingleCircle(id);
+        if(circleClassificationVo==null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+
         //得到图片组
         String[] strings = homeMapper.selectImgByPostId(circleClassificationVo.getId());
         circleClassificationVo.setImg(strings);
@@ -401,8 +411,28 @@ public class CircleServiceImpl implements ICircleService {
     }
 
     @Override
-    public int internalRelease(Circle circle, String imgUrl, int postType, int whetherCover) {
-        return 0;
+    public void internalRelease(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception {
+
+        if(circle.getHaplontType()==100) {
+            circle.setHaplontType(0);
+        }
+
+
+
+        //根据二级标签查询一级标签
+        int tagsOne = tagMapper.queryLabelAccordingSecondaryId(circle.getTagsTwo());
+        circle.setTagsOne(tagsOne);
+
+        //资源帖子
+        if(postType==0){
+            issue(circle,imgUrl,postType,whetherCover);
+        }
+
+        //圈子帖子
+        if(postType==1){
+            issue(circle,imgUrl,postType,whetherCover);
+        }
+
     }
 
     public void issue(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception{
@@ -429,17 +459,41 @@ public class CircleServiceImpl implements ICircleService {
             }
         }
 
-        int i = circleMapper.addCirclePost(circle);
-        if(i<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR);
-        }
-
-        if(imgUrl!=null || !"undefined".equals(imgUrl)){
-            int addImg = homeMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
-            if(addImg<=0){
+        //圈子添加
+        if(postType==1){
+            int i = circleMapper.addCirclePost(circle);
+            if(i<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
+
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                int addImg = homeMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
+                if(addImg<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+            }
         }
+
+        //资源添加
+        if(postType==0){
+            Resources resources=new Resources();
+
+            //实体类的值赋给另一个实体类
+            BeanUtils.copyProperties(circle,resources);
+
+            int i = homeMapper.addResourcesPost(resources);
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+
+            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+                int addImg = homeMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
+                if(addImg<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+            }
+        }
+
 
 
     }

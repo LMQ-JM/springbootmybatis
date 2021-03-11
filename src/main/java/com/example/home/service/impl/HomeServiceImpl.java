@@ -1,8 +1,12 @@
 package com.example.home.service.impl;
 
+import com.example.circle.dao.AttentionMapper;
+import com.example.circle.dao.CircleGiveMapper;
 import com.example.circle.dao.CircleMapper;
+import com.example.circle.dao.CommentMapper;
 import com.example.circle.entity.Img;
 import com.example.circle.vo.CircleClassificationVo;
+import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.*;
@@ -25,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +67,15 @@ public class HomeServiceImpl implements IHomeService {
     private HaplontMapper haplontMapper;
 
     @Autowired
+    private CircleGiveMapper circleGiveMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private AttentionMapper attentionMapper;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
@@ -81,6 +97,13 @@ public class HomeServiceImpl implements IHomeService {
         return homeMapper.selectAllSearch(postingName, sql);
     }
 
+
+    static <T> Predicate<T> distinctByKey1(Function<? super T, ?> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+
     @Override
     public Map<String,Object> querySearchRecords(int userId) {
         Map<String,Object> map=new HashMap<>(15);
@@ -94,10 +117,13 @@ public class HomeServiceImpl implements IHomeService {
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);
 
-        //如果用户id等于0随机推荐用户数据
+        //使用stream流根据字段去重
+        List<SearchHistory> collect = searchHistories.stream().filter(distinctByKey1(s -> s.getHistoricalContent())).collect(Collectors.toList());
+
+
         if(userId==0){
             map.put("users",randomList);
-            map.put("searchHistories",searchHistories);
+            map.put("searchHistories",collect);
             return map;
         }
 
@@ -105,7 +131,7 @@ public class HomeServiceImpl implements IHomeService {
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
         if(userTag==null){
             map.put("users",randomList);
-            map.put("searchHistories",searchHistories);
+            map.put("searchHistories",collect);
             return map;
         }
 
@@ -126,7 +152,7 @@ public class HomeServiceImpl implements IHomeService {
         //从list集合随机冲去5条数据
         List<User> randomList1 = getRandomList(users1, 5);
 
-        map.put("searchHistories",searchHistories);
+        map.put("searchHistories",collect);
         map.put("users",randomList1);
 
         return map;
@@ -547,83 +573,127 @@ public class HomeServiceImpl implements IHomeService {
 
             //查询找货数据
             if(type==3){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==4){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==5){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==6){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==7){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==8){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==9){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==10){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
             //查询找货数据
             if(type==11){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql);
+                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
         }
 
         if(postType==1){
+
+            List<CircleClassificationVo> circles=null;
+
             if(type==1){
                 str="order by a.create_at desc";
-                List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
-                return circles;
+                 circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
             }
 
             if(type==2){
                 str="order by a.favour desc";
-                List<CircleClassificationVo> circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
-                return circles;
+                 circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
             }
 
             if(type==5){
-                List<CircleClassificationVo> circles = circleMapper.queryPostByHaplontType(type,sql);
-                return circles;
+                 circles = circleMapper.queryPostByHaplontType(type,sql,tagId);
             }
 
             if(type==6){
-                List<CircleClassificationVo> circles = circleMapper.queryPostByHaplontType(type,sql);
-                return circles;
+                 circles = circleMapper.queryPostByHaplontType(type,sql,tagId);
+
             }
 
+
+            for (int i=0;i<circles.size();i++){
+                //得到图片组
+                String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
+
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
+
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
+
+
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if(userId==0){
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                }else{
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if(i1>0){
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if(integer>0){
+                        circles.get(i).setWhetherGive(1);
+                    }
+                }
+
+
+                //得到帖子评论数量
+                Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+                circles.get(i).setNumberPosts(integer2);
+
+                //得到评论数据
+                List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+                circles.get(i).setComments(comments);
+            }
+
+            return circles;
         }
 
 

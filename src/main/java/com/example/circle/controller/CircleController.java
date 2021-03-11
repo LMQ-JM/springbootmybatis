@@ -231,8 +231,8 @@ public class CircleController {
     @ApiOperation(value = "内层发布",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/internalRelease")
-    public int internalRelease(Circle circle, String imgUrl, int postType, int whetherCover)  {
-        return iCircleService.internalRelease(circle,imgUrl,postType,whetherCover);
+    public void internalRelease(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception  {
+         iCircleService.internalRelease(circle,imgUrl,postType,whetherCover);
     }
 
 

@@ -62,6 +62,11 @@ public class HomeClassificationVo {
      */
     private int tagId;
 
+    /**
+     * 内容
+     */
+    private String content;
+
 
 
 

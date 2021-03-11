@@ -30,6 +30,6 @@ public interface SearchRecordMapper {
      * @param userId
      * @return
      */
-    @Select("select *,count(distinct historical_content) from tb_search_history where user_id=${userId} order by create_at desc limit 4")
+    @Select("select id,historical_content from tb_search_history where user_id=${userId} order by create_at desc limit 4")
     List<SearchHistory> selectSearchRecordByUserId(@Param("userId") int userId);
 }

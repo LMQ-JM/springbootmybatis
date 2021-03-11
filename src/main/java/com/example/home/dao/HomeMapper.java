@@ -79,7 +79,7 @@ public interface HomeMapper {
     * @param resources
     * @return
     */
-   @Insert("insert into tb_resources(content,tags_one,tags_two,type,video,cover,create_at,u_id,title)values(#{resources.content},${resources.tagsOne},${resources.tagsTwo},${resources.type},#{resources.video},#{resources.cover},#{resources.createAt},${resources.uId},#{resources.title})")
+   @Insert("insert into tb_resources(content,tags_one,tags_two,type,video,cover,create_at,u_id,title,haplont_type)values(#{resources.content},${resources.tagsOne},${resources.tagsTwo},${resources.type},#{resources.video},#{resources.cover},#{resources.createAt},${resources.uId},#{resources.title},${resources.haplontType})")
    @Options(useGeneratedKeys=true, keyProperty="resources.id",keyColumn="id")
    int addResourcesPost(@Param("resources") Resources resources);
 
@@ -196,8 +196,8 @@ public interface HomeMapper {
      * @param haplontType
      * @return
      */
-    @Select("select select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
-            "tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.create_at desc ${paging}")
-    List<HomeClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType,@Param("paging") String paging);
+    @Select("select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
+            " tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.tags_two=${tagId} order by a.create_at desc ${paging}")
+    List<HomeClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType,@Param("paging") String paging,@Param("tagId") int tagId);
 
 }

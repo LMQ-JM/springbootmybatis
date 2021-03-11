@@ -1,13 +1,22 @@
 package com.example.personalCenter.service.impl;
 
+import com.example.circle.dao.AttentionMapper;
+import com.example.circle.dao.CircleGiveMapper;
+import com.example.circle.dao.CommentMapper;
 import com.example.circle.entity.Attention;
+import com.example.circle.vo.CircleClassificationVo;
+import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.home.dao.HomeMapper;
+import com.example.home.dao.RecruitMapper;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.LabelVo;
+import com.example.home.vo.RecruitVo;
 import com.example.personalCenter.dao.PersonalCenterMapper;
 import com.example.personalCenter.service.IPersonalCenterService;
+import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
 import com.example.user.entity.UserTag;
@@ -35,6 +44,18 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
     @Autowired
     private HomeMapper homeMapper;
+
+    @Autowired
+    private CircleGiveMapper circleGiveMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private AttentionMapper attentionMapper;
+
+    @Autowired
+    private RecruitMapper recruitMapper;
 
     @Override
     public InquireFollowersLikesVo queryInquireFollowersLikes(int userId) {
@@ -82,9 +103,71 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     }
 
     @Override
-    public List<HomeClassificationVo> queryHavePostedPosts(int userId) {
-        List<HomeClassificationVo> homeClassificationVos = personalCenterMapper.queryHavePostedPosts(userId);
-        return homeClassificationVos;
+    public Object queryHavePostedPosts(int userId, int type, Paging paging) {
+
+
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        //查询资源帖子
+        if (type == 0) {
+            List<HomeClassificationVo> homeClassificationVos = personalCenterMapper.queryHavePostedPosts(userId,pag);
+            return homeClassificationVos;
+        }
+        //查询圈子帖子
+        if (type == 1) {
+            List<CircleClassificationVo> circles = personalCenterMapper.queryHavePostedCirclePosts(userId,pag);
+            for (int i = 0; i < circles.size(); i++) {
+                //得到图片组
+                String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
+
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
+
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
+
+
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if (userId == 0) {
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                } else {
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if (i1 > 0) {
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if (integer > 0) {
+                        circles.get(i).setWhetherGive(1);
+                    }
+                }
+
+
+                //得到帖子评论数量
+                Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+                circles.get(i).setNumberPosts(integer2);
+
+                //得到评论数据
+                List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+                circles.get(i).setComments(comments);
+            }
+            return circles;
+        }
+
+        //查询人才帖子
+        if (type == 2) {
+            List<RecruitVo> recruitVos = recruitMapper.selectSignboardInformationByUserId(userId, pag);
+            return recruitVos;
+        }
+
+            return null;
     }
 
     @Override
@@ -183,6 +266,29 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
             }
         }
         return str;
+    }
+
+    @Override
+    public List<CircleVo> myCircleAndCircleJoined(int userId, int type, Paging paging) {
+
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+        List<CircleVo> circleVos=null;
+        if(type==0){
+            //查询我创建的圈子
+            circleVos= personalCenterMapper.myCircleAndCircleJoined(userId,pag);
+            return circleVos;
+        }
+
+        //查询我加入的圈子
+         circleVos = personalCenterMapper.circleJoined(userId, pag);
+        for (int i=0;i<circleVos.size();i++){
+            int i1 = personalCenterMapper.countCircleJoined(circleVos.get(i).getId());
+            circleVos.get(i).setCnt(i1);
+        }
+
+
+        return circleVos;
     }
 
 

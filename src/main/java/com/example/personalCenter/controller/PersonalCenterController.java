@@ -2,8 +2,10 @@ package com.example.personalCenter.controller;
 
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.personalCenter.service.IPersonalCenterService;
+import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
 import io.swagger.annotations.Api;
@@ -68,12 +70,25 @@ public class PersonalCenterController {
     @ApiOperation(value = "查询我发布过的帖子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryHavePostedPosts")
-    public List<HomeClassificationVo> queryHavePostedPosts(int userId) {
+    public Object queryHavePostedPosts(int userId,int type, Paging paging) {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return iPersonalCenterService.queryHavePostedPosts(userId);
+        return iPersonalCenterService.queryHavePostedPosts(userId,type,paging);
     }
+
+    @ApiOperation(value = "查询我的圈子和我加入的圈子", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/myCircleAndCircleJoined")
+    public List<CircleVo> myCircleAndCircleJoined(int userId, int type, Paging paging) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iPersonalCenterService.myCircleAndCircleJoined(userId,type,paging);
+    }
+
+
+
 
     @ApiOperation(value = "修改单个介绍", notes = "成功返回数据 反则为空")
     @ResponseBody

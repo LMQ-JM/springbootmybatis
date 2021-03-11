@@ -1,7 +1,9 @@
 package com.example.personalCenter.dao;
 
 import com.example.circle.entity.Attention;
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.home.vo.HomeClassificationVo;
+import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.UserMessageVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -55,7 +57,7 @@ public interface PersonalCenterMapper {
      * @param bgId 被关注人id
      * @return
      */
-    @Select("select b.name,b.avatar,b.id,b.introduction from tb_user_attention a INNER JOIN tb_user b on a.gu_id=b.id  where a.gu_id=${guId} and a.bg_id=${bgId} and a.is_delete=1")
+    @Select("select b.user_name,b.avatar,b.id,b.introduction from tb_user_attention a INNER JOIN tb_user b on a.gu_id=b.id  where a.gu_id=${guId} and a.bg_id=${bgId} and a.is_delete=1")
     UserMessageVo selectFollowMy(@Param("guId") int guId, @Param("bgId") int bgId);
 
     /**
@@ -70,12 +72,22 @@ public interface PersonalCenterMapper {
 
 
     /**
-     * 查询我发布的帖子
+     * 查询我发布资源帖子
      * @param userId 用户id
+     * @param paging 分页
      * @return
      */
-    @Select("select a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1")
-    List<HomeClassificationVo> queryHavePostedPosts(@Param("userId") int userId);
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1")
+    List<HomeClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 查询我发布圈子帖子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1")
+    List<CircleClassificationVo> queryHavePostedCirclePosts(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
      * 修改用户信息
@@ -85,4 +97,32 @@ public interface PersonalCenterMapper {
      */
     @Update("update tb_user set ${sql} where id=${id}")
     int updateUserMessage(@Param("sql") String sql,@Param("id") int id);
+
+    /**
+     * 根据id查询创建的圈子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("SELECT r.id, r.community_name, r.posters,COUNT(p.community_id) AS cnt FROM tb_community r" +
+            " inner JOIN tb_community_user p on r.id = p.community_id where r.user_id=${userId} and r.type=1 GROUP BY p.community_id")
+    List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId,@Param("paging") String paging);
+
+
+    /**
+     * 查询我加入的圈子
+     * @param userId 用户id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select b.id, b.community_name, b.posters from tb_community_user a inner JOIN tb_community b on a.community_id=b.id where a.user_id=${userId} and b.type=1 GROUP BY a.community_id ${paging}")
+    List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 统计每个圈子的人数
+     * @param id 用户id
+     * @return
+     */
+    @Select("select count(*) from tb_community_user where community_id=${id}")
+    int countCircleJoined(@Param("id") int id);
 }

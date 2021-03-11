@@ -1,6 +1,8 @@
 package com.example.personalCenter.service;
 
+import com.example.common.utils.Paging;
 import com.example.home.vo.HomeClassificationVo;
+import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
 import org.apache.ibatis.annotations.Param;
@@ -38,9 +40,11 @@ public interface IPersonalCenterService {
     /**
      * 查询我发布的帖子
      * @param userId 用户id
+     * @param type 0 资源 1圈子 2人才
+     * @param paging 分页
      * @return
      */
-    List<HomeClassificationVo> queryHavePostedPosts(int userId);
+    Object queryHavePostedPosts(int userId,int type, Paging paging);
 
     /**
      * 修改用户介绍
@@ -106,5 +110,14 @@ public interface IPersonalCenterService {
      * @return
      */
     List<String> queryMyNeed(int userId);
+
+    /**
+     * 查询我的圈子和我加入的圈子
+     * @param userId 用户id
+     * @param type 类型 0我的圈子 1我加入的圈子
+     * @param paging 分页
+     * @return
+     */
+    List<CircleVo> myCircleAndCircleJoined(int userId, int type, Paging paging);
 }
 

@@ -112,9 +112,10 @@ public interface ICircleService {
      * @param imgUrl 图片地址
      * @param postType 帖子类型 （0资源贴，1圈子贴）
      * @param whetherCover（1自己选的，0系统默认）
+     * @throws Exception
      * @return
      */
-    int internalRelease(Circle circle, String imgUrl, int postType, int whetherCover);
+    void internalRelease(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception;
 
 
 }

@@ -43,4 +43,12 @@ public interface TagMapper {
     @Select("select * from tb_tag where type=${type} and is_delete=1")
     List<Tag> selectFirstLevelLabelResource(@Param("type") int type);
 
+    /**
+     * 根据二级标签id查询一级标签
+     * @param id 二级标签id
+     * @return
+     */
+    @Select("select t_id from tb_tags where id=${id} and is_delete=1")
+    int queryLabelAccordingSecondaryId(@Param("id") int id);
+
 }

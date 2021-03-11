@@ -136,9 +136,11 @@ public interface IHomeService {
 
     /**
      * 单元体导航栏点击查询
-     * @param type
+     * @param type 单元体id
      * @param postType 0 资源 1圈子
      * @param userId 用户id
+     * @param tagId 二级标签id
+     * @param paging 分页
      * @return
      */
     Object queryClickUnitNavigationBar(int type,int postType,int userId,int tagId,Paging paging);
