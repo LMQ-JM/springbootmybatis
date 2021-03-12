@@ -23,8 +23,8 @@ public interface HomeMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select * from tb_resources where title like CONCAT('%',#{postingName},'%') and is_delete=1  ${paging}")
-   List<Resources> selectAllSearch(@Param("postingName") String postingName,@Param("paging") String paging);
+    @Select("select a.id,c.avatar,c.id as uId,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.title like CONCAT('%',#{postingName},'%') and a.is_delete=1  ${paging}")
+   List<HomeClassificationVo> selectAllSearch(@Param("postingName") String postingName,@Param("paging") String paging);
 
 
 

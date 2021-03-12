@@ -7,6 +7,8 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.ReturnVo;
 import com.example.common.utils.SHA1Util;
+import com.example.home.dao.HomeMapper;
+import com.example.personalCenter.dao.PersonalCenterMapper;
 import com.example.user.dao.UserMapper;
 import com.example.user.entity.AdminUser;
 import com.example.user.entity.LoginTag;
@@ -41,6 +43,12 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private HomeMapper homeMapper;
+
+    @Autowired
+    private PersonalCenterMapper personalCenterMapper;
 
     @Override
     public User wxLogin(String code,String userName,String avatar,String address,String sex) {
@@ -188,7 +196,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     public int addAdminUser(AdminUser adminUser) {
 
-
         AdminUser adminUser1 = userMapper.selectUserByUserName(adminUser.getAccount());
         if(adminUser1!=null){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"用户名已存在");
@@ -206,18 +213,46 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public int updateUser(User user) {
+         String sql="";
+
+         if(user.getAvatar()!=null && !user.getAvatar().equals("")){
+                sql=" avatar='"+user.getAvatar()+"'";
+         }
+
+         if(user.getUserName()!=null && !user.getUserName().equals("")){
+             sql=" user_name='"+user.getUserName()+"'";
+         }
+
+
+
+        int i = personalCenterMapper.updateUserMessage(sql, user.getId());
+         if(i<=0){
+             throw new ApplicationException(CodeType.SERVICE_ERROR);
+         }
+        return i;
+    }
+
+    @Override
     public List<LoginTag> selectAllUserLabel() {
         return userMapper.selectAllUserLabel();
     }
 
     @Override
     public int addUserAndLabel(UserTag userTag) {
-        userTag.setCreateAt(System.currentTimeMillis()/1000+"");
-        return userMapper.addUserAndLabel(userTag);
-    }
 
-    @Override
-    public int updateUserAndLabel(UserTag userTag) {
+        //查询出自己选中的标签
+        UserTag userTag1=homeMapper.selectOneselfLabel(userTag.getUId());
+        if(userTag1==null){
+            userTag.setCreateAt(System.currentTimeMillis()/1000+"");
+            int i = userMapper.addUserAndLabel(userTag);
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+            return i;
+        }
+
+
         //删除用户之前选中的标签
         int i = userMapper.deleteUserAndLabel(userTag.getUId());
         if(i<=0){
@@ -230,8 +265,11 @@ public class UserServiceImpl implements IUserService {
         if(i1<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
+
         return i1;
     }
+
+
 
 
 

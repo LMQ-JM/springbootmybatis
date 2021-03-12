@@ -1,10 +1,12 @@
 package com.example.personalCenter.service;
 
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.utils.Paging;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
+import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -119,5 +121,21 @@ public interface IPersonalCenterService {
      * @return
      */
     List<CircleVo> myCircleAndCircleJoined(int userId, int type, Paging paging);
+
+    /**
+     * 根据用户id查询出我选中的标签
+     * @param userId
+     * @return
+     */
+    UserTag queryTagSelectedBasedUserId(int userId);
+
+
+    /**
+     * 查询我近一个月浏览过的帖子
+     * @param userId
+     * @param type
+     * @return
+     */
+    List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int type, Paging paging);
 }
 

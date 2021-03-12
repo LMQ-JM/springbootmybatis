@@ -19,6 +19,7 @@ import com.example.personalCenter.service.IPersonalCenterService;
 import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
+import com.example.user.dao.UserMapper;
 import com.example.user.entity.UserTag;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
@@ -56,6 +57,9 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
     @Autowired
     private RecruitMapper recruitMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public InquireFollowersLikesVo queryInquireFollowersLikes(int userId) {
@@ -262,6 +266,9 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
             for (int i = 0; i < list.size(); i++) {
                 if(list.get(i).getChecked()=="true"){
                     str.add(list.get(i).getTagName());
+                    if(i>2){
+                        break;
+                    }
                 }
             }
         }
@@ -283,12 +290,85 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         //查询我加入的圈子
          circleVos = personalCenterMapper.circleJoined(userId, pag);
         for (int i=0;i<circleVos.size();i++){
+            //统计每个圈子的人数
             int i1 = personalCenterMapper.countCircleJoined(circleVos.get(i).getId());
             circleVos.get(i).setCnt(i1);
         }
 
 
         return circleVos;
+    }
+
+    @Override
+    public UserTag queryTagSelectedBasedUserId(int userId) {
+        //查询出自己选中的标签
+        UserTag userTag=homeMapper.selectOneselfLabel(userId);
+        if(userTag==null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+        return userTag;
+    }
+
+    @Override
+    public List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int type,Paging paging) {
+
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        String sql="";
+        if(type==0){
+            sql=" tb_resources";
+            List<CircleClassificationVo> circleClassificationVos = personalCenterMapper.queryCheckPostsBeenReadingPastMonth(userId, type, sql,pag);
+            return circleClassificationVos;
+        }
+        if(type==1){
+            sql=" tb_circles";
+            List<CircleClassificationVo> circles = personalCenterMapper.queryCheckPostsBeenReadingPastMonth(userId, type, sql,pag);
+            for (int i=0;i<circles.size();i++){
+                //得到图片组
+                String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
+
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
+
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
+
+
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if(userId==0){
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                }else{
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if(i1>0){
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if(integer>0){
+                        circles.get(i).setWhetherGive(1);
+                    }
+                }
+
+
+                //得到帖子评论数量
+                Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+                circles.get(i).setNumberPosts(integer2);
+
+                //得到评论数据
+                List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+                circles.get(i).setComments(comments);
+            }
+            return circles;
+        }
+
+        return null;
     }
 
 

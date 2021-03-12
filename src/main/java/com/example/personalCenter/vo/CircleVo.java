@@ -10,9 +10,14 @@ import lombok.Data;
 public class CircleVo {
 
     /**
-     * 社区id
+     * 圈子id
      */
     private int id;
+
+    /**
+     * 标签id
+     */
+    private int tagId;
 
     /**
      * 社区头像

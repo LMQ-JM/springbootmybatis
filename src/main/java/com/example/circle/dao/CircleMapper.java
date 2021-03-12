@@ -51,6 +51,14 @@ public interface CircleMapper {
     int addImg(@Param("img") Img img);
 
     /**
+     * 浏览量加一
+     * @param id
+     * @return
+     */
+    @Insert("update tb_circles set browse=browse+1 where id=${id} ")
+    int updateBrowse(@Param("id") int id);
+
+    /**
      * 根据条件查询所有圈子
      * @param sql 条件拼接
      * @param paging 分页拼接

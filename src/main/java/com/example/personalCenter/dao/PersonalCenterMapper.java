@@ -57,7 +57,7 @@ public interface PersonalCenterMapper {
      * @param bgId 被关注人id
      * @return
      */
-    @Select("select b.user_name,b.avatar,b.id,b.introduction from tb_user_attention a INNER JOIN tb_user b on a.gu_id=b.id  where a.gu_id=${guId} and a.bg_id=${bgId} and a.is_delete=1")
+    @Select("select b.user_name,b.avatar,b.id,b.introduce from tb_user_attention a INNER JOIN tb_user b on a.gu_id=b.id  where a.gu_id=${guId} and a.bg_id=${bgId} and a.is_delete=1")
     UserMessageVo selectFollowMy(@Param("guId") int guId, @Param("bgId") int bgId);
 
     /**
@@ -104,7 +104,7 @@ public interface PersonalCenterMapper {
      * @param paging 分页
      * @return
      */
-    @Select("SELECT r.id, r.community_name, r.posters,COUNT(p.community_id) AS cnt FROM tb_community r" +
+    @Select("SELECT r.id,r.tag_id, r.community_name, r.posters,COUNT(p.community_id) AS cnt FROM tb_community r" +
             " inner JOIN tb_community_user p on r.id = p.community_id where r.user_id=${userId} and r.type=1 GROUP BY p.community_id")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
@@ -115,7 +115,7 @@ public interface PersonalCenterMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select b.id, b.community_name, b.posters from tb_community_user a inner JOIN tb_community b on a.community_id=b.id where a.user_id=${userId} and b.type=1 GROUP BY a.community_id ${paging}")
+    @Select("select b.id,b.tag_id, b.community_name, b.posters from tb_community_user a inner JOIN tb_community b on a.community_id=b.id where a.user_id=${userId} and b.type=1 GROUP BY a.community_id ${paging}")
     List<CircleVo> circleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -125,4 +125,17 @@ public interface PersonalCenterMapper {
      */
     @Select("select count(*) from tb_community_user where community_id=${id}")
     int countCircleJoined(@Param("id") int id);
+
+    /**
+     * 查询我近一个月的帖子
+     * @param userId 用户id
+     * @param type 0资源 1圈子
+     * @param sql 表名 可能资源表  可能圈子表
+     * @return
+     */
+    @Select("select b.*,c.id as uId,b.cover,c.avatar,c.user_name,d.tag_name,d.id as tagId from tb_browse a " +
+            "INNER JOIN ${sql} b on a.zq_id=b.id INNER JOIN tb_user c on b.u_id=c.id " +
+            "INNER JOIN tb_tags d on b.tags_two=d.id where UNIX_TIMESTAMP(DATE_SUB(FROM_UNIXTIME(unix_timestamp(now()),'%Y-%m-%d %H:%i:%s'), INTERVAL 30 DAY))<=a.create_at " +
+            "and a.u_id=${userId} and b.is_delete=1 and a.type=${type} ORDER BY a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(@Param("userId")int userId, @Param("type")int type,@Param("sql")String sql,@Param("paging") String paging);
 }

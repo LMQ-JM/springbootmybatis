@@ -49,6 +49,13 @@ public interface IUserService {
     int addAdminUser(AdminUser adminUser);
 
     /**
+     * 修改用户信息
+     * @param user 用户对象
+     * @return
+     */
+    int updateUser(User user);
+
+    /**
      * 查询所以标签
      * @return
      */
@@ -61,12 +68,7 @@ public interface IUserService {
      */
     int addUserAndLabel(UserTag userTag);
 
-    /**
-     * 修改用户选中的标签关系
-     * @param userTag 标签对象
-     * @return
-     */
-    int updateUserAndLabel(UserTag userTag);
+
 
 
 

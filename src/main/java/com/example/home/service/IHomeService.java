@@ -25,7 +25,7 @@ public interface IHomeService {
      * @param paging
      * @return
      */
-    List<Resources> selectAllSearch(String postingName,int userId, Paging paging);
+    List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging);
 
     /**
      * 查询搜索记录和其他相关信息
@@ -77,7 +77,7 @@ public interface IHomeService {
      * @param id
      * @return
      */
-    List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id);
+    List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId);
 
     /**
      * 插叙所有资源数据

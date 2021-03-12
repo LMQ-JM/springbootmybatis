@@ -162,7 +162,7 @@ public class CircleController {
     @ApiOperation(value = "查询单个圈子的帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/querySingleCircle")
-    public CircleClassificationVo querySingleCircle(int id,int userId){
+    public CircleClassificationVo querySingleCircle(int id,int userId) throws ParseException {
         if(id==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }

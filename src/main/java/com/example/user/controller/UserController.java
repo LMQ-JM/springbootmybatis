@@ -46,7 +46,7 @@ public class UserController {
     @ResponseBody
     @PostMapping("/wxLogin")
     public User wxLogin(String code, String userName, String avatar, String address,String sex) {
-        if(code==null){
+        if("undefined".equals(code)){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
@@ -76,7 +76,6 @@ public class UserController {
     @ResponseBody
     @GetMapping("/selectUserNamePassword")
     public User selectUserNamePassword(@RequestParam("userName") String userName, @RequestParam("password") String password) {
-        // TODO Auto-generated method stub
         User useList=iUserService.selectUserNamePassword(userName, password);
         if(useList!=null){
             return useList;
@@ -89,9 +88,7 @@ public class UserController {
     @ResponseBody
     @PostMapping("/getImgAddress")
     public ReturnVo getImgAddress(@RequestParam("files") MultipartFile file) {
-        // TODO Auto-generated method stub
         List<String> upload = this.upload.upload(file);
-        System.out.println("=="+ this.upload);
         ReturnVo returnVo=new ReturnVo();
         returnVo.setList(upload.get(0));
         return returnVo;
@@ -101,20 +98,28 @@ public class UserController {
     @ResponseBody
     @PostMapping("/addAdminUser")
     public int addAdminUser(AdminUser adminUser) {
-        // TODO Auto-generated method stub
         int i = iUserService.addAdminUser(adminUser);
         return i;
     }
+
+    @ApiOperation(value = "增加系统用户", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/updateUser")
+    public int updateUser(User user) {
+        log.info(user.getUserName(),user.getId(),user.getAvatar());
+        int i = iUserService.updateUser(user);
+        return i;
+    }
+
 
     @ApiOperation(value = "查询所有标签", notes = "成功返回成功")
     @ResponseBody
     @PostMapping("/selectAllUserLabel")
     public List<LoginTag> selectAllUserLabel() {
-        // TODO Auto-generated method stub
         return iUserService.selectAllUserLabel();
     }
 
-    @ApiOperation(value = "增加用户选中的标签关系", notes = "成功返回成功")
+    @ApiOperation(value = "增加或修改用户选中的标签关系", notes = "成功返回成功")
     @ResponseBody
     @PostMapping("/addUserAndLabel")
     public int addUserAndLabel(UserTag userTag) {
@@ -123,17 +128,6 @@ public class UserController {
         }
         return iUserService.addUserAndLabel(userTag);
     }
-
-    @ApiOperation(value = "修改用户选中的标签关系", notes = "成功返回成功")
-    @ResponseBody
-    @PostMapping("/updateUserAndLabel")
-    public int updateUserAndLabel(UserTag userTag) {
-        if(userTag.getUId()==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR);
-        }
-        return iUserService.updateUserAndLabel(userTag);
-    }
-
 
 
     @ApiOperation(value = "根据用户id查询是否有登录进来的时候选中过标签", notes = "成功返回成功")

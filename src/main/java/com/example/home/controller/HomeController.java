@@ -50,7 +50,7 @@ public class HomeController {
     @ApiOperation(value = "搜索数据接口",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectAllSearch")
-    public List<Resources> selectAllSearch(String postingName,int userId, Paging paging)  {
+    public List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging)  {
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
         }
@@ -60,7 +60,7 @@ public class HomeController {
 
     /**
      *
-     *  查询搜索记录和其他相关信息
+     * 查询搜索记录和其他相关信息
      * @return
      */
     @ApiOperation(value = "查询搜索记录和其他相关信息",notes = "成功返回数据 反则为空")
@@ -73,7 +73,7 @@ public class HomeController {
 
     /**
      *
-     *  查询资源的第一级标签
+     * 查询资源的第一级标签
      * @return
      */
     @ApiOperation(value = "查询资源的第一级标签",notes = "成功返回数据 反则为空")
@@ -147,8 +147,8 @@ public class HomeController {
     @ApiOperation(value = "根据二级标签id查询推荐的数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectRecommendedSecondaryTagId")
-    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id)  {
-        return iHomeService.selectRecommendedSecondaryTagId(id);
+    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId)  {
+        return iHomeService.selectRecommendedSecondaryTagId(id,userId);
     }
 
 

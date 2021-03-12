@@ -71,7 +71,7 @@ public interface ICircleService {
      * @param userId 用户id
      * @return
      */
-    CircleClassificationVo querySingleCircle(int id,int userId);
+    CircleClassificationVo querySingleCircle(int id,int userId) throws ParseException;
 
     /**
      * 发布

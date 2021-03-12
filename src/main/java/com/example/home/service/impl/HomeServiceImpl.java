@@ -82,7 +82,7 @@ public class HomeServiceImpl implements IHomeService {
     private TagMapper tagMapper;
 
     @Override
-    public List<Resources> selectAllSearch(String postingName,int userId, Paging paging) {
+    public List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
         if(userId!=0){
@@ -328,15 +328,16 @@ public class HomeServiceImpl implements IHomeService {
     }
 
     @Override
-    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id) {
+    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId) {
         List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRecommendedSecondaryTagId(id);
-        return homeClassificationVos;
+        //筛选掉等于当前用户id的数据
+        List<HomeClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
+        return collect;
     }
 
     @Override
     public ReturnVo selectResourcesAllPosting(Resources resources, Integer page, Integer limit, String startTime, String endTime,String userName) throws Exception {
         String sql="";
-        System.out.println("jinlai");
         Integer pages=(page-1)*limit;
         if(!resources.getTitle().equals("undefined") && !resources.getTitle().equals("")){
             sql+=" and a.title like '%"+resources.getTitle()+"%'";
@@ -363,7 +364,6 @@ public class HomeServiceImpl implements IHomeService {
                 }
             }
         }
-        System.out.println(sql);
         String paging=" limit "+pages+","+limit+"";
         List<ResourcesLabelVo> resourcesLabelVos = homeMapper.selectResourcesAllPosting(sql, paging);
         System.out.println(resourcesLabelVos.size());

@@ -1,5 +1,6 @@
 package com.example.personalCenter.controller;
 
+import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
@@ -8,6 +9,7 @@ import com.example.personalCenter.service.IPersonalCenterService;
 import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
+import com.example.user.entity.UserTag;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -157,6 +159,25 @@ public class PersonalCenterController {
         return iPersonalCenterService.queryMyNeed(userId);
     }
 
+    @ApiOperation(value ="根据用户id查询出我选中的标签", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryTagSelectedBasedUserId")
+    public UserTag queryTagSelectedBasedUserId(int userId) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iPersonalCenterService.queryTagSelectedBasedUserId(userId);
+    }
+
+    @ApiOperation(value ="查询我近一个月浏览过的帖子", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCheckPostsBeenReadingPastMonth")
+    public List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int type, Paging paging) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iPersonalCenterService.queryCheckPostsBeenReadingPastMonth(userId,type,paging);
+    }
 
 
 
