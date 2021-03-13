@@ -1,7 +1,7 @@
 package com.example.home.service;
 
-import com.example.circle.entity.Circle;
 import com.example.common.utils.Paging;
+import com.example.home.entity.JobWanted;
 import com.example.home.vo.RecruitVo;
 
 import java.util.List;
@@ -43,4 +43,11 @@ public interface IRecruitService {
      * @return
      */
     List<RecruitVo> selectPostingBasedUserID (int userId, Paging paging);
+
+    /**
+     * 添加求职期望
+     * @param jobWanted
+     * @return
+     */
+    int addJobExpectations (JobWanted jobWanted);
 }

@@ -214,15 +214,27 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public int updateUser(User user) {
-         String sql="";
 
-         if(user.getAvatar()!=null && !user.getAvatar().equals("")){
+        List<User> users = userMapper.selectRandom();
+        //和数据库的比较是否有相同名字
+        users.stream().filter(u->u.getUserName()==user.getUserName()).forEach(u ->{
+            throw new ApplicationException(CodeType.RESOURCES_EXISTING);
+        });
+
+
+        String sql="";
+
+        if(user.getAvatar()!=null && !user.getAvatar().equals("") && user.getUserName()!=null && !user.getUserName().equals("")){
+            sql="avatar='"+user.getAvatar()+"',user_name='"+user.getUserName()+"'";
+        }else{
+            if(user.getAvatar()!=null && !user.getAvatar().equals("")){
                 sql=" avatar='"+user.getAvatar()+"'";
-         }
+            }
 
-         if(user.getUserName()!=null && !user.getUserName().equals("")){
-             sql=" user_name='"+user.getUserName()+"'";
-         }
+            if(user.getUserName()!=null && !user.getUserName().equals("")){
+                sql=" user_name='"+user.getUserName()+"'";
+            }
+        }
 
 
 

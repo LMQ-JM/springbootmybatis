@@ -74,7 +74,7 @@ public interface CircleMapper {
      * @param sql
      * @return
      */
-    @Select("select COALESCE(count(*),0) from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 ${sql}")
+    @Select("select COALESCE(count(*),0) from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_user c on a.u_id=c.id where a.is_delete=1 ${sql}")
     Integer selectAllPostingCount(@Param("sql") String sql);
 
     /**

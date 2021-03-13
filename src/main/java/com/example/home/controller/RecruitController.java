@@ -3,6 +3,7 @@ package com.example.home.controller;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
+import com.example.home.entity.JobWanted;
 import com.example.home.service.IRecruitService;
 import com.example.home.vo.RecruitVo;
 import io.swagger.annotations.Api;
@@ -88,5 +89,18 @@ public class RecruitController {
         return iRecruitService.selectPostingBasedUserID(userId,paging);
     }
 
+
+    /**
+     *
+     * 添加求职期望
+     * @return
+     */
+    @ApiOperation(value = "添加求职期望",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/addJobExpectations")
+    public int addJobExpectations (JobWanted jobWanted)  {
+
+        return iRecruitService.addJobExpectations(jobWanted);
+    }
 
 }

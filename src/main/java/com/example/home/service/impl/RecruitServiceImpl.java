@@ -1,10 +1,11 @@
 package com.example.home.service.impl;
 
-import com.example.circle.entity.Circle;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
+import com.example.home.dao.JobWantedMapper;
 import com.example.home.dao.RecruitMapper;
+import com.example.home.entity.JobWanted;
 import com.example.home.entity.RecruitLabel;
 import com.example.home.service.IRecruitService;
 import com.example.home.vo.RecruitVo;
@@ -22,6 +23,9 @@ public class RecruitServiceImpl implements IRecruitService {
 
     @Autowired
     private RecruitMapper recruitMapper;
+
+    @Autowired
+    private JobWantedMapper jobWantedMapper;
 
 
     @Override
@@ -98,5 +102,15 @@ public class RecruitServiceImpl implements IRecruitService {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pag="limit "+page+","+paging.getLimit()+"";
         return recruitMapper.selectSignboardInformationByUserId(userId,pag);
+    }
+
+    @Override
+    public int addJobExpectations(JobWanted jobWanted) {
+        jobWanted.setCreateAt(System.currentTimeMillis()/1000+"");
+        int i = jobWantedMapper.addJobExpectations(jobWanted);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"添加求职期望失败！");
+        }
+        return i;
     }
 }

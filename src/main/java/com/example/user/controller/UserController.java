@@ -102,11 +102,10 @@ public class UserController {
         return i;
     }
 
-    @ApiOperation(value = "增加系统用户", notes = "成功返回成功")
+    @ApiOperation(value = "修改用户信息", notes = "成功返回成功")
     @ResponseBody
     @PostMapping("/updateUser")
     public int updateUser(User user) {
-        log.info(user.getUserName(),user.getId(),user.getAvatar());
         int i = iUserService.updateUser(user);
         return i;
     }
