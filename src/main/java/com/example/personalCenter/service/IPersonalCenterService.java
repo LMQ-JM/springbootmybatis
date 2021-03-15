@@ -6,6 +6,7 @@ import com.example.home.vo.HomeClassificationVo;
 import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
+import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.Param;
 
@@ -37,7 +38,7 @@ public interface IPersonalCenterService {
      * @param userId 用户id
      * @return
      */
-    List<HomeClassificationVo> queryFavoritePosts(@Param("userId") int userId);
+    List<HomeClassificationVo> queryFavoritePosts(@Param("userId") int userId,Paging paging);
 
     /**
      * 查询我发布的帖子
@@ -137,5 +138,20 @@ public interface IPersonalCenterService {
      * @return
      */
     List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int type, Paging paging);
+
+    /**
+     * 查询看过我的人
+     * @param userId 被看人用户id
+     * @param paging 分页
+     * @return
+     */
+    List<User> queryPeopleWhoHaveSeenMe(int userId, Paging paging);
+
+    /**
+     * 单独查询观看我的用户头像
+     * @param userId 被看人用户id
+     * @return
+     */
+    String[] queryViewMyUserProfileSeparately(int userId);
 }
 

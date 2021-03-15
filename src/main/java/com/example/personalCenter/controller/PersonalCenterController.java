@@ -9,6 +9,7 @@ import com.example.personalCenter.service.IPersonalCenterService;
 import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
+import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -62,11 +63,11 @@ public class PersonalCenterController {
     @ApiOperation(value = "查询我收藏的帖子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryFavoritePosts")
-    public List<HomeClassificationVo> queryFavoritePosts(int userId) {
+    public List<HomeClassificationVo> queryFavoritePosts(int userId,Paging paging) {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return iPersonalCenterService.queryFavoritePosts(userId);
+        return iPersonalCenterService.queryFavoritePosts(userId,paging);
     }
 
     @ApiOperation(value = "查询我发布过的帖子", notes = "成功返回数据 反则为空")
@@ -177,6 +178,26 @@ public class PersonalCenterController {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return iPersonalCenterService.queryCheckPostsBeenReadingPastMonth(userId,type,paging);
+    }
+
+    @ApiOperation(value ="查询看过我的人", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryPeopleWhoHaveSeenMe")
+    public List<User> queryPeopleWhoHaveSeenMe(int userId,Paging paging) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iPersonalCenterService.queryPeopleWhoHaveSeenMe(userId,paging);
+    }
+
+    @ApiOperation(value ="单独查询观看我的用户头像", notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryViewMyUserProfileSeparately")
+    public String[] queryViewMyUserProfileSeparately(int userId) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iPersonalCenterService.queryViewMyUserProfileSeparately(userId);
     }
 
 

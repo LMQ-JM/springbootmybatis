@@ -4,6 +4,7 @@ import com.example.circle.dao.AttentionMapper;
 import com.example.circle.dao.CircleGiveMapper;
 import com.example.circle.dao.CircleMapper;
 import com.example.circle.dao.CommentMapper;
+import com.example.circle.entity.Attention;
 import com.example.circle.entity.Img;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CommentUserVo;
@@ -15,6 +16,7 @@ import com.example.home.entity.Collection;
 import com.example.home.entity.*;
 import com.example.home.service.IHomeService;
 import com.example.home.vo.*;
+import com.example.personalCenter.dao.PersonalCenterMapper;
 import com.example.tags.dao.TagMapper;
 import com.example.tags.entity.Tag;
 import com.example.user.dao.UserMapper;
@@ -81,6 +83,9 @@ public class HomeServiceImpl implements IHomeService {
     @Autowired
     private TagMapper tagMapper;
 
+    @Autowired
+    private PersonalCenterMapper personalCenterMapper;
+
     @Override
     public List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
@@ -106,13 +111,23 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public Map<String,Object> querySearchRecords(int userId) {
+
         Map<String,Object> map=new HashMap<>(15);
+
+        List<TagVo> tagVoList=new ArrayList<>();
 
         //查询用户表所有数据
         List<User> users = userMapper.selectRandom();
 
         //从list集合随机冲去5条数据
         List<User> randomList = getRandomList(users, 5);
+
+        //查询出我关注的人
+        List<Attention> followList=personalCenterMapper.selectFollowByGid(userId);
+        //拿用户集合和我关注的人集合匹配id是有相等 如果相等就不要
+        List<User> collect2 = randomList.stream().filter(mapa -> followList.stream().anyMatch(map1 -> mapa.getId() != map1.getId())).collect(Collectors.toList());
+
+
 
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);
@@ -121,17 +136,49 @@ public class HomeServiceImpl implements IHomeService {
         List<SearchHistory> collect = searchHistories.stream().filter(distinctByKey1(s -> s.getHistoricalContent())).collect(Collectors.toList());
 
 
+        /**
+         * 查询前三名的圈子
+         */
+        //查询圈子一级标签
+        List<Tag> tags = tagMapper.selectResourcesAllTag(1);
+        for (int i=0;i<tags.size();i++){
+            TagVo tagVo=new TagVo();
+            int q = circleMapper.countPostsBasedTagIdCircle(tags.get(i).getId());
+            tagVo.setId(tags.get(i).getId());
+            tagVo.setTagName(tags.get(i).getTagName());
+            tagVo.setNum(q);
+            tagVoList.add(tagVo);
+        }
+
+        //前三个
+        List<TagVo> tagVoList1=new ArrayList<>();
+
+        //根据集合里面的对象字段排序
+        List<TagVo> collect1 = tagVoList.stream().sorted(Comparator.comparing(TagVo::getNum).reversed()).collect(Collectors.toList());
+        for (int i=0;i<collect1.size();i++){
+            int a=i+1;
+            collect1.get(i).setRanking("Top."+a);
+            //取前三个
+            tagVoList1.add(collect1.get(i));
+            if(i==2){
+                break;
+            }
+        }
+//-------------------------------------------------------------
+
         if(userId==0){
-            map.put("users",randomList);
+            map.put("users",collect2);
             map.put("searchHistories",collect);
+            map.put("collect1",tagVoList1);
             return map;
         }
 
 
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
         if(userTag==null){
-            map.put("users",randomList);
+            map.put("users",collect2);
             map.put("searchHistories",collect);
+            map.put("collect1",tagVoList1);
             return map;
         }
 
@@ -151,10 +198,12 @@ public class HomeServiceImpl implements IHomeService {
 
         //从list集合随机冲去5条数据
         List<User> randomList1 = getRandomList(users1, 5);
+        //拿用户集合和我关注的人集合匹配id是有相等 如果相等就不要
+        List<User> collect3 = randomList1.stream().filter(mapa -> followList.stream().anyMatch(map1 -> mapa.getId() != map1.getId())).collect(Collectors.toList());
 
         map.put("searchHistories",collect);
-        map.put("users",randomList1);
-
+        map.put("users",collect3);
+        map.put("collect1",tagVoList1);
         return map;
     }
 

@@ -10,6 +10,7 @@ import com.example.common.utils.SHA1Util;
 import com.example.home.dao.HomeMapper;
 import com.example.personalCenter.dao.PersonalCenterMapper;
 import com.example.user.dao.UserMapper;
+import com.example.user.dao.ViewingRecordMapper;
 import com.example.user.entity.AdminUser;
 import com.example.user.entity.LoginTag;
 import com.example.user.entity.User;
@@ -49,6 +50,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private PersonalCenterMapper personalCenterMapper;
+
+    @Autowired
+    private ViewingRecordMapper viewingRecordMapper;
 
     @Override
     public User wxLogin(String code,String userName,String avatar,String address,String sex) {
@@ -295,4 +299,30 @@ public class UserServiceImpl implements IUserService {
     public User selectUserById(int userId) {
         return userMapper.selectUserById(userId);
     }
+
+    @Override
+    public User ClickInterfaceHeadImageEnter(int bUserId, int gUserId) {
+
+        //如果是自己观看自己则不添加观看记录数据
+        if(bUserId==gUserId){
+            //查询用户信息
+            User user = userMapper.selectUserById(bUserId);
+            return user;
+        }
+
+
+        if(gUserId!=0){
+            int i = viewingRecordMapper.addViewingRecord(bUserId, gUserId, System.currentTimeMillis() / 1000 + "");
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+        }
+
+        //查询用户信息
+        User user = userMapper.selectUserById(bUserId);
+
+        return user;
+    }
+
+
 }

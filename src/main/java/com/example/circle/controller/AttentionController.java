@@ -5,6 +5,7 @@ import com.example.circle.service.IAttentionService;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.user.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,11 +70,11 @@ public class AttentionController {
     @ApiOperation(value = "查询我关注的人和关注人发的帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryPostsPeopleFollow")
-    public List<CircleClassificationVo> queryPostsPeopleFollow(int userId){
+    public List<CircleClassificationVo> queryPostsPeopleFollow(int userId, Paging paging){
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return iAttentionService.queryPostsPeopleFollow(userId);
+        return iAttentionService.queryPostsPeopleFollow(userId,paging);
     }
 
     /**

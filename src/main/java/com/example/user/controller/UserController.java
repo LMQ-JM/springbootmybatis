@@ -150,4 +150,15 @@ public class UserController {
         return iUserService.selectUserById(userId);
     }
 
+    @ApiOperation(value = "点击头像进入的接口", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/ClickInterfaceHeadImageEnter")
+    public User ClickInterfaceHeadImageEnter(int bUserId,int gUserId) {
+        if(bUserId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iUserService.ClickInterfaceHeadImageEnter(bUserId,gUserId);
+    }
+
+
 }

@@ -130,5 +130,7 @@ public interface UserMapper {
      */
     @Select("select * from tb_user where is_delete=1")
     List<User> selectRandom();
+
+
 }
 

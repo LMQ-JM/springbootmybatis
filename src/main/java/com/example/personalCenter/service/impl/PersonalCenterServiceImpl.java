@@ -20,6 +20,7 @@ import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
 import com.example.user.dao.UserMapper;
+import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
@@ -101,8 +102,10 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     }
 
     @Override
-    public List<HomeClassificationVo> queryFavoritePosts(int userId) {
-        List<HomeClassificationVo> homeClassificationVos = personalCenterMapper.queryFavoritePosts(userId);
+    public List<HomeClassificationVo> queryFavoritePosts(int userId,Paging paging) {
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+        List<HomeClassificationVo> homeClassificationVos = personalCenterMapper.queryFavoritePosts(userId,pag);
         return homeClassificationVos;
     }
 
@@ -263,13 +266,17 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         if(userTag!=null){
             JSONArray j= JSONArray.fromObject(userTag.getTab());
             List<LabelVo> list = JSONArray.toList(j, LabelVo.class);
+            int a=0;
             for (int i = 0; i < list.size(); i++) {
                 if(list.get(i).getChecked()=="true"){
+                    a++;
                     str.add(list.get(i).getTagName());
-                    if(i>2){
+                    if(a>2){
                         break;
                     }
                 }
+
+
             }
         }
         return str;
@@ -369,6 +376,32 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         }
 
         return null;
+    }
+
+    @Override
+    public List<User> queryPeopleWhoHaveSeenMe(int userId, Paging paging) {
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pag="limit "+page+","+paging.getLimit()+"";
+
+        //查询看过我的用户信息
+        List<User> users = personalCenterMapper.queryPeopleWhoHaveSeenMe(userId, pag);
+        return users;
+    }
+
+    @Override
+    public String[] queryViewMyUserProfileSeparately(int userId) {
+
+        Integer page=(1-1)*10;
+        String pag="limit "+page+","+10+"";
+
+        String[] string=new String[10];
+
+        //查询看过我的用户信息
+        List<User> users = personalCenterMapper.queryPeopleWhoHaveSeenMe(userId, pag);
+        for (int i=0;i<users.size();i++){
+            string[i]=users.get(i).getAvatar();
+        }
+        return string;
     }
 
 

@@ -9,6 +9,7 @@ import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.home.dao.HomeMapper;
 import com.example.home.vo.LabelVo;
 import com.example.user.dao.UserMapper;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author MQ
@@ -83,6 +85,8 @@ public class AttentionServiceImpl implements IAttentionService {
 
     @Override
     public List<User> queryAttentionPerson(int userId) {
+
+
         Map<String,Object> map=new HashMap<>(15);
 
         //查询我关注的人
@@ -100,13 +104,13 @@ public class AttentionServiceImpl implements IAttentionService {
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
         if(userTag==null){
             List<User> users = userMapper.selectRandom();
-            for (int i=0;i<users.size();i++){
-                if(users.get(i).getId()==userId){
-                    users.remove(i);
-                }
-            }
+
+            //筛选掉等于我的用户信息
+            List<User> collect = users.stream().filter(u -> u.getId() != userId).collect(Collectors.toList());
+
             //从list集合随机冲去5条数据
-            List<User> randomList = getRandomList(users, 5);
+            List<User> randomList = getRandomList(collect, 5);
+
             return  randomList;
         }
 
@@ -120,23 +124,26 @@ public class AttentionServiceImpl implements IAttentionService {
                 }
             }
         }
+
         //根据标签id多表联查出用户数据
         List<User> users = homeMapper.selectUserByTagOne(idArr);
-        for (int i=0;i<users.size();i++){
-            if(users.get(i).getId()==userId){
-                users.remove(i);
-            }
-        }
+
+        //筛选掉等于我的用户信息
+        List<User> collect = users.stream().filter(u -> u.getId() != userId).collect(Collectors.toList());
+
         //从list集合随机冲去5条数据
-        List<User> randomList = getRandomList(users, 5);
+        List<User> randomList = getRandomList(collect, 5);
 
         return randomList;
     }
 
     @Override
-    public List<CircleClassificationVo> queryPostsPeopleFollow(int userId) {
+    public List<CircleClassificationVo> queryPostsPeopleFollow(int userId, Paging paging) {
+
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String sql="limit "+page+","+paging.getLimit()+"";
         //查询我关注的人发的帖子
-        List<CircleClassificationVo> circleClassificationVos = attentionMapper.queryAttentionPerson(userId);
+        List<CircleClassificationVo> circleClassificationVos = attentionMapper.queryAttentionPerson(userId,sql);
         for (int i=0;i<circleClassificationVos.size();i++){
 
             //得到图片组

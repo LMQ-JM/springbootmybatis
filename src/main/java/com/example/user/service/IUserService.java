@@ -85,4 +85,12 @@ public interface IUserService {
      * @return
      */
     User selectUserById(int userId);
+
+    /**
+     * 点击头像进入的接口
+     * @param bUserId 被观看人id
+     * @param gUserId 观看人id
+     * @return
+     */
+    User ClickInterfaceHeadImageEnter(int bUserId,int gUserId);
 }

@@ -2,6 +2,7 @@ package com.example.circle.service;
 
 import com.example.circle.entity.Attention;
 import com.example.circle.vo.CircleClassificationVo;
+import com.example.common.utils.Paging;
 import com.example.user.entity.User;
 
 import java.util.List;
@@ -38,5 +39,5 @@ public interface IAttentionService {
      * @param userId
      * @return
      */
-    List<CircleClassificationVo> queryPostsPeopleFollow(int userId);
+    List<CircleClassificationVo> queryPostsPeopleFollow(int userId, Paging paging);
 }

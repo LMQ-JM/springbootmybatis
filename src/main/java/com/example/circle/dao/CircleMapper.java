@@ -98,6 +98,15 @@ public interface CircleMapper {
 
 
     /**
+     * 统计每个一级标签下面有多少个帖子
+     * @param id 一级标签id
+     * @return
+     */
+    @Select("select count(if(tags_one=${id},1,null)) from tb_circles  where is_delete=1")
+    int countPostsBasedTagIdCircle(@Param("id") int id);
+
+
+    /**
      * 根据圈子中二级标签id查询帖子
      * @param id 二级标签id
      * @param paging 分页

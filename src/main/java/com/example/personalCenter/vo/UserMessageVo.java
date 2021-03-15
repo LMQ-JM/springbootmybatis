@@ -17,7 +17,7 @@ public class UserMessageVo {
 	/**
 	 * 用户表名称
 	 */
-	private String  name ;
+	private String  name;
 
 	/**
 	 * 用户表头像

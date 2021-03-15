@@ -5,6 +5,7 @@ import com.example.circle.vo.CircleClassificationVo;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.UserMessageVo;
+import com.example.user.entity.User;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -67,8 +68,8 @@ public interface PersonalCenterMapper {
      */
     @Select("select a.id,d.id as uId,d.user_name,d.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId " +
             "from tb_resources a INNER JOIN tb_user d on a.u_id=d.id INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_user_collection c on a.id=c.t_id  " +
-            "where c.u_id=${userId} and a.is_delete=1 and c.is_delete=1")
-    List<HomeClassificationVo> queryFavoritePosts(@Param("userId") int userId);
+            "where c.u_id=${userId} and a.is_delete=1 and c.is_delete=1 ${paging}")
+    List<HomeClassificationVo> queryFavoritePosts(@Param("userId") int userId,@Param("paging") String paging);
 
 
     /**
@@ -77,7 +78,7 @@ public interface PersonalCenterMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1")
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 ${paging}")
     List<HomeClassificationVo> queryHavePostedPosts(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -86,7 +87,7 @@ public interface PersonalCenterMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1")
+    @Select("select a.content,a.id,c.id as uId,c.user_name,c.avatar,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.u_id=${userId} and a.is_delete=1 ${paging}")
     List<CircleClassificationVo> queryHavePostedCirclePosts(@Param("userId") int userId,@Param("paging") String paging);
 
     /**
@@ -105,7 +106,7 @@ public interface PersonalCenterMapper {
      * @return
      */
     @Select("SELECT r.id,r.tag_id, r.community_name, r.posters,COUNT(p.community_id) AS cnt FROM tb_community r" +
-            " inner JOIN tb_community_user p on r.id = p.community_id where r.user_id=${userId} and r.type=1 GROUP BY p.community_id")
+            " inner JOIN tb_community_user p on r.id = p.community_id where r.user_id=${userId} and r.type=1 GROUP BY p.community_id ${paging}")
     List<CircleVo> myCircleAndCircleJoined(@Param("userId") int userId,@Param("paging") String paging);
 
 
@@ -136,6 +137,16 @@ public interface PersonalCenterMapper {
     @Select("select b.*,c.id as uId,b.cover,c.avatar,c.user_name,d.tag_name,d.id as tagId from tb_browse a " +
             "INNER JOIN ${sql} b on a.zq_id=b.id INNER JOIN tb_user c on b.u_id=c.id " +
             "INNER JOIN tb_tags d on b.tags_two=d.id where UNIX_TIMESTAMP(DATE_SUB(FROM_UNIXTIME(unix_timestamp(now()),'%Y-%m-%d %H:%i:%s'), INTERVAL 30 DAY))<=a.create_at " +
-            "and a.u_id=${userId} and b.is_delete=1 and a.type=${type} ORDER BY a.create_at desc ${paging}")
+            "and a.u_id=${userId} and b.is_delete=1 and a.type=${type} GROUP BY a.zq_id ORDER BY a.create_at desc ${paging}")
     List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(@Param("userId")int userId, @Param("type")int type,@Param("sql")String sql,@Param("paging") String paging);
+
+    /**
+     * 查询观看我的人
+     * @param userId 被观看人id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select b.id,b.avatar,b.user_name,b.introduce from tb_viewing_record a INNER JOIN tb_user b on a.viewers_id=b.id where a.beholder_id=${userId} GROUP BY a.viewers_id ORDER BY a.create_at desc ${paging}")
+    List<User> queryPeopleWhoHaveSeenMe(@Param("userId") int userId,@Param("paging") String paging);
+
 }
