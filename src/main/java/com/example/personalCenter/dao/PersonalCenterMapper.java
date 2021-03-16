@@ -146,7 +146,15 @@ public interface PersonalCenterMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select b.id,b.avatar,b.user_name,b.introduce from tb_viewing_record a INNER JOIN tb_user b on a.viewers_id=b.id where a.beholder_id=${userId} GROUP BY a.viewers_id ORDER BY a.create_at desc ${paging}")
+    @Select("select b.id,b.avatar,b.user_name,b.introduce,a.create_at from (select DISTINCT * from tb_viewing_record  ORDER BY create_at desc) a INNER JOIN tb_user b on a.viewers_id=b.id where  a.beholder_id=${userId} GROUP BY a.viewers_id ORDER BY a.create_at desc ${paging}")
     List<User> queryPeopleWhoHaveSeenMe(@Param("userId") int userId,@Param("paging") String paging);
+
+    /**
+     * 查询观看我的人头像
+     * @param userId 被观看人id
+     * @return
+     */
+    @Select("select b.avatar from tb_viewing_record a INNER JOIN tb_user b on a.viewers_id=b.id where to_days(FROM_UNIXTIME(a.create_at)) = to_days(now()) and  a.beholder_id=260 GROUP BY a.viewers_id ORDER BY a.create_at desc limit 4")
+    String[] queryPeopleWhoHaveSeenMeAvatar(@Param("userId") int userId);
 
 }

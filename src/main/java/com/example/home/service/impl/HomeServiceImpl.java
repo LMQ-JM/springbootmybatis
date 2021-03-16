@@ -553,6 +553,9 @@ public class HomeServiceImpl implements IHomeService {
         }
 
          homeClassificationVos = homeMapper.selectPostByTagOne(idArr,sql);
+         if(homeClassificationVos==null || homeClassificationVos.size()==0){
+             return homeClassificationVos;
+         }
 
          //使用stream流筛选不等于当前用户id的数据
          List<HomeClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());

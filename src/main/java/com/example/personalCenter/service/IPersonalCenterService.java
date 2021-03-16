@@ -11,6 +11,7 @@ import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -152,6 +153,6 @@ public interface IPersonalCenterService {
      * @param userId 被看人用户id
      * @return
      */
-    String[] queryViewMyUserProfileSeparately(int userId);
+    Map<String,Object> queryViewMyUserProfileSeparately(int userId);
 }
 

@@ -312,6 +312,7 @@ public class UserServiceImpl implements IUserService {
 
 
         if(gUserId!=0){
+            System.out.println("个");
             int i = viewingRecordMapper.addViewingRecord(bUserId, gUserId, System.currentTimeMillis() / 1000 + "");
             if(i<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);

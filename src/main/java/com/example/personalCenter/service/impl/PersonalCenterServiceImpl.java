@@ -8,6 +8,7 @@ import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.DateUtils;
 import com.example.common.utils.Paging;
 import com.example.home.dao.HomeMapper;
 import com.example.home.dao.RecruitMapper;
@@ -29,7 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -385,23 +388,25 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
         //查询看过我的用户信息
         List<User> users = personalCenterMapper.queryPeopleWhoHaveSeenMe(userId, pag);
+        users.stream().forEach(u->{
+            //得到当前时间戳和过去时间戳比较相隔多少分钟或者多少小时或者都少天或者多少年
+            String time = DateUtils.getTime(u.getCreateAt());
+            u.setCreateAt(time);
+        });
         return users;
     }
 
     @Override
-    public String[] queryViewMyUserProfileSeparately(int userId) {
+    public Map<String,Object> queryViewMyUserProfileSeparately(int userId) {
+        Map<String,Object> map=new HashMap<>(15);
 
-        Integer page=(1-1)*10;
-        String pag="limit "+page+","+10+"";
-
-        String[] string=new String[10];
 
         //查询看过我的用户信息
-        List<User> users = personalCenterMapper.queryPeopleWhoHaveSeenMe(userId, pag);
-        for (int i=0;i<users.size();i++){
-            string[i]=users.get(i).getAvatar();
-        }
-        return string;
+        String[] strings = personalCenterMapper.queryPeopleWhoHaveSeenMeAvatar(userId);
+
+        map.put("string",strings);
+        map.put("usersSize",strings.length);
+        return map;
     }
 
 

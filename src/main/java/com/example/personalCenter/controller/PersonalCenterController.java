@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -193,7 +194,7 @@ public class PersonalCenterController {
     @ApiOperation(value ="单独查询观看我的用户头像", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryViewMyUserProfileSeparately")
-    public String[] queryViewMyUserProfileSeparately(int userId) {
+    public Map<String,Object> queryViewMyUserProfileSeparately(int userId) {
         if(userId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
