@@ -326,11 +326,14 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         String pag="limit "+page+","+paging.getLimit()+"";
 
         String sql="";
+        //资源
         if(type==0){
             sql=" tb_resources";
             List<CircleClassificationVo> circleClassificationVos = personalCenterMapper.queryCheckPostsBeenReadingPastMonth(userId, type, sql,pag);
             return circleClassificationVos;
         }
+
+        //圈子
         if(type==1){
             sql=" tb_circles";
             List<CircleClassificationVo> circles = personalCenterMapper.queryCheckPostsBeenReadingPastMonth(userId, type, sql,pag);

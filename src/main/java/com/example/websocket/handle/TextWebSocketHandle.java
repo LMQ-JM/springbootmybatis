@@ -34,7 +34,6 @@ public class TextWebSocketHandle extends SimpleChannelInboundHandler<TextWebSock
 
       try {
          msgInfo = JSONObject.parseObject(text, MsgInfo.class);
-         System.out.println(msgInfo.getType());
          if (msgInfo.getType() != 2) {
             log.info("收到一个非心跳消息");
          }

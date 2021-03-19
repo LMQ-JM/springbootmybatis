@@ -35,7 +35,8 @@ public class HeartWebSocketHandle extends SimpleChannelInboundHandler<MsgInfo> {
          }
 
          if (channel != null) {
-            log.info("收到心跳消息");
+            log.info("收到心跳消息,链接数{}",groupUtils.size());
+           // ctx.channel().writeAndFlush(new TextWebSocketFrame("收到心跳消息"));
             //接收到客户端给服务器的心跳消息 ping帧
             //服务器给客户端回一个心跳 pong帧
          }

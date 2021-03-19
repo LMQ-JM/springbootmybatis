@@ -16,10 +16,10 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Component
-public class NettyServer implements CommandLineRunner {
+public class NettyServer implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(NettyServer.class);
     /**
      * 创建主从线程池
@@ -57,9 +57,12 @@ public class NettyServer implements CommandLineRunner {
     @Autowired
     private TextWebSocketHandle textWebSocketHandle;
 
+    /*@Autowired
+    private OneChatWebSocketHandle oneChatWebSocketHandle;*/
 
 
-    private ChannelFuture init() {
+
+    private ChannelFuture init() throws InterruptedException {
 
         ServerBootstrap bootstrap = new ServerBootstrap();
 
@@ -74,7 +77,7 @@ public class NettyServer implements CommandLineRunner {
                         pipeline.addLast(new HttpObjectAggregator(512 * 1024));
                         pipeline.addLast(new WebSocketServerProtocolHandler("/game",null,true,65536 * 5));
                         pipeline.addLast(new ReadTimeoutHandler(60, TimeUnit.SECONDS)); // 如果60秒没发心跳 服务器会自动切断连接
-                        pipeline.addLast(new WriteTimeoutHandler(3,TimeUnit.SECONDS));
+                        pipeline.addLast(new WriteTimeoutHandler(3,TimeUnit.SECONDS)); //服务器回客户端的消息超过3秒  会断开
                         pipeline.addLast(new StringDecoder());
                         // 二进制文件加密传输
                         pipeline.addLast(new ObjectEncoder());
@@ -83,7 +86,7 @@ public class NettyServer implements CommandLineRunner {
                         pipeline.addLast(textWebSocketHandle);
                         pipeline.addLast(connectWebSocketHandle);
                         pipeline.addLast(heartWebSocketHandle);
-
+                       // pipeline.addLast(oneChatWebSocketHandle);
 
                         //文件
                         pipeline.addLast(fileWebSocketHandle);
@@ -115,6 +118,7 @@ public class NettyServer implements CommandLineRunner {
     /**
      * 销毁线程
      * 关闭连接
+     * 释放线程池资源
      */
     public void destory () {
         if (channel != null && channel.isActive()) {
@@ -123,9 +127,12 @@ public class NettyServer implements CommandLineRunner {
         MASTER_GROUP.shutdownGracefully();
         SLAVE_GROUP.shutdownGracefully();
     }
+
+
+    @SneakyThrows
     @Override
-    public void run(String... args) throws Exception {
-        ChannelFuture channelFuture = init();
+    public void run() {
+        ChannelFuture channelFuture=init();
         Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void run() {

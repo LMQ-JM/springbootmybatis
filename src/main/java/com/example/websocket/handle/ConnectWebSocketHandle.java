@@ -7,7 +7,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -50,7 +49,6 @@ public class ConnectWebSocketHandle extends SimpleChannelInboundHandler<MsgInfo>
 
    @Override
    protected void channelRead0(ChannelHandlerContext ctx, MsgInfo msgInfo) {
-      System.out.println(msgInfo.getType());
       if (msgInfo.getType() == 1) {
          //连接请求
          Channel channel = ctx.channel();
@@ -62,7 +60,6 @@ public class ConnectWebSocketHandle extends SimpleChannelInboundHandler<MsgInfo>
          groupUtils.put(cid,channel);
 
          log.info("握手成功--当前连接数：" + groupUtils.size());
-         ctx.channel().writeAndFlush(new TextWebSocketFrame("握手成功"));
       } else {
          //非握手请求，继续往后透传
          ctx.fireChannelRead(msgInfo);

@@ -37,6 +37,7 @@ public interface IPersonalCenterService {
     /**
      * 查询我收藏的帖子
      * @param userId 用户id
+     * @param paging 分页
      * @return
      */
     List<HomeClassificationVo> queryFavoritePosts(@Param("userId") int userId,Paging paging);
@@ -134,8 +135,9 @@ public interface IPersonalCenterService {
 
     /**
      * 查询我近一个月浏览过的帖子
-     * @param userId
-     * @param type
+     * @param userId 用户id
+     * @param type 0资源  1圈子
+     * @param paging 分页
      * @return
      */
     List<CircleClassificationVo> queryCheckPostsBeenReadingPastMonth(int userId, int type, Paging paging);
