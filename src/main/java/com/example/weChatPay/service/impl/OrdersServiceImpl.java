@@ -33,7 +33,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
     @Override
     public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body) throws Exception {
-
+        System.out.println("================="+openid);
         // 支付金额，单位：分，这边需要转成字符串类型，否则后面的签名会失败
         String payment =""+((price.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()));
         System.out.println(payment);
@@ -100,7 +100,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
         // MD5运算生成签名，这里是第一次签名，用于调用统一下单接口
         String mysign = PayUtil.sign(prestr, WeChatPayConfig.PATERNERKEY, "utf-8").toUpperCase();
-
+        System.out.println("第一次签名+="+mysign);
 
         // 拼接统一下单接口使用的xml数据，要将上一步生成的签名一起拼接进去
         String xml = "<xml>" + "<appid>" + WeChatPayConfig.appid + "</appid>" + "<body><![CDATA[" + body + "]]></body>"
@@ -113,6 +113,8 @@ public class OrdersServiceImpl implements IOrdersService {
 
         // 调用统一下单接口，并接受返回的结果
         String result = PayUtil.httpRequest(WeChatPayConfig.payUrl, "POST", xml);
+        System.out.println("======"+result);
+
 
         // 将解析结果存储在HashMap中
         Map map = PayUtil.doXMLParse(result);
@@ -124,8 +126,10 @@ public class OrdersServiceImpl implements IOrdersService {
         Map<String, Object> response = new HashMap<String, Object>();
         if (return_code == "SUCCESS" || return_code.equals(return_code)) {
             // 业务结果
-            // 返回的预付单信息
+            // 返回的预支付id
             String prepay_id = (String) map.get("prepay_id");
+
+
             response.put("nonceStr", nonceStr);
             response.put("package", "prepay_id=" + prepay_id);
 
@@ -143,6 +147,8 @@ public class OrdersServiceImpl implements IOrdersService {
 
             response.put("paySign", paySign);
             // 更新订单信息
+
+
             // 业务逻辑代码
         }
 
@@ -164,22 +170,31 @@ public class OrdersServiceImpl implements IOrdersService {
         String notityXml = sb.toString();
 
 
-
+        // 将解析结果存储在HashMap中
         Map map = PayUtil.doXMLParse(notityXml);
 
         String returnCode = (String) map.get("return_code");
         if ("SUCCESS".equals(returnCode)) {
             //验证签名是否正确
-            Map<String, String> validParams = PayUtil.paraFilter(map);  //回调验签时需要去除sign和空值参数
-            String validStr = PayUtil.createLinkString(validParams);//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-            String sign = PayUtil.sign(validStr, WeChatPayConfig.PATERNERKEY, "utf-8").toUpperCase();//拼装生成服务器端验证的签名
+            //回调验签时需要去除sign和空值参数
+            Map<String, String> validParams = PayUtil.paraFilter(map);
+
+            //把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
+            String validStr = PayUtil.createLinkString(validParams);
+
+            //拼装生成服务器端验证的签名
+            String sign = PayUtil.sign(validStr, WeChatPayConfig.PATERNERKEY, "utf-8").toUpperCase();
 
             // 验证签名是否正确
             if (sign.equals(map.get("sign"))) {
                 /** 此处添加自己的业务逻辑代码start **/
 
-                //String transaction_id = map.get("transaction_id").toString(); //微信支付交易号
-                //String out_trade_no = map.get("out_trade_no").toString(); //商户订单号
+                //微信支付交易号
+                //String transaction_id = map.get("transaction_id").toString();
+
+                //订单号
+                String out_trade_no = map.get("out_trade_no").toString();
+                System.out.println("订单号=="+out_trade_no);
                 // shoppingService.updateOrderStateByOrderId(map.get("out_trade_no").toString(), 12, map.get("transaction_id").toString());
                 /** 此处添加自己的业务逻辑代码end **/
 

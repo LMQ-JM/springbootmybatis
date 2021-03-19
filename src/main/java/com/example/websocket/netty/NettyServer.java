@@ -1,10 +1,7 @@
 package com.example.websocket.netty;
 
 
-import com.example.websocket.handle.ConnectWebSocketHandle;
-import com.example.websocket.handle.FileWebSocketHandle;
-import com.example.websocket.handle.HeartWebSocketHandle;
-import com.example.websocket.handle.TextWebSocketHandle;
+import com.example.websocket.handle.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -57,8 +54,8 @@ public class NettyServer implements Runnable {
     @Autowired
     private TextWebSocketHandle textWebSocketHandle;
 
-    /*@Autowired
-    private OneChatWebSocketHandle oneChatWebSocketHandle;*/
+    @Autowired
+    private OneChatWebSocketHandle oneChatWebSocketHandle;
 
 
 
@@ -86,7 +83,7 @@ public class NettyServer implements Runnable {
                         pipeline.addLast(textWebSocketHandle);
                         pipeline.addLast(connectWebSocketHandle);
                         pipeline.addLast(heartWebSocketHandle);
-                       // pipeline.addLast(oneChatWebSocketHandle);
+                        pipeline.addLast(oneChatWebSocketHandle);
 
                         //文件
                         pipeline.addLast(fileWebSocketHandle);

@@ -26,7 +26,6 @@ public class TextWebSocketHandle extends SimpleChannelInboundHandler<TextWebSock
    protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame textWebSocketFrame) {
 
       String text = textWebSocketFrame.text();
-
       //拿到channel对象
       Channel channel = ctx.channel();
 
@@ -42,7 +41,6 @@ public class TextWebSocketHandle extends SimpleChannelInboundHandler<TextWebSock
          log.info("消息类型转换错误");
          e.printStackTrace();
       }
-
       if (msgInfo != null && msgInfo.getType() > 0) {
          //符合协议，继续透传
          ctx.fireChannelRead(msgInfo);
