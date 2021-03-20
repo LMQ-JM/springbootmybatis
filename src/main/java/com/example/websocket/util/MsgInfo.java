@@ -16,15 +16,12 @@ public class MsgInfo {
      */
     private String msg;
 
-    /**
-     * 谁发的信息
-     */
-    private Long fromId;
+
 
     /**
      * 发给谁
      */
-    private Long toId;
+    private String toId;
 
     /**
      * 1--连接请求
@@ -48,7 +45,7 @@ public class MsgInfo {
     private Integer type;
 
     /**
-     * 设备id
+     * 谁发的信息
      */
     private String cid;
 
@@ -73,4 +70,9 @@ public class MsgInfo {
      * 发送Id的集合
      */
     private List<Long> toIdList;
+
+    /**
+     * 用户与用户之间的唯一标识
+     */
+    private long uniqueIdentification;
 }

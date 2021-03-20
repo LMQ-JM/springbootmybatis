@@ -86,6 +86,7 @@ public class HomeServiceImpl implements IHomeService {
     @Autowired
     private PersonalCenterMapper personalCenterMapper;
 
+
     @Override
     public List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
@@ -126,7 +127,6 @@ public class HomeServiceImpl implements IHomeService {
         List<Attention> followList=personalCenterMapper.selectFollowByGid(userId);
         //拿用户集合和我关注的人集合匹配id是有相等 如果相等就不要
         List<User> collect2 = randomList.stream().filter(mapa -> followList.stream().anyMatch(map1 -> mapa.getId() != map1.getId())).collect(Collectors.toList());
-
 
 
         //根据用户id查询历史记录
@@ -393,7 +393,6 @@ public class HomeServiceImpl implements IHomeService {
         }
         //如果发帖人不为空 ，根据发帖人查询帖子
         if(!userName.equals("undefined") && !userName.equals("")){
-            System.out.println("erw");
             sql+="and c.user_name like '%"+userName+"%'";
         }
 
@@ -415,7 +414,6 @@ public class HomeServiceImpl implements IHomeService {
         }
         String paging=" limit "+pages+","+limit+"";
         List<ResourcesLabelVo> resourcesLabelVos = homeMapper.selectResourcesAllPosting(sql, paging);
-        System.out.println(resourcesLabelVos.size());
         //根据不同条件得到不同帖子数量
         Integer integer = homeMapper.selectResourcesAllPostingCount(sql);
 
@@ -552,8 +550,8 @@ public class HomeServiceImpl implements IHomeService {
             }
         }
 
-         homeClassificationVos = homeMapper.selectPostByTagOne(idArr,sql);
-         if(homeClassificationVos==null || homeClassificationVos.size()==0){
+        List<HomeClassificationVo> homeClassificationVos1 = homeMapper.selectPostByTagOne(idArr, sql);
+        if(homeClassificationVos1==null || homeClassificationVos1.size()==0){
              return homeClassificationVos;
          }
 
@@ -595,7 +593,6 @@ public class HomeServiceImpl implements IHomeService {
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
-
 
         return i;
     }

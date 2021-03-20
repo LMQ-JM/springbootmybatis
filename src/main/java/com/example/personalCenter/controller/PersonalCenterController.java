@@ -24,7 +24,7 @@ import java.util.Map;
  * @author MQ
  * @date 2021/3/9 9:26
  */
-@Api(tags = "关注API")
+@Api(tags = "个人中心API")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @Slf4j

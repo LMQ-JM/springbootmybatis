@@ -1,6 +1,7 @@
 package com.example.message.service;
 
 import com.example.message.entity.ChatLogList;
+import com.example.message.entity.ChatRecord;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface IChatLogListService {
      * @param chatLogList 聊天列表对象
      * @return
      */
-    int addChatList( ChatLogList chatLogList);
+    long addChatList( ChatLogList chatLogList);
 
     /**
      * 查询聊天列表
@@ -23,4 +24,11 @@ public interface IChatLogListService {
      * @return
      */
     List<ChatLogList> queryChatList(int userId);
+
+    /**
+     * 根据用户唯一标识查询出用户与用户的聊天记录
+     * @param uniqueIdentification 唯一标识
+     * @return
+     */
+    List<ChatRecord> queryChattingRecords(long uniqueIdentification);
 }

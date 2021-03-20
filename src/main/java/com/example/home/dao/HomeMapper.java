@@ -44,7 +44,7 @@ public interface HomeMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select a.*,b.id as uId,b.avatar,b.user_name from tb_resources a INNER JOIN tb_user b on a.u_id=b.id " +
+    @Select("select a.*,b.id as uId,b.avatar,b.user_name,c.tag_name,c.id as tagId from tb_resources a INNER JOIN tb_user b on a.u_id=b.id INNER JOIN tb_tags c on a.tags_two=c.id " +
             " where a.tags_two=${id} and a.is_delete=1 ${sql} ${paging}")
     List<HomeClassificationVo> selectPostsByCommunityCategoryId(@Param("id") int id, @Param("paging") String paging,@Param("sql") String sql);
 

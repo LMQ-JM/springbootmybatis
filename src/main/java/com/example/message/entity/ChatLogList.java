@@ -38,6 +38,11 @@ public class ChatLogList {
     private String newestChatLog;
 
     /**
+     * 用户与用户之间的唯一标识
+     */
+    private long uniqueIdentification;
+
+    /**
      *创建时间
      */
     private String createAt;

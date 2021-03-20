@@ -3,6 +3,7 @@ package com.example.message.controller;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.message.entity.ChatLogList;
+import com.example.message.entity.ChatRecord;
 import com.example.message.service.IChatLogListService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,12 +35,13 @@ public class ChatLogListController {
     @ApiOperation(value = "添加聊天列表",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addChatList")
-    public int addChatList(ChatLogList chatLogList) {
+    public long addChatList(ChatLogList chatLogList) {
         if(chatLogList.getUserId()==0 || chatLogList.getDqUserId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"参数错误");
         }
+        long l = iChatLogListService.addChatList(chatLogList);
 
-        return iChatLogListService.addChatList(chatLogList);
+        return l;
     }
 
     /**
@@ -57,4 +59,22 @@ public class ChatLogListController {
 
         return iChatLogListService.queryChatList(userId);
     }
+
+
+    /**
+     *
+     * 根据用户唯一标识查询出用户与用户的聊天记录
+     * @return
+     */
+    @ApiOperation(value = "根据用户唯一标识查询出用户与用户的聊天记录",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryChattingRecords")
+    public List<ChatRecord> queryChattingRecords(long uniqueIdentification) {
+        if(uniqueIdentification==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"参数错误");
+        }
+
+        return iChatLogListService.queryChattingRecords(uniqueIdentification);
+    }
+
 }
