@@ -29,8 +29,7 @@ public class OrdersController {
     private IOrdersService iOrdersService;
 
     /**
-     *
-     * 微信浏览器内微信支付/公众号支付(JSAPI)
+     * 微信支付 （公众号支付(JSAPI)）
      * @return
      */
     @ApiOperation(value = "微信浏览器内微信支付/公众号支付(JSAPI)",notes = "成功返回数据 反则为空")

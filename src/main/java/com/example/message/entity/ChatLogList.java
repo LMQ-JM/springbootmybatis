@@ -40,7 +40,7 @@ public class ChatLogList {
     /**
      * 用户与用户之间的唯一标识
      */
-    private long uniqueIdentification;
+    private String uniqueIdentification;
 
     /**
      *创建时间

@@ -55,9 +55,9 @@ public class MsgInfo {
     private Long manyChatId;
 
     /**
-     * 1--文本
-     * 2--图片
-     * 3--音频
+     * 0--文本
+     * 1--图片
+     * 2--音频
      */
     private Integer msgType;
 

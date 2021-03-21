@@ -52,15 +52,21 @@ public class OneChatWebSocketHandle extends SimpleChannelInboundHandler<MsgInfo>
          chatRecord.setCreateAt(System.currentTimeMillis()/1000+"");
          chatRecord.setMCode(msgInfo.getUniqueIdentification());
          chatRecord.setMessage(msgInfo.getMsg());
+         chatRecord.setMessageType(msgInfo.getMsgType());
+
          int i = messageMapper.addMessage(chatRecord);
          if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"消息推送失败");
          }
 
-
+         if(channel==null){
+            log.info("对方不在线");
+         }
 
          if(channel!=null){
             log.info("发送消息");
+            //3代表 单聊和消息列表
+           // msgInfo.setType(3);
             channel.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(msgInfo)));
          }
 

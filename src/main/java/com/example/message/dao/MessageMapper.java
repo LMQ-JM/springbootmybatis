@@ -2,6 +2,9 @@ package com.example.message.dao;
 
 import com.example.message.entity.ChatLogList;
 import com.example.message.entity.ChatRecord;
+import com.example.message.vo.ChatRecordUserVo;
+import com.example.message.vo.ChatRecordVo;
+import com.example.message.vo.UsersVo;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -21,8 +24,17 @@ public interface MessageMapper {
      * @param userId 当前登录人id
      * @return
      */
-    @Select("select * from tb_chat_log_list where dq_user_id=${userId}")
+    @Select("select * from tb_chat_log_list where dq_user_id=${userId} or user_id=${userId}")
     List<ChatLogList> queryChatList(@Param("userId") int userId);
+
+    /**
+     * 查询我是否与这个用户聊过天或者他是否与我聊过天
+     * @param userId 当前登录人id
+     * @param id 被聊天人id
+     * @return
+     */
+    @Select("select * from tb_chat_log_list where (dq_user_id=${userId} and user_id=${id}) or (dq_user_id=${id} and user_id=${userId})")
+    List<ChatLogList> queryChatLists(@Param("userId") int userId,@Param("id") int id);
 
     /**+
      * 添加聊天列表
@@ -37,16 +49,16 @@ public interface MessageMapper {
      * @param uniqueIdentification 唯一标识
      * @return
      */
-    @Select("select message tb_chat_record where m_code=#{uniqueIdentification} order by create_at desc limit 1")
-    String queryNewestByUniqueIdentification(@Param("uniqueIdentification")long uniqueIdentification);
+    @Select("select message,message_type from tb_chat_record where m_code=${uniqueIdentification} order by create_at desc limit 1")
+    ChatRecordVo queryNewestByUniqueIdentification(@Param("uniqueIdentification")long uniqueIdentification);
 
     /**
      * 根据用户唯一标识查询出用户与用户的聊天记录
      * @param uniqueIdentification 唯一标识
      * @return
      */
-    @Select("select * from tb_chat_record where m_code=#{uniqueIdentification}")
-    List<ChatRecord> queryChattingRecords(@Param("uniqueIdentification") long uniqueIdentification);
+    @Select("select * from tb_chat_record where m_code=${uniqueIdentification}")
+    List<ChatRecordUserVo> queryChattingRecords(@Param("uniqueIdentification") long uniqueIdentification);
 
     /**
      * 添加消息
@@ -56,4 +68,12 @@ public interface MessageMapper {
     @Insert("insert into tb_chat_record(fuser_id,juser_id,message,message_type,create_at,read_unread,m_code)"
             + "values(${chatRecord.fUserId},${chatRecord.jUserId},#{chatRecord.message},${chatRecord.messageType},#{chatRecord.createAt},${chatRecord.readUnread},#{chatRecord.mCode})")
     int addMessage(@Param("chatRecord") ChatRecord chatRecord);
+
+    /**
+     * 查询双方聊天用户信息
+     * @param dqUserId 等钱登录id
+     * @return
+     */
+    @Select("select id, user_name,avatar from tb_user where id=${dqUserId}")
+    UsersVo queryUsersById( @Param("dqUserId") int dqUserId);
 }

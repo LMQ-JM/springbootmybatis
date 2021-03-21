@@ -5,8 +5,10 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.IdGenerator;
 import com.example.message.dao.MessageMapper;
 import com.example.message.entity.ChatLogList;
-import com.example.message.entity.ChatRecord;
 import com.example.message.service.IChatLogListService;
+import com.example.message.vo.ChatRecordUserVo;
+import com.example.message.vo.ChatRecordVo;
+import com.example.message.vo.UsersVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,10 @@ public class ChatLogListServiceImpl implements IChatLogListService {
     private IdGenerator idGenerator;
 
     @Override
-    public long addChatList(ChatLogList chatLogList) {
+    public String addChatList(ChatLogList chatLogList) {
 
         //查询是否存在数据库
-        List<ChatLogList> chatLogLists = messageMapper.queryChatList(chatLogList.getDqUserId());
+        List<ChatLogList> chatLogLists = messageMapper.queryChatLists(chatLogList.getDqUserId(),chatLogList.getUserId());
 
         //得到用户与用户之间的唯一标识
         long numberId = idGenerator.getNumberId();
@@ -41,7 +43,7 @@ public class ChatLogListServiceImpl implements IChatLogListService {
         //不存在则添加
         if(chatLogLists.size()==0 || chatLogLists==null){
 
-            chatLogList.setUniqueIdentification(numberId);
+            chatLogList.setUniqueIdentification(String.valueOf(numberId));
             chatLogList.setCreateAt(System.currentTimeMillis()/1000+"");
 
             //添加用户聊天列表
@@ -50,7 +52,8 @@ public class ChatLogListServiceImpl implements IChatLogListService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"添加聊天列表失败！");
             }
         }
-        return numberId;
+
+        return String.valueOf(numberId);
 
     }
 
@@ -58,18 +61,44 @@ public class ChatLogListServiceImpl implements IChatLogListService {
     public List<ChatLogList> queryChatList(int userId) {
 
         List<ChatLogList> chatLogLists = messageMapper.queryChatList(userId);
-        chatLogLists.stream().forEach(u->{
+        for (int i=0;i<chatLogLists.size();i++){
             //根据唯一标识去查询用户与用户最新的一条聊天记录
-            String s = messageMapper.queryNewestByUniqueIdentification(u.getUniqueIdentification());
-            u.setNewestChatLog(s);
-        });
+            ChatRecordVo chatRecordVo = messageMapper.queryNewestByUniqueIdentification(Long.valueOf(chatLogLists.get(i).getUniqueIdentification()));
+
+
+            if(chatRecordVo!=null) {
+                chatLogLists.get(i).setNewestChatLog(chatRecordVo.getMessage());
+
+                if (chatRecordVo.getMessageType() == 1) {
+                    chatLogLists.get(i).setNewestChatLog("[图片]");
+                }
+
+                if (chatRecordVo.getMessageType() == 2) {
+                    chatLogLists.get(i).setNewestChatLog("[视屏]");
+                }
+            }
+
+        }
+
 
         return chatLogLists;
     }
 
     @Override
-    public List<ChatRecord> queryChattingRecords(long uniqueIdentification) {
-        List<ChatRecord> chatRecords = messageMapper.queryChattingRecords(uniqueIdentification);
+    public List<ChatRecordUserVo> queryChattingRecords(long uniqueIdentification) {
+
+        //查询聊天记录
+        List<ChatRecordUserVo> chatRecords = messageMapper.queryChattingRecords(uniqueIdentification);
+
+        if(chatRecords.size()!=0){
+            chatRecords.stream().forEach(u->{
+                //得到双方用户信息
+                UsersVo usersVo = messageMapper.queryUsersById(u.getFUserId());
+
+                u.setUsersVo(usersVo);
+            });
+
+        }
 
         return chatRecords;
     }

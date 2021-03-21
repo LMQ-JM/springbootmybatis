@@ -20,7 +20,6 @@ import com.example.personalCenter.service.IPersonalCenterService;
 import com.example.personalCenter.vo.CircleVo;
 import com.example.personalCenter.vo.InquireFollowersLikesVo;
 import com.example.personalCenter.vo.UserMessageVo;
-import com.example.user.dao.UserMapper;
 import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import lombok.extern.slf4j.Slf4j;
@@ -61,9 +60,6 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
     @Autowired
     private RecruitMapper recruitMapper;
-
-    @Autowired
-    private UserMapper userMapper;
 
     @Override
     public InquireFollowersLikesVo queryInquireFollowersLikes(int userId) {
@@ -326,6 +322,7 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
         String pag="limit "+page+","+paging.getLimit()+"";
 
         String sql="";
+
         //资源
         if(type==0){
             sql=" tb_resources";
@@ -396,6 +393,7 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
             String time = DateUtils.getTime(u.getCreateAt());
             u.setCreateAt(time);
         });
+
         return users;
     }
 

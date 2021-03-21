@@ -125,9 +125,9 @@ public class HomeServiceImpl implements IHomeService {
 
         //查询出我关注的人
         List<Attention> followList=personalCenterMapper.selectFollowByGid(userId);
+
         //拿用户集合和我关注的人集合匹配id是有相等 如果相等就不要
         List<User> collect2 = randomList.stream().filter(mapa -> followList.stream().anyMatch(map1 -> mapa.getId() != map1.getId())).collect(Collectors.toList());
-
 
         //根据用户id查询历史记录
         List<SearchHistory> searchHistories = searchRecordMapper.selectSearchRecordByUserId(userId);
@@ -193,11 +193,13 @@ public class HomeServiceImpl implements IHomeService {
                 }
             }
         }
+
         //根据标签id多表联查出用户数据
         List<User> users1 = homeMapper.selectUserByTagOne(idArr);
 
         //从list集合随机冲去5条数据
         List<User> randomList1 = getRandomList(users1, 5);
+
         //拿用户集合和我关注的人集合匹配id是有相等 如果相等就不要
         List<User> collect3 = randomList1.stream().filter(mapa -> followList.stream().anyMatch(map1 -> mapa.getId() != map1.getId())).collect(Collectors.toList());
 
@@ -247,6 +249,7 @@ public class HomeServiceImpl implements IHomeService {
                 List<RecruitLabel> recruitLabels = recruitMapper.selectRecruitLabelById(recruits.get(i).getId());
                 recruits.get(i).setRecruitLabels(recruitLabels);
             }
+
             return recruits;
         }
 
@@ -258,15 +261,10 @@ public class HomeServiceImpl implements IHomeService {
     public List<HomeClassificationVo> selectPostsByCommunityCategoryId(int id, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pagings="limit "+page+","+paging.getLimit()+"";
+
         String str="order by a.create_at desc";
+
         List<HomeClassificationVo> resources = homeMapper.selectPostsByCommunityCategoryId(id, pagings,str);
-        /*for (int i=0;i<resources.size();i++){
-            //根据帖子id查询出当前帖子图片
-            String[] strings = homeMapper.selectImgByPostId(resources.get(i).getId());
-            resources.get(i).setImg(strings);
-        }*/
-
-
         return resources;
     }
 
@@ -281,6 +279,7 @@ public class HomeServiceImpl implements IHomeService {
         //根据圈子id查询这个圈子有哪些人参加了讨论
         String[] strings = communityMapper.selectCirclesAvatar(communityVo.getId());
         communityVo.setAvatar(strings);
+
         //得到用户圈子里面的讨论人数
         communityVo.setTotalNumberCircles(strings.length);
 
@@ -314,6 +313,7 @@ public class HomeServiceImpl implements IHomeService {
                 browse.setUId(userId);
                 browse.setZqId(id);
                 browse.setType(0);
+
                 //增加浏览记录
                 int i = browseMapper.addBrowse(browse);
                 if(i<=0){
@@ -334,6 +334,7 @@ public class HomeServiceImpl implements IHomeService {
                     browse.setUId(userId);
                     browse.setZqId(id);
                     browse.setType(0);
+
                     //增加浏览记录
                     int i = browseMapper.addBrowse(browse);
                     if(i<=0){
@@ -354,6 +355,7 @@ public class HomeServiceImpl implements IHomeService {
 
         //得到当前时间戳和过去时间戳比较相隔多少分钟或者多少小时或者都少天或者多少年
         String time = DateUtils.getTime(resourcesVo.getCreateAt());
+
         //根据帖子id查询出当前帖子图片
         String[] strings = homeMapper.selectImgByPostId(resourcesVo.getId());
         resourcesVo.setImg(strings);
@@ -367,11 +369,10 @@ public class HomeServiceImpl implements IHomeService {
         //得到浏览过人的头像
         String[] strings1 = browseMapper.selectBrowseAvatar(id);
         resourcesVo.setBrowseAvatar(strings1);
+
         //得到这个帖子的观看数量
         int browse = browseMapper.countPostNum(id);
         resourcesVo.setBrowse(browse);
-
-
 
         return resourcesVo;
     }
@@ -379,6 +380,7 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId) {
         List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRecommendedSecondaryTagId(id);
+
         //筛选掉等于当前用户id的数据
         List<HomeClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
         return collect;
@@ -387,10 +389,13 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public ReturnVo selectResourcesAllPosting(Resources resources, Integer page, Integer limit, String startTime, String endTime,String userName) throws Exception {
         String sql="";
+
         Integer pages=(page-1)*limit;
+
         if(!resources.getTitle().equals("undefined") && !resources.getTitle().equals("")){
             sql+=" and a.title like '%"+resources.getTitle()+"%'";
         }
+
         //如果发帖人不为空 ，根据发帖人查询帖子
         if(!userName.equals("undefined") && !userName.equals("")){
             sql+="and c.user_name like '%"+userName+"%'";
@@ -412,8 +417,11 @@ public class HomeServiceImpl implements IHomeService {
                 }
             }
         }
+
         String paging=" limit "+pages+","+limit+"";
+
         List<ResourcesLabelVo> resourcesLabelVos = homeMapper.selectResourcesAllPosting(sql, paging);
+
         //根据不同条件得到不同帖子数量
         Integer integer = homeMapper.selectResourcesAllPostingCount(sql);
 
@@ -521,8 +529,8 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public List<HomeClassificationVo> selectRecommendPost(int userId, Paging paging) {
         int page=(paging.getPage()-1)*paging.getLimit();
-
         String sql="limit "+page+","+paging.getLimit()+"";
+
         List<HomeClassificationVo> homeClassificationVos=null;
         //没有登录的情况下 随机给出数据
         if(userId==0){
@@ -556,18 +564,19 @@ public class HomeServiceImpl implements IHomeService {
          }
 
          //使用stream流筛选不等于当前用户id的数据
-         List<HomeClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
+         List<HomeClassificationVo> collect = homeClassificationVos1.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
 
         return collect;
     }
+
 
     @Override
     public int collectionPost(Collection collection) {
 
         collection.setCreateAt(System.currentTimeMillis()/1000+"");
+
         //查看是否有数据存在
         Collection collection1 = collectionMapper.selectCountWhether(collection.getUId(),collection.getTId());
-
 
         //如果不存在
         if(collection1==null){
@@ -626,53 +635,48 @@ public class HomeServiceImpl implements IHomeService {
                 return homeClassificationVos;
             }
 
-            //查询找货数据
+            //查询找人办事数据
             if(type==4){
                 List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
-            //查询找货数据
+            //查询发任务数据
             if(type==5){
                 List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
-            //查询找货数据
+            //查询介绍数据
             if(type==6){
                 List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
-            //查询找货数据
+            //查询开店问题数据
             if(type==7){
                 List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
-            //查询找货数据
+            //查询运营问题数据
             if(type==8){
                 List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
-            //查询找货数据
+            //查询技巧问题数据
             if(type==9){
                 List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
-            //查询找货数据
+            //查询提问数据
             if(type==10){
                 List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
                 return homeClassificationVos;
             }
 
-            //查询找货数据
-            if(type==11){
-                List<HomeClassificationVo> homeClassificationVos = homeMapper.queryPostByHaplontType(type,sql,tagId);
-                return homeClassificationVos;
-            }
 
         }
 
@@ -680,20 +684,23 @@ public class HomeServiceImpl implements IHomeService {
 
             List<CircleClassificationVo> circles=null;
 
+            //查询最新的数据
             if(type==1){
                 str="order by a.create_at desc";
                  circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
             }
 
+            //查询最热的数据
             if(type==2){
                 str="order by a.favour desc";
                  circles = circleMapper.selectPostsBasedTagIdCircleTwo(tagId, sql);
             }
-
+            //查询发任务数据
             if(type==5){
                  circles = circleMapper.queryPostByHaplontType(type,sql,tagId);
             }
 
+            //查询介绍数据
             if(type==6){
                  circles = circleMapper.queryPostByHaplontType(type,sql,tagId);
 

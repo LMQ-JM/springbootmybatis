@@ -44,6 +44,7 @@ public class RecruitServiceImpl implements IRecruitService {
 
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pag="limit "+page+","+paging.getLimit()+"";
+
         //查询全部
         if(typeId==0){
             List<RecruitVo> recruitVos = recruitMapper.selectAllRecruit(pag,orderBys);
@@ -88,6 +89,7 @@ public class RecruitServiceImpl implements IRecruitService {
     @Override
     public RecruitVo selectViewDetails(int id) {
         RecruitVo recruitVos = recruitMapper.selectViewDetails(id);
+
         //得到岗位要求标签组
         List<RecruitLabel> recruitLabels = recruitMapper.selectRecruitLabelById(recruitVos.getId());
         recruitVos.setRecruitLabels(recruitLabels);
@@ -107,6 +109,7 @@ public class RecruitServiceImpl implements IRecruitService {
     @Override
     public int addJobExpectations(JobWanted jobWanted) {
         jobWanted.setCreateAt(System.currentTimeMillis()/1000+"");
+
         int i = jobWantedMapper.addJobExpectations(jobWanted);
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"添加求职期望失败！");
