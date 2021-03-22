@@ -3,6 +3,7 @@ package com.example.message.controller;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.message.entity.ChatLogList;
+import com.example.message.entity.ChatRecord;
 import com.example.message.service.IChatLogListService;
 import com.example.message.vo.ChatRecordUserVo;
 import io.swagger.annotations.Api;
@@ -62,7 +63,6 @@ public class ChatLogListController {
 
 
     /**
-     *
      * 根据用户唯一标识查询出用户与用户的聊天记录
      * @return
      */
@@ -75,6 +75,20 @@ public class ChatLogListController {
         }
 
         return iChatLogListService.queryChattingRecords(uniqueIdentification);
+    }
+
+    /**
+     * 单聊
+     * @return
+     */
+    @ApiOperation(value = "单聊",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/singleChat")
+    public void singleChat(ChatRecord chatRecord) {
+        if(chatRecord.getFUserId()==0 || chatRecord.getJUserId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"参数错误");
+        }
+        iChatLogListService.singleChat(chatRecord);
     }
 
 }

@@ -5,10 +5,14 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.IdGenerator;
 import com.example.message.dao.MessageMapper;
 import com.example.message.entity.ChatLogList;
+import com.example.message.entity.ChatRecord;
 import com.example.message.service.IChatLogListService;
 import com.example.message.vo.ChatRecordUserVo;
 import com.example.message.vo.ChatRecordVo;
 import com.example.message.vo.UsersVo;
+import io.goeasy.GoEasy;
+import io.goeasy.publish.GoEasyError;
+import io.goeasy.publish.PublishListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,6 +105,27 @@ public class ChatLogListServiceImpl implements IChatLogListService {
         }
 
         return chatRecords;
+    }
+
+    @Override
+    public void singleChat(ChatRecord chatRecord) {
+
+        GoEasy goEasy = new GoEasy("http://rest-hangzhou.goeasy.io","BC-1f464ed03b514029aa7e541bd6d572a1");
+        goEasy.publish("my_channel"+chatRecord.getFUserId(), chatRecord.getMessage(),new PublishListener(){
+            @Override
+            public void onSuccess() {
+                int i = messageMapper.addMessage(chatRecord);
+                if(i<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"消息推送失败");
+                }
+            }
+
+            @Override
+            public void onFailed(GoEasyError error) {
+                System.out.println("发送失败");
+                System.out.println("Publish failed "+error.getCode()+":"+error.getContent());
+            }
+        });
     }
 
 

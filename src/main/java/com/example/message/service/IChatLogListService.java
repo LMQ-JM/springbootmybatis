@@ -1,6 +1,7 @@
 package com.example.message.service;
 
 import com.example.message.entity.ChatLogList;
+import com.example.message.entity.ChatRecord;
 import com.example.message.vo.ChatRecordUserVo;
 
 import java.util.List;
@@ -31,4 +32,10 @@ public interface IChatLogListService {
      * @return
      */
     List<ChatRecordUserVo> queryChattingRecords(long uniqueIdentification);
+
+    /**
+     * 单聊
+     * @param chatRecord
+     */
+    void singleChat(ChatRecord chatRecord);
 }

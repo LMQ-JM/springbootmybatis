@@ -6,7 +6,6 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.message.dao.MessageMapper;
 import com.example.message.entity.ChatRecord;
-import com.example.user.dao.UserMapper;
 import com.example.websocket.util.GroupUtils;
 import com.example.websocket.util.MsgInfo;
 import io.netty.channel.Channel;
@@ -35,8 +34,6 @@ public class OneChatWebSocketHandle extends SimpleChannelInboundHandler<MsgInfo>
    @Autowired
    private MessageMapper messageMapper;
 
-   @Autowired
-   private UserMapper userMapper;
 
    @Override
    protected void channelRead0(ChannelHandlerContext ctx, MsgInfo msgInfo){
