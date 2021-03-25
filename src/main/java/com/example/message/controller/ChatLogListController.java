@@ -3,9 +3,9 @@ package com.example.message.controller;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.message.entity.ChatLogList;
-import com.example.message.entity.ChatRecord;
 import com.example.message.service.IChatLogListService;
 import com.example.message.vo.ChatRecordUserVo;
+import com.example.message.vo.UsersVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -73,22 +73,21 @@ public class ChatLogListController {
         if(uniqueIdentification==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"参数错误");
         }
-
         return iChatLogListService.queryChattingRecords(uniqueIdentification);
     }
 
     /**
-     * 单聊
+     * 根据用户id查询用户信息
      * @return
      */
-    @ApiOperation(value = "单聊",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据用户id查询用户信息",notes = "成功返回数据 反则为空")
     @ResponseBody
-    @PostMapping("/singleChat")
-    public void singleChat(ChatRecord chatRecord) {
-        if(chatRecord.getFUserId()==0 || chatRecord.getJUserId()==0){
+    @PostMapping("/QueryUserInformationBasedUserId")
+    public UsersVo QueryUserInformationBasedUserId(int id) {
+        if(id==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"参数错误");
         }
-        iChatLogListService.singleChat(chatRecord);
+       return iChatLogListService.QueryUserInformationBasedUserId(id);
     }
 
 }

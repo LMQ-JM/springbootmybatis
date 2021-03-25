@@ -5,14 +5,12 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.IdGenerator;
 import com.example.message.dao.MessageMapper;
 import com.example.message.entity.ChatLogList;
-import com.example.message.entity.ChatRecord;
 import com.example.message.service.IChatLogListService;
 import com.example.message.vo.ChatRecordUserVo;
 import com.example.message.vo.ChatRecordVo;
 import com.example.message.vo.UsersVo;
-import io.goeasy.GoEasy;
-import io.goeasy.publish.GoEasyError;
-import io.goeasy.publish.PublishListener;
+import com.example.user.dao.UserMapper;
+import com.example.user.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +32,9 @@ public class ChatLogListServiceImpl implements IChatLogListService {
 
     @Autowired
     private IdGenerator idGenerator;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public String addChatList(ChatLogList chatLogList) {
@@ -98,16 +99,26 @@ public class ChatLogListServiceImpl implements IChatLogListService {
             chatRecords.stream().forEach(u->{
                 //得到双方用户信息
                 UsersVo usersVo = messageMapper.queryUsersById(u.getFUserId());
-
                 u.setUsersVo(usersVo);
             });
-
         }
 
         return chatRecords;
     }
 
     @Override
+    public UsersVo QueryUserInformationBasedUserId(int id) {
+        User user = userMapper.selectUserById(id);
+
+        UsersVo usersVo=new UsersVo();
+        usersVo.setAvatar(user.getAvatar());
+        usersVo.setId(user.getId());
+        usersVo.setUserName(user.getUserName());
+
+        return usersVo;
+    }
+
+    /*@Override
     public void singleChat(ChatRecord chatRecord) {
 
         GoEasy goEasy = new GoEasy("http://rest-hangzhou.goeasy.io","BC-1f464ed03b514029aa7e541bd6d572a1");
@@ -126,7 +137,7 @@ public class ChatLogListServiceImpl implements IChatLogListService {
                 System.out.println("Publish failed "+error.getCode()+":"+error.getContent());
             }
         });
-    }
+    }*/
 
 
 }

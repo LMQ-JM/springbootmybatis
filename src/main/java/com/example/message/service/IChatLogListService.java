@@ -1,8 +1,8 @@
 package com.example.message.service;
 
 import com.example.message.entity.ChatLogList;
-import com.example.message.entity.ChatRecord;
 import com.example.message.vo.ChatRecordUserVo;
+import com.example.message.vo.UsersVo;
 
 import java.util.List;
 
@@ -34,8 +34,9 @@ public interface IChatLogListService {
     List<ChatRecordUserVo> queryChattingRecords(long uniqueIdentification);
 
     /**
-     * 单聊
-     * @param chatRecord
+     * 根据用户id查询用户信息
+     * @param id 用户id
+     * @return
      */
-    void singleChat(ChatRecord chatRecord);
+    UsersVo QueryUserInformationBasedUserId(int id);
 }

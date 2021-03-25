@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -43,11 +42,4 @@ public class OrdersController {
         return iOrdersService.orders(openid,request,price,body);
     }
 
-
-    @ApiOperation(value = "微信支付回调",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/WeChatNotify")
-    public void WeChatNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-    }
 }

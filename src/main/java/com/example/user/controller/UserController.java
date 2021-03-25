@@ -87,7 +87,7 @@ public class UserController {
     @ApiOperation(value = "得到图片地址", notes = "得到图片地址")
     @ResponseBody
     @PostMapping("/getImgAddress")
-    public ReturnVo getImgAddress(@RequestParam("files") MultipartFile file) {
+    public ReturnVo getImgAddress(@RequestParam("files") MultipartFile file) throws Exception {
         List<String> upload = this.upload.upload(file);
         ReturnVo returnVo=new ReturnVo();
         returnVo.setList(upload.get(0));

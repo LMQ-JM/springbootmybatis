@@ -13,10 +13,7 @@ import com.example.circle.vo.CircleLabelVo;
 import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
-import com.example.common.utils.FfmpegUtil;
-import com.example.common.utils.Paging;
-import com.example.common.utils.ReturnVo;
-import com.example.common.utils.TimeUtil;
+import com.example.common.utils.*;
 import com.example.home.dao.BrowseMapper;
 import com.example.home.dao.CommunityMapper;
 import com.example.home.dao.HaplontMapper;
@@ -354,6 +351,12 @@ public class CircleServiceImpl implements ICircleService {
 
     @Override
     public void issueResourceOrCircle(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception {
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(circle.getContent(), token);
+        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
 
         //资源帖子
         if(postType==0){

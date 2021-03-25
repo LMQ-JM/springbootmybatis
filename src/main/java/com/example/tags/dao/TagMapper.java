@@ -1,6 +1,7 @@
 package com.example.tags.dao;
 
 import com.example.tags.entity.Tag;
+import com.example.tags.vo.TagsVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
@@ -50,5 +51,20 @@ public interface TagMapper {
      */
     @Select("select t_id from tb_tags where id=${id} and is_delete=1")
     int queryLabelAccordingSecondaryId(@Param("id") int id);
+
+    /**
+     * 根据二级标签组查询每个标签发过多少个帖子
+     * @param list 标签id组
+     * @param tableName 表名
+     * @return
+     */
+    @Select({"<script>" +
+            "select count(*) as num,b.id,b.tag_name,b.img_url from ${tableName} a right JOIN tb_tags b on a.tags_two=b.id " +
+                    " WHERE a.tags_two in " +
+                    "<foreach item = 'item' index = 'index' collection = 'list' open='(' separator=',' close=')'>" +
+                    "${item}" +
+                    "</foreach> GROUP BY a.tags_two"+
+            "</script>"})
+    List<TagsVo> selectTagsNum(@Param("list") List<Integer> list,@Param("tableName") String tableName);
 
 }

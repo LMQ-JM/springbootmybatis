@@ -147,8 +147,8 @@ public class HomeController {
     @ApiOperation(value = "根据二级标签id查询推荐的数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectRecommendedSecondaryTagId")
-    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId)  {
-        return iHomeService.selectRecommendedSecondaryTagId(id,userId);
+    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId,int tid)  {
+        return iHomeService.selectRecommendedSecondaryTagId(id,userId,tid);
     }
 
 
@@ -219,7 +219,7 @@ public class HomeController {
     @ApiOperation(value = "文件上传", notes = "文件上传")
     @ResponseBody
     @PostMapping("/uploadFile")
-    public List<String> uploadFile(@RequestParam("files") MultipartFile file) {
+    public List<String> uploadFile(@RequestParam("files") MultipartFile file) throws Exception {
         return this.upload.upload(file);
     }
 

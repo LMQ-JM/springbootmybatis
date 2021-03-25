@@ -196,7 +196,10 @@ public class HomeServiceImpl implements IHomeService {
 
         //根据标签id多表联查出用户数据
         List<User> users1 = homeMapper.selectUserByTagOne(idArr);
-
+        if(users1==null || users1.size()==0){
+            //查询用户表所有数据
+             users1 = userMapper.selectRandom();
+        }
         //从list集合随机冲去5条数据
         List<User> randomList1 = getRandomList(users1, 5);
 
@@ -365,7 +368,6 @@ public class HomeServiceImpl implements IHomeService {
         int i = collectionMapper.selectCollectNumber(id);
         resourcesVo.setCollect(i);
 
-
         //得到浏览过人的头像
         String[] strings1 = browseMapper.selectBrowseAvatar(id);
         resourcesVo.setBrowseAvatar(strings1);
@@ -378,11 +380,13 @@ public class HomeServiceImpl implements IHomeService {
     }
 
     @Override
-    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId) {
+    public List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId,int tid) {
         List<HomeClassificationVo> homeClassificationVos = homeMapper.selectRecommendedSecondaryTagId(id);
 
         //筛选掉等于当前用户id的数据
-        List<HomeClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
+        //筛选掉当前点进来的帖子是一样的就干掉
+        List<HomeClassificationVo> collect = homeClassificationVos.stream().filter(u -> u.getUId() != userId).filter(a-> a.getId()!=tid).collect(Collectors.toList());
+
         return collect;
     }
 
@@ -469,12 +473,19 @@ public class HomeServiceImpl implements IHomeService {
             }
         }
 
-
         return 1;
     }
 
     @Override
     public void issueResourceOrCircle(Resources resources, String imgUrl, int postType, int whetherCover) throws Exception {
+
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(resources.getTitle(), token);
+        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+           throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
 
         //资源帖子
         if(postType==0){
@@ -535,7 +546,7 @@ public class HomeServiceImpl implements IHomeService {
         //没有登录的情况下 随机给出数据
         if(userId==0){
             //查询出浏览量最多的帖子
-             homeClassificationVos = homeMapper.selectRandom(sql);
+            homeClassificationVos = homeMapper.selectRandom(sql);
             return homeClassificationVos;
         }
 

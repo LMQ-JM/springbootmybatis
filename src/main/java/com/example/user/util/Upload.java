@@ -2,6 +2,7 @@ package com.example.user.util;
 
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.FfmpegUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +29,15 @@ public class Upload {
     }
 
     Path path=null;
-    public synchronized List<String> upload(MultipartFile files){
+    public synchronized List<String> upload(MultipartFile files) throws Exception {
+
+        //得到存入数据库的token
+        String token = ConstantUtil.getToken();
+        String checkImg = ConstantUtil.checkImg(files, token);
+        if(checkImg=="87014" || checkImg.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"图片违规!");
+        }
+
         String modeFiles=null;
             String modeFile=null;
             String times="";

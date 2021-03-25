@@ -2,6 +2,7 @@ package com.example.tags.controller;
 
 import com.example.tags.entity.Tag;
 import com.example.tags.service.ITagService;
+import com.example.tags.vo.TagsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +47,9 @@ public class TagController {
     @ApiOperation(value = "根据一级标签id查询二级标签",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectResourcesAllTags")
-    public List<Tag> selectResourcesAllTags(int tid) {
-        List<Tag> tags = iTagService.selectResourcesAllTags(tid);
+    public List<TagsVo> selectResourcesAllTags(int tid) {
+        List<TagsVo> tags = iTagService.selectResourcesAllTags(tid);
+
         return tags;
     }
 

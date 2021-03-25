@@ -77,7 +77,7 @@ public interface IHomeService {
      * @param id
      * @return
      */
-    List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId);
+    List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId,int tid);
 
     /**
      * 插叙所有资源数据
