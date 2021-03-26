@@ -44,5 +44,10 @@ public class Tag {
      */
     private String imgUrl;
 
+    /**
+     * 这个标签发帖数量
+     */
+    private int num;
+
 
 }

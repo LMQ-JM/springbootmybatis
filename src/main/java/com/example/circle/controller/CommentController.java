@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class CommentController {
     @ApiOperation(value = "添加评论",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addComment")
-    public int addComment(Comment comment){
+    public int addComment(Comment comment) throws ParseException {
         if(comment.getPId()==0 || comment.getBId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
@@ -52,8 +53,7 @@ public class CommentController {
     @ApiOperation(value = "添加二级评论",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addSecondLevelComment")
-    public int addSecondLevelComment(PostReply postReply){
-        System.out.println("===="+postReply.getHContent());
+    public int addSecondLevelComment(PostReply postReply) throws ParseException {
         if(postReply.getBhId()==0 || postReply.getHId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }

@@ -471,6 +471,13 @@ public class CircleServiceImpl implements ICircleService {
 
     @Override
     public void internalRelease(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception {
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(circle.getContent(), token);
+        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
 
         if(circle.getHaplontType()==100) {
             circle.setHaplontType(0);

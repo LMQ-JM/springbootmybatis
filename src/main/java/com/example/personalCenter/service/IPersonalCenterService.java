@@ -10,6 +10,7 @@ import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.Param;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public interface IPersonalCenterService {
      * @param userId 用户id
      * @return
      */
-    int updateUserDataByIntroduction(String introduction,int userId);
+    int updateUserDataByIntroduction(String introduction,int userId) throws ParseException;
 
     /**
      * 修改用户地址
@@ -99,7 +100,7 @@ public interface IPersonalCenterService {
      * @param userId 用户id
      * @return
      */
-    int updateUserName(String name, int userId);
+    int updateUserName(String name, int userId) throws ParseException;
 
     /**
      * 修改性别

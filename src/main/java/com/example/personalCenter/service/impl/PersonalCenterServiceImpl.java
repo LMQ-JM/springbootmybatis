@@ -8,6 +8,7 @@ import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.DateUtils;
 import com.example.common.utils.Paging;
 import com.example.home.dao.HomeMapper;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +179,14 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     }
 
     @Override
-    public int updateUserDataByIntroduction(String introduction, int id) {
+    public int updateUserDataByIntroduction(String introduction, int id) throws ParseException {
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(introduction, token);
+        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
         String sql=" introduce='"+introduction+"'";
 
         int i=personalCenterMapper.updateUserMessage(sql,id);
@@ -234,7 +243,14 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     }
 
     @Override
-    public int updateUserName(String name, int id) {
+    public int updateUserName(String name, int id) throws ParseException {
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(name, token);
+        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
         String sql=" user_name='"+name+"'";
 
         int updateUserMessage = personalCenterMapper.updateUserMessage(sql, id);

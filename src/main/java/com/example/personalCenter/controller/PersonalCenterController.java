@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +98,7 @@ public class PersonalCenterController {
     @ApiOperation(value = "修改单个介绍", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/updateUserDataByIntroduction")
-    public int updateUserDataByIntroduction(String introduction,int userId) {
+    public int updateUserDataByIntroduction(String introduction,int userId) throws ParseException {
         int i=iPersonalCenterService.updateUserDataByIntroduction(introduction,userId);
         return i;
     }
@@ -140,7 +141,7 @@ public class PersonalCenterController {
     @ApiOperation(value = "修改用户名称", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/updateUserName")
-    public int updateUserName(String name, int userId) {
+    public int updateUserName(String name, int userId) throws ParseException {
         int updateUserMessage = iPersonalCenterService.updateUserName(name, userId);
         return updateUserMessage;
     }

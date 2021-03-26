@@ -102,7 +102,7 @@ public interface CircleMapper {
      * @param id 一级标签id
      * @return
      */
-    @Select("select count(if(tags_one=${id},1,null)) from tb_circles  where is_delete=1")
+    @Select("select count(if(tags_two=${id},1,null)) from tb_resources  where is_delete=1")
     int countPostsBasedTagIdCircle(@Param("id") int id);
 
 

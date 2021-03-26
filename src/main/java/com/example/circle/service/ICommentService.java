@@ -5,6 +5,7 @@ import com.example.circle.entity.CommentGive;
 import com.example.circle.entity.PostReply;
 import com.example.circle.vo.CommentReplyVo;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -18,14 +19,14 @@ public interface ICommentService {
      * @param comment
      * @return
      */
-    int addComment(Comment comment);
+    int addComment(Comment comment) throws ParseException;
 
     /**
      * 添加二级评论
      * @param postReply 二级评论对象
      * @return
      */
-    int addSecondLevelComment(PostReply postReply);
+    int addSecondLevelComment(PostReply postReply) throws ParseException;
 
     /**
      * 查询评论

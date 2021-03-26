@@ -1,7 +1,6 @@
 package com.example.tags.service;
 
 import com.example.tags.entity.Tag;
-import com.example.tags.vo.TagsVo;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ public interface ITagService {
      * @param tid 一级标签id
      * @return
      */
-    List<TagsVo> selectResourcesAllTags(int tid);
+    List<Tag> selectResourcesAllTags(int tid);
 
 
 }

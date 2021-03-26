@@ -139,8 +139,8 @@ public class HomeServiceImpl implements IHomeService {
         /**
          * 查询前三名的圈子
          */
-        //查询圈子一级标签
-        List<Tag> tags = tagMapper.selectResourcesAllTag(1);
+        //查询圈子二级标签
+        List<Tag> tags = tagMapper.queryCorrespondingSecondaryLabel(0);
         for (int i=0;i<tags.size();i++){
             TagVo tagVo=new TagVo();
             int q = circleMapper.countPostsBasedTagIdCircle(tags.get(i).getId());
@@ -235,7 +235,7 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public List<Tag> selectFirstLevelLabelResource() {
-        return tagMapper.selectFirstLevelLabelResource(0);
+        return tagMapper.selectResourcesAllTag(0);
     }
 
     @Override

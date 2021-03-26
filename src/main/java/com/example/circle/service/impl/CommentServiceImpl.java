@@ -10,12 +10,14 @@ import com.example.circle.vo.CommentReplyVo;
 import com.example.circle.vo.PostReplyVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.ConstantUtil;
 import com.example.user.dao.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -37,7 +39,15 @@ public class CommentServiceImpl implements ICommentService {
     private UserMapper userMapper;
 
     @Override
-    public int addComment(Comment comment) {
+    public int addComment(Comment comment) throws ParseException {
+
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(comment.getCommentContent(), token);
+        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
         comment.setCreateAt(System.currentTimeMillis()/1000+"");
         comment.setGiveStatus(0);
         //添加评论
@@ -49,9 +59,17 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public int addSecondLevelComment(PostReply postReply) {
+    public int addSecondLevelComment(PostReply postReply) throws ParseException {
         postReply.setCreateAt(System.currentTimeMillis()/1000+"");
         postReply.setReplyGiveStatus(0);
+
+
+        //获取token
+        String token = ConstantUtil.getToken();
+        String identifyTextContent = ConstantUtil.identifyText(postReply.getHContent(), token);
+        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
 
         //添加二级评论
         int i = postReplyMapper.addSecondLevelComment(postReply);

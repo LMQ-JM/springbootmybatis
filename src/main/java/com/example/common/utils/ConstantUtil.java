@@ -78,7 +78,6 @@ public class ConstantUtil {
 	    public static String getToken(){
 	    	 String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx6f3fbf1454d85747"+"&secret=3d39711670edf5003814761764f0c350";
 	         String wxJson = new RestTemplate().getForEntity(url, String.class).getBody();
-	         System.out.println("access-token响应: {}"+wxJson);
 	         JSONObject jsonObject = JSON.parseObject(wxJson);
 	         Object accessTokenObj = jsonObject.get("access_token");
 	         String token=accessTokenObj.toString().split(",")[0].split(":")[0];
@@ -117,6 +116,8 @@ public class ConstantUtil {
 	             String result = EntityUtils.toString(entity,"utf-8");
 	             //将响应结果变成json
 	             JSONObject resultJsonObject = JSONObject.parseObject(result, JSONObject.class);
+				 System.out.println(resultJsonObject);
+
 	             //根据key得到值
 	             returnedValue =String.valueOf(resultJsonObject.get("errcode")) ;
 
