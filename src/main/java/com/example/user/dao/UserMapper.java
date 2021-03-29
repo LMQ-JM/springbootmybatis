@@ -30,7 +30,7 @@ public interface UserMapper {
      * @param paging 分页
      * @return
      */
-    @Select("select id,user_name,user_sex,avatar,create_at,m_code  from tb_user where is_delete=1 ${sql} order by create_at desc ${paging}")
+    @Select("select id,user_name,user_sex,avatar,create_at,m_code,is_delete  from tb_user  ${sql} order by create_at desc ${paging}")
     List<User> queryAllUserForSql(@Param("sql")String sql, @Param("paging")String paging);
 
     /**
@@ -130,6 +130,15 @@ public interface UserMapper {
      */
     @Select("select * from tb_user where is_delete=1")
     List<User> selectRandom();
+
+    /**
+     * 封号
+     * @param userId 用户id
+     * @param status 状态
+     * @return
+     */
+    @Update("update tb_user set is_delete=${status} where id=${userId}")
+    int sealUserNumber(@Param("userId") int userId,@Param("status") int status);
 
 
 }

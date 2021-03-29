@@ -1,9 +1,11 @@
 package com.example.home.service;
 
 import com.example.common.utils.Paging;
-import com.example.home.entity.JobWanted;
+import com.example.home.entity.Recruit;
+import com.example.home.entity.RecruitLabel;
 import com.example.home.vo.RecruitVo;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -46,8 +48,14 @@ public interface IRecruitService {
 
     /**
      * 添加求职期望
-     * @param jobWanted
+     * @param recruit
      * @return
      */
-    int addJobExpectations (JobWanted jobWanted);
+    int addJobExpectations (Recruit recruit,Integer[] label) throws ParseException;
+
+    /**
+     * 查询职位要求标签
+     * @return
+     */
+    List<RecruitLabel> queryCheckJobRequirementsTab ();
 }

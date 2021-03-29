@@ -154,7 +154,7 @@ public class HomeController {
 
     /**
      *
-     *  增加资源帖子
+     *  增加资源帖子  后台
      * @return
      */
     @ApiOperation(value = "增加资源帖子",notes = "成功返回数据 反则为空")

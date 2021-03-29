@@ -185,10 +185,12 @@ public class ConstantUtil {
 		}
 		
 		public static String getImg(String[] modes){
+			System.out.println(modes.length+"==长度");
 			String  srcq="";
 			
 			TreeMap<Integer, String> stTre=new TreeMap<>();
 		    for (int j = 0; j < modes.length; j++) {
+				System.out.println("数字=="+j);
 		    int index=modes[j].lastIndexOf(".");
 		    String x= modes[j].substring(index-1,index);
 				stTre.put(Integer.parseInt(x), modes[j]);
@@ -207,6 +209,7 @@ public class ConstantUtil {
 			 sb.replace(lastIndexOf-1,lastIndexOf,"");
 			 System.out.println("====="+sb);
 		     srcq+=sb+",";
+				System.out.println("-----------"+srcq);
 		    }
 		    return srcq;
 		}

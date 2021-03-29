@@ -139,10 +139,11 @@ public class HomeServiceImpl implements IHomeService {
         /**
          * 查询前三名的圈子
          */
-        //查询圈子二级标签
-        List<Tag> tags = tagMapper.queryCorrespondingSecondaryLabel(0);
+        //根据一级标签id查询二级标签信息
+        List<Tag> tags = tagMapper.queryCorrespondingSecondaryLabel(1);
         for (int i=0;i<tags.size();i++){
             TagVo tagVo=new TagVo();
+            //根据二级标签id去帖子表查询统计每个标签有多个帖子
             int q = circleMapper.countPostsBasedTagIdCircle(tags.get(i).getId());
             tagVo.setId(tags.get(i).getId());
             tagVo.setTagName(tags.get(i).getTagName());
@@ -153,7 +154,7 @@ public class HomeServiceImpl implements IHomeService {
         //前三个
         List<TagVo> tagVoList1=new ArrayList<>();
 
-        //根据集合里面的对象字段排序
+        //根据集合里面的每个标签帖子数量排序，只取前三个
         List<TagVo> collect1 = tagVoList.stream().sorted(Comparator.comparing(TagVo::getNum).reversed()).collect(Collectors.toList());
         for (int i=0;i<collect1.size();i++){
             int a=i+1;
@@ -450,6 +451,7 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public int addResourcesPost(Resources resources) {
+        System.out.println(resources);
         resources.setCreateAt(System.currentTimeMillis()/1000+"");
 
         int i1 = homeMapper.addResourcesPost(resources);
@@ -471,6 +473,7 @@ public class HomeServiceImpl implements IHomeService {
                     throw new ApplicationException(CodeType.SERVICE_ERROR, "添加图片组失败");
                 }
             }
+
         }
 
         return 1;
@@ -482,8 +485,15 @@ public class HomeServiceImpl implements IHomeService {
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(resources.getTitle(), token);
-        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+        if(identifyTextContent.equals("87014")){
            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        //获取token
+        String token1 = ConstantUtil.getToken();
+        String identifyTextContent1 = ConstantUtil.identifyText(resources.getContent(), token1);
+        if(identifyTextContent1.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
 
 
@@ -507,6 +517,7 @@ public class HomeServiceImpl implements IHomeService {
         if(whetherCover==1){
             if(imgUrl!=null || !"undefined".equals(imgUrl)){
                 split=imgUrl.split(",");
+
             }
 
         }
@@ -527,7 +538,10 @@ public class HomeServiceImpl implements IHomeService {
             throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
 
+
+
         if(imgUrl!=null || !"undefined".equals(imgUrl)){
+
             int addImg = homeMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
             if(addImg<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);

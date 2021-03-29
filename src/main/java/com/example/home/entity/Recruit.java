@@ -1,5 +1,9 @@
 package com.example.home.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
@@ -7,12 +11,14 @@ import lombok.Data;
  * @create 2021/2/19
  **/
 @Data
-public class Recruit {
+@TableName("tb_recruit")
+public class Recruit extends Model<Recruit> {
 
-    private int id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
     /**
-     * 工作名称
+     * 职位名称
      */
     private String jobTitle;
 
@@ -22,20 +28,9 @@ public class Recruit {
     private String wageRange;
 
     /**
-     * 公司名称
+     * 公司id对应公司表里面的用户id
      */
-    private String corporateName;
-
-    /**
-     * 公司人数
-     */
-    private String numberCompanies;
-
-
-    /**
-     * 工作地址
-     */
-    private String workAddress;
+    private int companyId;
 
     /**
      * 浏览次数
@@ -46,11 +41,6 @@ public class Recruit {
      * 职位要求
      */
     private String jobRequirements;
-
-    /**
-     * 是否需要融资（0不要，1需要）
-     */
-    private String needFinancing;
 
     /**
      * (1招全职，2招兼职，3找全职，4找兼职)

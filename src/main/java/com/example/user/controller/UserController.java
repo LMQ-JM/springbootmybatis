@@ -160,5 +160,13 @@ public class UserController {
         return iUserService.ClickInterfaceHeadImageEnter(bUserId,gUserId);
     }
 
-
+    @ApiOperation(value = "封号", notes = "成功返回成功")
+    @ResponseBody
+    @PostMapping("/sealUserNumber")
+    public void sealUserNumber(int userId,int status) {
+        if(userId==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+         iUserService.sealUserNumber(userId,status);
+    }
 }

@@ -34,8 +34,8 @@ public class Upload {
         //得到存入数据库的token
         String token = ConstantUtil.getToken();
         String checkImg = ConstantUtil.checkImg(files, token);
-        if(checkImg=="87014" || checkImg.equals("87014")){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"图片违规!");
+        if(checkImg.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"文件违规!");
         }
 
         String modeFiles=null;

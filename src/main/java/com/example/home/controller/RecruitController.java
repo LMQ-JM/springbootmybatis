@@ -3,7 +3,8 @@ package com.example.home.controller;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
-import com.example.home.entity.JobWanted;
+import com.example.home.entity.Recruit;
+import com.example.home.entity.RecruitLabel;
 import com.example.home.service.IRecruitService;
 import com.example.home.vo.RecruitVo;
 import io.swagger.annotations.Api;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -91,16 +93,31 @@ public class RecruitController {
 
 
     /**
-     *
      * 添加求职期望
      * @return
      */
     @ApiOperation(value = "添加求职期望",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addJobExpectations")
-    public int addJobExpectations (JobWanted jobWanted)  {
-
-        return iRecruitService.addJobExpectations(jobWanted);
+    public int addJobExpectations (Recruit recruit,Integer[] label) throws ParseException {
+        if(label.length==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iRecruitService.addJobExpectations(recruit,label);
     }
+
+
+    /**
+     * 查询职位要求标签
+     * @return
+     */
+    @ApiOperation(value = "查询职位要求标签",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCheckJobRequirementsTab")
+    public List<RecruitLabel> queryCheckJobRequirementsTab ()  {
+        return iRecruitService.queryCheckJobRequirementsTab();
+    }
+
+
 
 }

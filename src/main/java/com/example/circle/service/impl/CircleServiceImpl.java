@@ -91,6 +91,18 @@ public class CircleServiceImpl implements ICircleService {
         }
 
         if(circle.getType()==0) {
+           /* String[] split = urlImg.split(",");
+
+            //排序
+            String img = ConstantUtil.getImg(split);
+            split= img.split(",");
+
+            int addImg = homeMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", 1);
+            if(addImg<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }*/
+
+
             //添加图片组
             Img img = new Img();
             img.setType(1);
@@ -302,8 +314,6 @@ public class CircleServiceImpl implements ICircleService {
         }
 
 
-
-
         //得到图片组
         String[] strings = homeMapper.selectImgByPostId(circleClassificationVo.getId());
         circleClassificationVo.setImg(strings);
@@ -354,7 +364,7 @@ public class CircleServiceImpl implements ICircleService {
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(circle.getContent(), token);
-        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+        if(identifyTextContent.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
 
@@ -474,7 +484,7 @@ public class CircleServiceImpl implements ICircleService {
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(circle.getContent(), token);
-        if(identifyTextContent=="87014" || identifyTextContent.equals("87014")){
+        if(identifyTextContent.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
 

@@ -130,14 +130,12 @@ public interface HomeMapper {
      * @param postType 帖子类型
      * @return
      */
-    @Insert({
-         "<script>",
-         "insert into tb_img(z_id,img_url,type,create_at) values ",
-         "<foreach collection='imgUrl' item='item' index='index' separator=','>",
-         "(${zId}, #{item},${postType}, #{createAt})",
-         "</foreach>",
-         "</script>"
-    })
+    @Insert("<script>" +
+         "insert into tb_img(z_id,img_url,type,create_at) VALUES  " +
+          "<foreach collection='imgUrl' item='item' index='index' separator=','>" +
+             "(${zId},#{item},${postType},#{createAt})" +
+          "</foreach>" +
+         "</script>")
     int addImg(@Param("zId") int zId, @Param("imgUrl") String[] imgUrl,@Param("createAt") String createAt,@Param("postType") int postType);
 
     /**
@@ -146,7 +144,7 @@ public interface HomeMapper {
      * @return
      */
     @Select("select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
-            " tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one in (12,13,15) ORDER BY browse desc ${paging}")
+            " tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 and a.tags_one in (12,13,15) ORDER BY browse desc ${paging}")
     List<HomeClassificationVo>  selectRandom(@Param("paging") String paging);
 
 
@@ -167,7 +165,7 @@ public interface HomeMapper {
     @Select({
          "<script>" +
                  "select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
-                 "  tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one in"+
+                 "  tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 and a.tags_one in"+
                  "<foreach item = 'item' index = 'index' collection = 'list' open='(' separator=',' close=')'>" +
                  "#{item}" +
                  "</foreach> ORDER BY a.create_at desc ${sql}" +

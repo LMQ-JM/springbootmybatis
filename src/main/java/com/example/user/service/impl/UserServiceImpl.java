@@ -80,6 +80,10 @@ public class UserServiceImpl implements IUserService {
         //根据openid查询数据库是否存在
         User user = userMapper.selectUserByOpenId(openid);
         if(user!=null){
+            //如果用户是封号状态就返回null
+            if(user.getIsDelete()==0){
+                return null;
+            }
             return user;
         }else{
             //增加新用户信息
@@ -173,7 +177,7 @@ public class UserServiceImpl implements IUserService {
 
 
         if(!"undefined".equals(userHtVo.getUserName())){
-                sql+=" and user_name like '%"+userHtVo.getUserName()+"%'";
+                sql+="where user_name like '%"+userHtVo.getUserName()+"%'";
         }
 
         Integer integer = userMapper.userCount(sql);
@@ -321,6 +325,22 @@ public class UserServiceImpl implements IUserService {
         User user = userMapper.selectUserById(bUserId);
 
         return user;
+    }
+
+    @Override
+    public void sealUserNumber(int userId,int status) {
+        if(status==1){
+            status=0;
+        }else{
+            status=1;
+        }
+
+
+
+        int i = userMapper.sealUserNumber(userId, status);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"封号或者解封失败");
+        }
     }
 
 

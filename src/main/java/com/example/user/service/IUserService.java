@@ -93,4 +93,11 @@ public interface IUserService {
      * @return
      */
     User ClickInterfaceHeadImageEnter(int bUserId,int gUserId);
+
+    /**
+     * 封号
+     * @param userId 用户id
+     * @param status 状态
+     */
+    void sealUserNumber(int userId,int status);
 }

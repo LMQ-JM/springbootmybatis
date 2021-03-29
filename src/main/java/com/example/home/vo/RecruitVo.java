@@ -25,9 +25,9 @@ public class RecruitVo {
     private String wageRange;
 
     /**
-     * 发布人id
+     * 发布公司id
      */
-    private int userId;
+    private int companyId;
 
 
     /**
@@ -39,7 +39,7 @@ public class RecruitVo {
     /**
      * 工作地址
      */
-    private String workAddress;
+    private String companyAddress;
 
     /**
      * 职位要求
@@ -72,7 +72,7 @@ public class RecruitVo {
     private String corporateName;
 
     /**
-     * 用户头像
+     * 发布人头像
      */
     private String headPortrait;
 
