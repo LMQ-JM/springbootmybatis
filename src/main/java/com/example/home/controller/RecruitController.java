@@ -20,7 +20,7 @@ import java.util.List;
  * @author MQ
  * @create 2021/2/20
  **/
-@Api(tags = "人才API")
+@Api(tags = "人才招人API")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @Slf4j

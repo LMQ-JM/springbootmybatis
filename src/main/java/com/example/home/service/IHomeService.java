@@ -136,7 +136,7 @@ public interface IHomeService {
 
     /**
      * 单元体导航栏点击查询
-     * @param type 单元体id
+     * @param type 单元体导航栏id
      * @param postType 0 资源 1圈子
      * @param userId 用户id
      * @param tagId 二级标签id

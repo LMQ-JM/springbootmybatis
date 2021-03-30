@@ -2,10 +2,6 @@ package com.example.websocket.handle;
 
 
 import com.alibaba.fastjson.JSON;
-import com.example.common.constanct.CodeType;
-import com.example.common.exception.ApplicationException;
-import com.example.message.dao.MessageMapper;
-import com.example.message.entity.ChatRecord;
 import com.example.websocket.util.GroupUtils;
 import com.example.websocket.util.MsgInfo;
 import io.netty.channel.Channel;
@@ -31,8 +27,6 @@ public class OneChatWebSocketHandle extends SimpleChannelInboundHandler<MsgInfo>
    @Autowired
    private GroupUtils groupUtils;
 
-   @Autowired
-   private MessageMapper messageMapper;
 
 
    @Override
@@ -43,18 +37,6 @@ public class OneChatWebSocketHandle extends SimpleChannelInboundHandler<MsgInfo>
 
          Channel channel = groupUtils.getChannel(msgInfo.getToId());
 
-         ChatRecord chatRecord=new ChatRecord();
-         chatRecord.setFUserId(Integer.parseInt(msgInfo.getCid()));
-         chatRecord.setJUserId(Integer.parseInt(msgInfo.getToId()));
-         chatRecord.setCreateAt(System.currentTimeMillis()/1000+"");
-         chatRecord.setMCode(msgInfo.getUniqueIdentification());
-         chatRecord.setMessage(msgInfo.getMsg());
-         chatRecord.setMessageType(msgInfo.getMsgType());
-
-         int i = messageMapper.addMessage(chatRecord);
-         if(i<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"消息推送失败");
-         }
 
          if(channel==null){
             log.info("对方不在线");

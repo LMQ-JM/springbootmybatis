@@ -123,7 +123,6 @@ public class RecruitServiceImpl extends ServiceImpl<RecruitMapper,Recruit> imple
 
     @Override
     public int addJobExpectations(Recruit recruit,Integer[] label) throws ParseException {
-        System.out.println(recruit.getJobTitle());
         //查询是否注册过公司
         int i1 = companyMapper.queryCount(recruit.getCompanyId());
         if(i1<=0){
@@ -132,11 +131,14 @@ public class RecruitServiceImpl extends ServiceImpl<RecruitMapper,Recruit> imple
 
         //获取token
         String token = ConstantUtil.getToken();
+
+        //职位名称
         String identifyTextContent = ConstantUtil.identifyText(recruit.getJobTitle(), token);
         if(identifyTextContent.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
         }
 
+        //职位要求
         String identifyTextContent2 = ConstantUtil.identifyText(recruit.getJobRequirements(), token);
         if(identifyTextContent2.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");

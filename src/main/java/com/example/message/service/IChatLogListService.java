@@ -1,10 +1,6 @@
 package com.example.message.service;
 
-import com.example.message.entity.ChatLogList;
-import com.example.message.vo.ChatRecordUserVo;
 import com.example.message.vo.UsersVo;
-
-import java.util.List;
 
 /**
  * @author MQ
@@ -12,26 +8,7 @@ import java.util.List;
  */
 public interface IChatLogListService {
 
-    /**
-     * 添加聊天列表
-     * @param chatLogList 聊天列表对象
-     * @return
-     */
-    String addChatList( ChatLogList chatLogList);
 
-    /**
-     * 查询聊天列表
-     * @param userId 当前登录人id
-     * @return
-     */
-    List<ChatLogList> queryChatList(int userId);
-
-    /**
-     * 根据用户唯一标识查询出用户与用户的聊天记录
-     * @param uniqueIdentification 唯一标识
-     * @return
-     */
-    List<ChatRecordUserVo> queryChattingRecords(long uniqueIdentification);
 
     /**
      * 根据用户id查询用户信息

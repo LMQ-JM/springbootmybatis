@@ -30,19 +30,6 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, RecruitingUse
 
     @Override
     public int addRecruitingUsers(RecruitingUsers recruitingUsers) throws ParseException {
-        //查询是否注册过公司信息
-        int i = companyMapper.queryCount(recruitingUsers.getUserId());
-        if(i>0){
-            //修改公司信息
-            QueryWrapper queryWrapper=new QueryWrapper();
-            queryWrapper.eq("user_id",recruitingUsers.getUserId());
-
-            int update = baseMapper.update(recruitingUsers, queryWrapper);
-            if(update<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"修改失败");
-            }
-            return update;
-        }
 
 
         //获取token
@@ -58,6 +45,33 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, RecruitingUse
         String identifyTextContent1 = ConstantUtil.identifyText(recruitingUsers.getCompanyDescription(), token);
         if(identifyTextContent1.equals("87014")){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        //验证公司地址内容是否有误
+        String identifyTextContent2 = ConstantUtil.identifyText(recruitingUsers.getCompanyAddress(), token);
+        if(identifyTextContent2.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+        //验证公司地址内容是否有误
+        String identifyTextContent3 = ConstantUtil.identifyText(recruitingUsers.getUserName(), token);
+        if(identifyTextContent3.equals("87014")){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+        }
+
+
+        //查询是否注册过公司信息
+        int i = companyMapper.queryCount(recruitingUsers.getUserId());
+        if(i>0){
+            //修改公司信息
+            QueryWrapper queryWrapper=new QueryWrapper();
+            queryWrapper.eq("user_id",recruitingUsers.getUserId());
+
+            int update = baseMapper.update(recruitingUsers, queryWrapper);
+            if(update<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"修改失败");
+            }
+            return update;
         }
 
         recruitingUsers.setCreateAt(System.currentTimeMillis()/1000+"");
