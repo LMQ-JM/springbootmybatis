@@ -50,4 +50,14 @@ public interface RecruitJobSearchMapper extends BaseMapper<RecruitJobSearch> {
             "</foreach>" +
             "</script>")
     int addRecruitJobSearchLabelMiddle(@Param("recruitId") int recruitId,@Param("label") Integer[] label);
+
+
+    /**
+     * 查看找工作信息详情
+     * @param id 主键id
+     * @return
+     */
+    @Select("select a.*,b.user_name,b.avatar from tb_recruit_job_search a INNER JOIN tb_users b on a.user_id=b.id" +
+            " where a.id=${id} ")
+    RecruitJobSearchVo queryJobSearchDetails(@Param("id") int id);
 }

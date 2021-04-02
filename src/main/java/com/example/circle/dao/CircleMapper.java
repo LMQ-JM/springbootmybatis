@@ -162,4 +162,14 @@ public interface CircleMapper {
     @Select("select a.*,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.tags_two=${tagId} and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType,@Param("paging") String paging,@Param("tagId") int tagId);
+
+    /**
+     * 根据圈子内容模糊查询
+     * @param content 内容
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.*,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
+            " tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.content like CONCAT('%',#{content},'%') and a.is_delete=1 order by a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryFuzzyCircle(@Param("content") String content,@Param("paging") String paging);
 }

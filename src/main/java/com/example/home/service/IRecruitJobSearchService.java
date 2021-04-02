@@ -28,4 +28,11 @@ public interface IRecruitJobSearchService {
      * @param label 标签数组
      */
     void addJobHunting(RecruitJobSearch recruitJobSearch,Integer[] label) throws ParseException;
+
+    /**
+     *查看找工作信息详情
+     * @param id
+     * @return
+     */
+    RecruitJobSearchVo queryJobSearchDetails (int id);
 }

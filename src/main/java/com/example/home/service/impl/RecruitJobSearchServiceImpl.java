@@ -52,6 +52,7 @@ public class RecruitJobSearchServiceImpl extends ServiceImpl<RecruitJobSearchMap
         //查询找全职
         List<RecruitJobSearchVo> recruitJobSearchVos = recruitJobSearchMapper.queryJobInformation(typeId, pag, orderBys);
         for (int i=0;i<recruitJobSearchVos.size();i++){
+            ////根据id得到这个文章的标签
             List<RecruitLabel> recruitLabels = recruitJobSearchMapper.queryRecruitJobSearchLabelById(recruitJobSearchVos.get(i).getId());
             recruitJobSearchVos.get(i).setRecruitLabels(recruitLabels);
         }
@@ -80,6 +81,7 @@ public class RecruitJobSearchServiceImpl extends ServiceImpl<RecruitJobSearchMap
 
         recruitJobSearch.setCreateAt(System.currentTimeMillis()/1000+"");
 
+        //添加发布的岗位信息
         int insert = baseMapper.insert(recruitJobSearch);
         if(insert<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"添加失败");
@@ -94,5 +96,18 @@ public class RecruitJobSearchServiceImpl extends ServiceImpl<RecruitJobSearchMap
 
 
 
+    }
+
+    @Override
+    public RecruitJobSearchVo queryJobSearchDetails(int id) {
+
+        //根据id查询详情
+        RecruitJobSearchVo recruitJobSearchVo = recruitJobSearchMapper.queryJobSearchDetails(id);
+
+        //根据id得到这个文章的标签
+        List<RecruitLabel> recruitLabels = recruitJobSearchMapper.queryRecruitJobSearchLabelById(recruitJobSearchVo.getId());
+        recruitJobSearchVo.setRecruitLabels(recruitLabels);
+
+        return recruitJobSearchVo;
     }
 }

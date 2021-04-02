@@ -88,10 +88,76 @@ public class HomeServiceImpl implements IHomeService {
 
 
     @Override
-    public List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging) {
+    public Object selectAllSearch(int strata,String postingName,int userId, Paging paging) {
+
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
+
+        //查用户
+        if(strata==0){
+            List<User> users = userMapper.queryFuzzyUser(postingName,sql);
+            return users;
+        }
+
+        //查圈子
+        if(strata==1){
+            List<CircleClassificationVo> circles = circleMapper.queryFuzzyCircle(postingName, sql);
+            for (int i=0;i<circles.size();i++){
+                //得到图片组
+                String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+                circles.get(i).setImg(strings);
+
+                //得到点过赞人的头像
+                String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+                circles.get(i).setGiveAvatar(strings1);
+
+                //得到点赞数量
+                Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+                circles.get(i).setGiveNumber(integer1);
+
+
+                //等于0在用户没有到登录的情况下 直接设置没有点赞
+                if(userId==0){
+                    circles.get(i).setWhetherGive(0);
+                    circles.get(i).setWhetherAttention(0);
+                }else{
+                    //查看我是否关注了此人
+                    int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                    if(i1>0){
+                        circles.get(i).setWhetherAttention(1);
+                    }
+
+                    //查询是否对帖子点了赞   0没有 1有
+                    Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                    if(integer>0){
+                        circles.get(i).setWhetherGive(1);
+                    }
+                }
+
+
+                //得到帖子评论数量
+                Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+                circles.get(i).setNumberPosts(integer2);
+
+                //得到评论数据
+                List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+                circles.get(i).setComments(comments);
+            }
+            return circles;
+        }
+
+        //查资源
+        if(strata==2){
+            List<HomeClassificationVo> homeClassificationVos = homeMapper.selectAllSearch(postingName, sql);
+            return homeClassificationVos;
+        }
+
+
         if(userId!=0){
+            if(postingName.equals("undefined")){
+                return null;
+            }
+
             //增加搜索记录
             int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "",userId);
             if(i<=0){
@@ -99,8 +165,9 @@ public class HomeServiceImpl implements IHomeService {
             }
         }
 
+        //业务异常
+        throw new ApplicationException(CodeType.SERVICE_ERROR);
 
-        return homeMapper.selectAllSearch(postingName, sql);
     }
 
 
@@ -353,9 +420,7 @@ public class HomeServiceImpl implements IHomeService {
 
                 }
             }
-
         }
-
 
         //得到当前时间戳和过去时间戳比较相隔多少分钟或者多少小时或者都少天或者多少年
         String time = DateUtils.getTime(resourcesVo.getCreateAt());
@@ -451,7 +516,6 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public int addResourcesPost(Resources resources) {
-        System.out.println(resources);
         resources.setCreateAt(System.currentTimeMillis()/1000+"");
 
         int i1 = homeMapper.addResourcesPost(resources);
@@ -556,11 +620,13 @@ public class HomeServiceImpl implements IHomeService {
         int page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
 
+
         List<HomeClassificationVo> homeClassificationVos=null;
         //没有登录的情况下 随机给出数据
         if(userId==0){
             //查询出浏览量最多的帖子
             homeClassificationVos = homeMapper.selectRandom(sql);
+
             return homeClassificationVos;
         }
 
@@ -586,7 +652,7 @@ public class HomeServiceImpl implements IHomeService {
         List<HomeClassificationVo> homeClassificationVos1 = homeMapper.selectPostByTagOne(idArr, sql);
         if(homeClassificationVos1==null || homeClassificationVos1.size()==0){
              return homeClassificationVos;
-         }
+        }
 
          //使用stream流筛选不等于当前用户id的数据
          List<HomeClassificationVo> collect = homeClassificationVos1.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
@@ -777,9 +843,20 @@ public class HomeServiceImpl implements IHomeService {
             return circles;
         }
 
-
-
         return null;
+    }
+
+    @Override
+    public List<Tag> queryMiddleSecondaryTagHomePage(int tagId,int userId) {
+        if(tagId==0){
+            List<Tag> tags = homeMapper.queryMiddleSecondaryTagHomePage();
+            return tags;
+        }
+
+        //根据一级标签查询二级标签
+        List<Tag> tags = tagMapper.selectResourcesAllTags(tagId);
+
+        return tags;
     }
 
 

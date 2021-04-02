@@ -38,7 +38,7 @@ public interface CommunityMapper {
      * @param id 圈子id
      * @return
      */
-    @Select("select c.avatar from tb_community a INNER JOIN tb_resources b on  a.tag_id=b.tags_two INNER JOIN tb_user c on b.u_id=c.id where a.id=${id} and b.is_delete=1 GROUP BY c.id")
+    @Select("select c.avatar from tb_community a INNER JOIN tb_resources b on  a.tag_id=b.tags_two INNER JOIN tb_user c on b.u_id=c.id where a.id=${id} and b.is_delete=1 GROUP BY c.id limit 6")
     String[] selectCirclesAvatar(@Param("id") int id);
 
     /**
@@ -46,7 +46,7 @@ public interface CommunityMapper {
      * @param id 圈子id
      * @return
      */
-    @Select("select b.avatar from tb_community_user a INNER JOIN tb_user b on a.user_id=b.id where a.community_id=${id}")
+    @Select("select b.avatar from tb_community_user a INNER JOIN tb_user b on a.user_id=b.id where a.community_id=${id} limit 6")
     String[] selectCirclesAvatars(@Param("id") int id);
 
     /**

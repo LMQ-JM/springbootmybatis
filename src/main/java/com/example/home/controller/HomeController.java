@@ -38,24 +38,23 @@ public class HomeController {
     @Autowired
     private IHomeService iHomeService;
 
-
     @Autowired
     private Upload upload;
 
     /**
      *
-     *  搜索数据接口
+     * 搜索数据接口
      * @return
      */
     @ApiOperation(value = "搜索数据接口",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectAllSearch")
-    public List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging)  {
+    public Object selectAllSearch(int strata,String postingName,int userId, Paging paging)  {
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0，page传1");
         }
 
-        return iHomeService.selectAllSearch(postingName,userId, paging);
+        return iHomeService.selectAllSearch(strata,postingName,userId, paging);
     }
 
     /**
@@ -284,6 +283,13 @@ public class HomeController {
     @PostMapping("/queryClickUnitNavigationBar")
     public Object queryClickUnitNavigationBar(int type,int postType,int userId,int tagId,Paging paging) {
         return iHomeService.queryClickUnitNavigationBar(type,postType,userId,tagId,paging);
+    }
+
+    @ApiOperation(value = "查询首页中间二级标签", notes = "成功返回集合")
+    @ResponseBody
+    @PostMapping("/queryMiddleSecondaryTagHomePage")
+    public List<Tag> queryMiddleSecondaryTagHomePage(int tagId,int userId) {
+        return iHomeService.queryMiddleSecondaryTagHomePage(tagId,userId);
     }
 
 

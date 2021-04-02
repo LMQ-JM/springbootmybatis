@@ -4,6 +4,7 @@ import com.example.home.entity.Resources;
 import com.example.home.vo.HomeClassificationVo;
 import com.example.home.vo.ResourcesLabelVo;
 import com.example.home.vo.ResourcesVo;
+import com.example.tags.entity.Tag;
 import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
 import org.apache.ibatis.annotations.*;
@@ -18,12 +19,12 @@ import java.util.List;
 public interface HomeMapper {
 
     /**
-     * 搜索数据接口
+     *  根据标题和内容模糊查询
      * @param postingName 内容
      * @param paging 分页
      * @return
      */
-    @Select("select a.id,c.avatar,c.id as uId,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.title like CONCAT('%',#{postingName},'%') and a.is_delete=1  ${paging}")
+    @Select("select a.id,c.avatar,c.id as uId,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.title like CONCAT('%',#{postingName},'%') or a.content like CONCAT('%',#{postingName},'%')  and a.is_delete=1  ${paging}")
    List<HomeClassificationVo> selectAllSearch(@Param("postingName") String postingName,@Param("paging") String paging);
 
 
@@ -148,6 +149,7 @@ public interface HomeMapper {
     List<HomeClassificationVo>  selectRandom(@Param("paging") String paging);
 
 
+
     /**
      * 查询自己的标签
      * @param userId 用户id
@@ -199,5 +201,13 @@ public interface HomeMapper {
     @Select("select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
             " tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.haplont_type=${haplontType} and a.tags_two=${tagId} order by a.create_at desc ${paging}")
     List<HomeClassificationVo> queryPostByHaplontType(@Param("haplontType") int haplontType,@Param("paging") String paging,@Param("tagId") int tagId);
+
+   /**
+    * 查询首页中间二级标签
+    * @return
+    */
+    @Select("select * from tb_tags where t_id=13 or t_id=12")
+    List<Tag> queryMiddleSecondaryTagHomePage();
+
 
 }

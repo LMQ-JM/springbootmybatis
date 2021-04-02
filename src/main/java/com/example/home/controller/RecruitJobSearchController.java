@@ -46,7 +46,22 @@ public class RecruitJobSearchController {
     }
 
     /**
-     *
+     * 查看找工作信息详情
+     * @return
+     */
+    @ApiOperation(value = "查看找工作信息详情",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryJobSearchDetails")
+    public RecruitJobSearchVo queryJobSearchDetails (int id)  {
+        if(id==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+        return iRecruitJobSearchService.queryJobSearchDetails(id);
+    }
+
+
+
+    /**
      * 添加找工作数据
      * @return
      */

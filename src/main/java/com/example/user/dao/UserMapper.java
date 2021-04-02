@@ -140,6 +140,13 @@ public interface UserMapper {
     @Update("update tb_user set is_delete=${status} where id=${userId}")
     int sealUserNumber(@Param("userId") int userId,@Param("status") int status);
 
+    /**
+     * 根据用户名 模糊查询用户
+     * @param userName 用户名
+     * @return
+     */
+    @Select("select * from tb_user where user_name like CONCAT('%',#{userName},'%') ${paging}")
+    List<User> queryFuzzyUser(@Param("userName") String userName,@Param("paging") String paging);
 
 }
 

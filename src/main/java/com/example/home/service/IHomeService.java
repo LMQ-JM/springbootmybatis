@@ -21,11 +21,13 @@ public interface IHomeService {
 
     /**
      * 搜索数据接口
-     * @param postingName
-     * @param paging
+     * @param strata 状态
+     * @param postingName 内容
+     * @param userId 用户id
+     * @param paging 分页
      * @return
      */
-    List<HomeClassificationVo> selectAllSearch(String postingName,int userId, Paging paging);
+    Object selectAllSearch(int strata,String postingName,int userId, Paging paging);
 
     /**
      * 查询搜索记录和其他相关信息
@@ -74,7 +76,9 @@ public interface IHomeService {
 
     /**
      * 根据二级标签id查询推荐数据
-     * @param id
+     * @param id 二级标签id
+     * @param userId 用户id
+     * @param tid 帖子id
      * @return
      */
     List<HomeClassificationVo> selectRecommendedSecondaryTagId(int id,int userId,int tid);
@@ -93,7 +97,7 @@ public interface IHomeService {
     /**
      * 后台
      * 批量删除
-     * @param id
+     * @param id 帖子id
      * @return
      */
     Integer resourcesDeletes(Integer[] id);
@@ -144,6 +148,14 @@ public interface IHomeService {
      * @return
      */
     Object queryClickUnitNavigationBar(int type,int postType,int userId,int tagId,Paging paging);
+
+    /**
+     * 查询首页中间二级标签
+     * @param tagId 一级标签id
+     * @param userId 用户id
+     * @return
+     */
+    List<Tag> queryMiddleSecondaryTagHomePage(int tagId,int userId);
 
 
 }

@@ -43,6 +43,6 @@ public interface BrowseMapper {
      * @param tId
      * @return
      */
-    @Select("select b.avatar from tb_browse a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${tId} and a.type=0 GROUP BY b.id")
+    @Select("select b.avatar from tb_browse a INNER JOIN tb_user b on a.u_id=b.id where a.zq_id=${tId} and a.type=0 GROUP BY b.id limit 6")
     String[] selectBrowseAvatar(@Param("tId") int tId);
 }
