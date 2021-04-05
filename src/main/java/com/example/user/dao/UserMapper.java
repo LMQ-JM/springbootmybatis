@@ -4,6 +4,7 @@ import com.example.user.entity.AdminUser;
 import com.example.user.entity.LoginTag;
 import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
+import com.example.user.vo.UserHtVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -145,8 +146,8 @@ public interface UserMapper {
      * @param userName 用户名
      * @return
      */
-    @Select("select * from tb_user where user_name like CONCAT('%',#{userName},'%') ${paging}")
-    List<User> queryFuzzyUser(@Param("userName") String userName,@Param("paging") String paging);
+    @Select("select id,user_name,avatar,introduce from tb_user where user_name like CONCAT('%',#{userName},'%') ${paging}")
+    List<UserHtVo> queryFuzzyUser(@Param("userName") String userName, @Param("paging") String paging);
 
 }
 

@@ -33,5 +33,8 @@ public class UserHtVo {
      */
     private String createAt;
 
-
+    /**
+     * 是否关注
+     */
+    private int whetherAttention;
 }

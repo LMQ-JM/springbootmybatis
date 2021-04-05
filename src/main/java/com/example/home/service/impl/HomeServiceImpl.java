@@ -22,6 +22,7 @@ import com.example.tags.entity.Tag;
 import com.example.user.dao.UserMapper;
 import com.example.user.entity.User;
 import com.example.user.entity.UserTag;
+import com.example.user.vo.UserHtVo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,12 +96,21 @@ public class HomeServiceImpl implements IHomeService {
 
         //查用户
         if(strata==0){
-            List<User> users = userMapper.queryFuzzyUser(postingName,sql);
+            List<UserHtVo> users = userMapper.queryFuzzyUser(postingName,sql);
+            for (int i=0;i<users.size();i++){
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, users.get(i).getId());
+                if(i1>0){
+                    users.get(i).setWhetherAttention(1);
+                }
+            }
+
+
             return users;
         }
 
         //查圈子
-        if(strata==1){
+        if(strata==2){
             List<CircleClassificationVo> circles = circleMapper.queryFuzzyCircle(postingName, sql);
             for (int i=0;i<circles.size();i++){
                 //得到图片组
@@ -134,7 +144,6 @@ public class HomeServiceImpl implements IHomeService {
                     }
                 }
 
-
                 //得到帖子评论数量
                 Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
                 circles.get(i).setNumberPosts(integer2);
@@ -147,7 +156,7 @@ public class HomeServiceImpl implements IHomeService {
         }
 
         //查资源
-        if(strata==2){
+        if(strata==1){
             List<HomeClassificationVo> homeClassificationVos = homeMapper.selectAllSearch(postingName, sql);
             return homeClassificationVos;
         }
@@ -698,7 +707,7 @@ public class HomeServiceImpl implements IHomeService {
     }
 
     @Override
-    public Object queryClickUnitNavigationBar(int type, int postType, int userId,int tagId,Paging paging) {
+    public Object queryClickUnitNavigationBar(int type,int postType,int userId,int tagId,Paging paging) {
         int page=(paging.getPage()-1)*paging.getLimit();
 
         String sql="limit "+page+","+paging.getLimit()+"";
@@ -857,6 +866,23 @@ public class HomeServiceImpl implements IHomeService {
         List<Tag> tags = tagMapper.selectResourcesAllTags(tagId);
 
         return tags;
+    }
+
+    @Override
+    public int updatePostInformation(Resources resources) {
+        System.out.println("123");
+        System.out.println(resources.getContent()+"=="+resources.getTagsOne()+"=="+resources.getTagsTwo()+"==aa"+resources.getCover()+"==aa"+resources.getImg());
+        System.out.println(2456);
+        String str="";
+
+        if(!resources.getTagsTwo().equals(null)){
+            System.out.println("不等于空");
+        }
+        if(!resources.getTagsOne().equals(null)){
+            System.out.println("不等于空");
+        }
+
+        return 0;
     }
 
 

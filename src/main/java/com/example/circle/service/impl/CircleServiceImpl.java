@@ -24,6 +24,7 @@ import com.example.home.entity.Haplont;
 import com.example.home.entity.Resources;
 import com.example.home.vo.CommunityVo;
 import com.example.tags.dao.TagMapper;
+import com.example.tags.entity.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author MQ
@@ -509,6 +512,17 @@ public class CircleServiceImpl implements ICircleService {
             issue(circle,imgUrl,postType,whetherCover);
         }
 
+    }
+
+    @Override
+    public List<Tag> queryHowManyPostsAreInEachCell(int id) {
+        //根据一级标签查询所有二级标签下面的帖子数量
+        List<Tag> tags = circleMapper.queryHowManyPostsAreInEachCell(id);
+
+        //根据数量排序再取前5条数据
+        List<Tag> collect = tags.stream().sorted(Comparator.comparing(Tag::getNum).reversed()).limit(5).collect(Collectors.toList());
+
+        return collect;
     }
 
     public void issue(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception{

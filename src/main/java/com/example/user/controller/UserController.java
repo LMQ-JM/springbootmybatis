@@ -39,7 +39,7 @@ public class UserController {
 
     /**
      *
-     *  小程序登陆
+     * 小程序登陆
      * @return
      */
     @ApiOperation(value = "小程序登陆",notes = "成功返回数据 反则为空")
@@ -54,11 +54,9 @@ public class UserController {
     }
 
 
-
-
     /**
      *
-     *  根据条件查询帖子
+     * 根据条件查询帖子
      * @return
      */
     @ApiOperation(value = "根据条件查询帖子",notes = "成功返回数据 反则为空")

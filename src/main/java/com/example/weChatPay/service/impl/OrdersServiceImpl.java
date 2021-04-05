@@ -29,7 +29,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
 
     @Autowired
-    private  IdGenerator idGenerator;
+    private IdGenerator idGenerator;
 
     @Override
     public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body) throws Exception {

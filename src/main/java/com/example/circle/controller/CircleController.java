@@ -9,6 +9,7 @@ import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
+import com.example.tags.entity.Tag;
 import com.example.user.util.Upload;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -235,6 +236,16 @@ public class CircleController {
          iCircleService.internalRelease(circle,imgUrl,postType,whetherCover);
     }
 
+    /**
+     * 查询每个单元体里面有多少个帖子
+     * @return
+     */
+    @ApiOperation(value = "查询每个单元体里面有多少个帖子",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryHowManyPostsAreInEachCell")
+    public List<Tag> queryHowManyPostsAreInEachCell(int id)  {
+       return iCircleService.queryHowManyPostsAreInEachCell(id);
+    }
 
 
 }

@@ -175,12 +175,14 @@ public class UserServiceImpl implements IUserService {
 
         pageNum=(pageNum-1)*pageSize;
 
+        String sql1="";
 
         if(!"undefined".equals(userHtVo.getUserName())){
                 sql+="where user_name like '%"+userHtVo.getUserName()+"%'";
+            sql1+="and user_name like '%"+userHtVo.getUserName()+"%'";
         }
 
-        Integer integer = userMapper.userCount(sql);
+        Integer integer = userMapper.userCount(sql1);
 
         String paging=" limit "+pageNum+","+pageSize+"";
 

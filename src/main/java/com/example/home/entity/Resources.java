@@ -21,12 +21,12 @@ public class Resources {
     /**
      * 一级标签ID
      */
-    private int tagsOne;
+    private Integer tagsOne;
 
     /**
      * 二级标签ID
      */
-    private int tagsTwo;
+    private Integer tagsTwo;
 
 
     /**

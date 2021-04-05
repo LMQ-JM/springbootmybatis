@@ -49,6 +49,11 @@ public class ResourcesLabelVo {
     private String avatar;
 
     /**
+     * 帖子封面
+     */
+    private String cover;
+
+    /**
      * 视频
      */
     private String video;

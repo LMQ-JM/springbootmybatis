@@ -184,6 +184,26 @@ public class HomeController {
         return iHomeService.selectResourcesAllPosting(resources, page, limit, startTime, endTime,userName);
     }
 
+    /**
+     *  后台
+     *  修改帖子信息
+     * @return
+     */
+    @ApiOperation(value = "修改帖子信息",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/updatePostInformation")
+    public int updatePostInformation(Resources resources) throws Exception {
+
+        if (resources.getId()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+
+         iHomeService.updatePostInformation(resources);
+        return 0;
+    }
+
+
+
 
     /**
      * 后台

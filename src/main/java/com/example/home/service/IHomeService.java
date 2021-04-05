@@ -158,4 +158,10 @@ public interface IHomeService {
     List<Tag> queryMiddleSecondaryTagHomePage(int tagId,int userId);
 
 
+    /**
+     * 修改帖子信息
+     * @param resources
+     */
+    int updatePostInformation(Resources resources);
+
 }

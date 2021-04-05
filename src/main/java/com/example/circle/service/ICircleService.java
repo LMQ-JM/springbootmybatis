@@ -6,6 +6,7 @@ import com.example.common.utils.Paging;
 import com.example.common.utils.ReturnVo;
 import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
+import com.example.tags.entity.Tag;
 
 import java.text.ParseException;
 import java.util.List;
@@ -117,5 +118,11 @@ public interface ICircleService {
      */
     void internalRelease(Circle circle, String imgUrl, int postType, int whetherCover) throws Exception;
 
+    /**
+     * 根据一级标签查询所有二级标签下面的帖子数量
+     * @param id 一级标签id
+     * @return
+     */
+    List<Tag> queryHowManyPostsAreInEachCell(int id);
 
 }

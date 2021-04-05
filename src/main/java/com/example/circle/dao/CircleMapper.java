@@ -6,6 +6,7 @@ import com.example.circle.vo.CircleClassificationVo;
 import com.example.circle.vo.CircleLabelVo;
 import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
+import com.example.tags.entity.Tag;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -172,4 +173,14 @@ public interface CircleMapper {
     @Select("select a.*,c.id as uId,c.avatar,c.user_name,b.tag_name,b.id as tagId from" +
             " tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.content like CONCAT('%',#{content},'%') and a.is_delete=1 order by a.create_at desc ${paging}")
     List<CircleClassificationVo> queryFuzzyCircle(@Param("content") String content,@Param("paging") String paging);
+
+    /**
+     * 根据一级标签查询所有二级标签下面的帖子数量
+     * @param id 一级标签id
+     * @return
+     */
+    @Select("SELECT d.id,d.tag_name,d.img_url,IFNULL(t1.count1, 0) AS num FROM tb_tags d  LEFT JOIN " +
+            "(SELECT tags_two,COUNT(*) AS count1 FROM tb_circles where is_delete=1 GROUP BY tags_two) t1" +
+            " on d.id=t1.tags_two where d.t_id=${id} ORDER BY d.id;")
+    List<Tag> queryHowManyPostsAreInEachCell(@Param("id") int id);
 }
