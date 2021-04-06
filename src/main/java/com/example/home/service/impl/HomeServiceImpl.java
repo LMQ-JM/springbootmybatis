@@ -90,6 +90,17 @@ public class HomeServiceImpl implements IHomeService {
 
     @Override
     public Object selectAllSearch(int strata,String postingName,int userId, Paging paging) {
+        if(postingName.equals("undefined")){
+            return null;
+        }
+
+        if(userId!=0){
+            //增加搜索记录
+            int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "",userId);
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"增加历史记录错误");
+            }
+        }
 
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String sql="limit "+page+","+paging.getLimit()+"";
@@ -151,6 +162,12 @@ public class HomeServiceImpl implements IHomeService {
                 //得到评论数据
                 List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
                 circles.get(i).setComments(comments);
+
+                //将时间戳转换为多少天或者多少个小时和多少年
+                String time = DateUtils.getTime(circles.get(i).getCreateAt());
+                circles.get(i).setCreateAt(time);
+
+
             }
             return circles;
         }
@@ -162,17 +179,7 @@ public class HomeServiceImpl implements IHomeService {
         }
 
 
-        if(userId!=0){
-            if(postingName.equals("undefined")){
-                return null;
-            }
 
-            //增加搜索记录
-            int i = searchRecordMapper.addSearchRecord(postingName, System.currentTimeMillis() / 1000 + "",userId);
-            if(i<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"增加历史记录错误");
-            }
-        }
 
         //业务异常
         throw new ApplicationException(CodeType.SERVICE_ERROR);
@@ -660,13 +667,18 @@ public class HomeServiceImpl implements IHomeService {
 
         List<HomeClassificationVo> homeClassificationVos1 = homeMapper.selectPostByTagOne(idArr, sql);
         if(homeClassificationVos1==null || homeClassificationVos1.size()==0){
+             //混乱的意思
+             Collections.shuffle(homeClassificationVos);
+
              return homeClassificationVos;
         }
 
          //使用stream流筛选不等于当前用户id的数据
          List<HomeClassificationVo> collect = homeClassificationVos1.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
+         //混乱的意思
+         Collections.shuffle(collect);
 
-        return collect;
+         return collect;
     }
 
 

@@ -144,6 +144,7 @@ public interface UserMapper {
     /**
      * 根据用户名 模糊查询用户
      * @param userName 用户名
+     * @param paging 分页
      * @return
      */
     @Select("select id,user_name,avatar,introduce from tb_user where user_name like CONCAT('%',#{userName},'%') ${paging}")

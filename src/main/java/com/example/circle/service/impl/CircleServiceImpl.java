@@ -226,6 +226,10 @@ public class CircleServiceImpl implements ICircleService {
             //得到评论数据
             List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
             circles.get(i).setComments(comments);
+
+            //将时间戳转换为多少天或者多少个小时和多少年
+            String time = DateUtils.getTime(circles.get(i).getCreateAt());
+            circles.get(i).setCreateAt(time);
         }
 
              return circles;
@@ -358,6 +362,10 @@ public class CircleServiceImpl implements ICircleService {
         List<CommentUserVo> comments = commentMapper.selectComment(circleClassificationVo.getId());
         circleClassificationVo.setComments(comments);
 
+        //将时间戳转换为多少天或者多少个小时和多少年
+        String time = DateUtils.getTime(circleClassificationVo.getCreateAt());
+        circleClassificationVo.setCreateAt(time);
+
 
         return circleClassificationVo;
     }
@@ -428,6 +436,10 @@ public class CircleServiceImpl implements ICircleService {
             //得到评论数据
             List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
             circles.get(i).setComments(comments);
+
+            //将时间戳转换为多少天或者多少个小时和多少年
+            String time = DateUtils.getTime(circles.get(i).getCreateAt());
+            circles.get(i).setCreateAt(time);
         }
         return circles;
     }

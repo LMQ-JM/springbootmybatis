@@ -37,4 +37,9 @@ public class UserHtVo {
      * 是否关注
      */
     private int whetherAttention;
+
+    /**
+     * 介绍
+     */
+    private String introduce;
 }

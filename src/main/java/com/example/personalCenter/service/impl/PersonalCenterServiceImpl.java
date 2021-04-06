@@ -111,7 +111,7 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     }
 
     @Override
-    public Object queryHavePostedPosts(int userId, int type, Paging paging) {
+    public Object queryHavePostedPosts(int othersId,int userId, int type, Paging paging) {
 
 
         Integer page=(paging.getPage()-1)*paging.getLimit();
@@ -119,12 +119,12 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
         //查询资源帖子
         if (type == 0) {
-            List<HomeClassificationVo> homeClassificationVos = personalCenterMapper.queryHavePostedPosts(userId,pag);
+            List<HomeClassificationVo> homeClassificationVos = personalCenterMapper.queryHavePostedPosts(othersId,pag);
             return homeClassificationVos;
         }
         //查询圈子帖子
         if (type == 1) {
-            List<CircleClassificationVo> circles = personalCenterMapper.queryHavePostedCirclePosts(userId,pag);
+            List<CircleClassificationVo> circles = personalCenterMapper.queryHavePostedCirclePosts(othersId,pag);
             for (int i = 0; i < circles.size(); i++) {
                 //得到图片组
                 String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
@@ -140,7 +140,7 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
 
 
                 //等于0在用户没有到登录的情况下 直接设置没有点赞
-                if (userId == 0) {
+                if (othersId == 0) {
                     circles.get(i).setWhetherGive(0);
                     circles.get(i).setWhetherAttention(0);
                 } else {
@@ -272,11 +272,11 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     }
 
     @Override
-    public List<String> queryMyNeed(int userId) {
+    public List<String> queryMyNeed(int othersId) {
 
         List<String> str=new ArrayList<>();
 
-        UserTag userTag=homeMapper.selectOneselfLabel(userId);
+        UserTag userTag=homeMapper.selectOneselfLabel(othersId);
 
         if(userTag!=null){
             JSONArray j= JSONArray.fromObject(userTag.getTab());

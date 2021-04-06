@@ -72,14 +72,14 @@ public class PersonalCenterController {
         return iPersonalCenterService.queryFavoritePosts(userId,paging);
     }
 
-    @ApiOperation(value = "查询我发布过的帖子", notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "根据id查询他人发布的所有帖子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryHavePostedPosts")
-    public Object queryHavePostedPosts(int userId,int type, Paging paging) {
-        if(userId==0){
+    public Object queryHavePostedPosts(int othersId,int userId,int type, Paging paging) {
+        if(userId==0 || othersId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return iPersonalCenterService.queryHavePostedPosts(userId,type,paging);
+        return iPersonalCenterService.queryHavePostedPosts(othersId,userId,type,paging);
     }
 
     @ApiOperation(value = "查询我的圈子和我加入的圈子", notes = "成功返回数据 反则为空")
@@ -158,8 +158,8 @@ public class PersonalCenterController {
     @ApiOperation(value = "查询我的需求", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryMyNeed")
-    public List<String> queryMyNeed(int userId) {
-        return iPersonalCenterService.queryMyNeed(userId);
+    public List<String> queryMyNeed(int othersId) {
+        return iPersonalCenterService.queryMyNeed(othersId);
     }
 
     @ApiOperation(value ="根据用户id查询出我选中的标签", notes = "成功返回数据 反则为空")

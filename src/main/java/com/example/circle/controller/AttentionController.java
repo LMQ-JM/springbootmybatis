@@ -50,7 +50,7 @@ public class AttentionController {
      * 查询我关注的人
      * @return
      */
-    @ApiOperation(value = " 查询我关注的人和关注人发的帖子",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询我关注的人",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryAttentionPerson")
     public List<User> queryAttentionPerson(int userId){
@@ -67,7 +67,7 @@ public class AttentionController {
      * 查询我关注的人发的帖子
      * @return
      */
-    @ApiOperation(value = "查询我关注的人和关注人发的帖子",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询我关注的人发的帖子",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryPostsPeopleFollow")
     public List<CircleClassificationVo> queryPostsPeopleFollow(int userId, Paging paging){

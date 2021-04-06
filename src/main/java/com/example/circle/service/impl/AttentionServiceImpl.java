@@ -86,9 +86,6 @@ public class AttentionServiceImpl implements IAttentionService {
     @Override
     public List<User> queryAttentionPerson(int userId) {
 
-
-        Map<String,Object> map=new HashMap<>(15);
-
         //查询我关注的人
         List<User> users = attentionMapper.queryPeopleFollow(userId);
 

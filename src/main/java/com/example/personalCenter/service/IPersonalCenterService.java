@@ -44,13 +44,14 @@ public interface IPersonalCenterService {
     List<HomeClassificationVo> queryFavoritePosts(@Param("userId") int userId,Paging paging);
 
     /**
-     * 查询我发布的帖子
-     * @param userId 用户id
+     * 根据id查询他人发布的所有帖子
+     * @param othersId 他人用户id
+     * @param userId 当前登录用户id
      * @param type 0 资源 1圈子 2人才
      * @param paging 分页
      * @return
      */
-    Object queryHavePostedPosts(int userId,int type, Paging paging);
+    Object queryHavePostedPosts(int othersId,int userId,int type, Paging paging);
 
     /**
      * 修改用户介绍
@@ -112,10 +113,10 @@ public interface IPersonalCenterService {
 
     /**
      * 查询我的需求
-     * @param userId 用户id
+     * @param othersId 他人用户id
      * @return
      */
-    List<String> queryMyNeed(int userId);
+    List<String> queryMyNeed(int othersId);
 
     /**
      * 查询我的圈子和我加入的圈子
