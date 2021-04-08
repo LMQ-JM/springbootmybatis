@@ -116,7 +116,6 @@ public class HomeServiceImpl implements IHomeService {
                 }
             }
 
-
             return users;
         }
 
@@ -167,7 +166,6 @@ public class HomeServiceImpl implements IHomeService {
                 String time = DateUtils.getTime(circles.get(i).getCreateAt());
                 circles.get(i).setCreateAt(time);
 
-
             }
             return circles;
         }
@@ -178,12 +176,8 @@ public class HomeServiceImpl implements IHomeService {
             return homeClassificationVos;
         }
 
-
-
-
         //业务异常
         throw new ApplicationException(CodeType.SERVICE_ERROR);
-
     }
 
 
@@ -597,7 +591,6 @@ public class HomeServiceImpl implements IHomeService {
         if(whetherCover==1){
             if(imgUrl!=null || !"undefined".equals(imgUrl)){
                 split=imgUrl.split(",");
-
             }
 
         }

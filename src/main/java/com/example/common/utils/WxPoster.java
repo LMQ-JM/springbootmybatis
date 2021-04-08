@@ -724,9 +724,10 @@ public class WxPoster {
 	 * @param loadUrl 合成图的地址  （自定义）
 	 * @param headUrl 头像地址
 	 * @param postImg 帖子第一张图片
+	 * @param postContent 帖子内容
 	 * @return
 	 */
-	public static String getPosterUrlGreatMaster(String leftUrl,String rightUrl,String loadUrl,String headUrl,String postImg)  {
+	public static String getPosterUrlGreatMaster(String leftUrl,String rightUrl,String loadUrl,String headUrl,String postImg,String postContent)  {
 		
 		try {
 			WxPoster tt = new WxPoster();
@@ -736,20 +737,25 @@ public class WxPoster {
 			
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,945, 136,214,214));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,500, 1800,300,300));
 			
-			//将头像图改为圆形
+			/*//将头像图改为圆形
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
 			//将图片设置为圆形
 			BufferedImage convertCircular = convertCircular(ka);
 
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,420, 355,420,420));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,203, 1128,858,1010));*/
 			
 		    //帖子第一张图片的地址
 		    //网络图片
 		    BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-		    tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,203, 1128,858,1010));
-		    
+		    tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,225, 130,800,650));
+
+
+			//帖子内容
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,postContent,150,1500);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(modifyImageYe, j,0, 800,0,0));
+
 		   
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -757,7 +763,6 @@ public class WxPoster {
 		}
 		
 		return loadUrl;
-
 	}
 	
 	

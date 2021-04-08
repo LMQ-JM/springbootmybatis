@@ -30,11 +30,10 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
 
     @Override
-    public List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName) {
+    public List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName,String pageUrl) {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
-        Map<String, Object> param = null;
 
         String time = "";
 
@@ -44,21 +43,23 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
         String token = ConstantUtil.getToken();
 
         try {
-            String url = "http://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + token;
+            String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+token;
 
-            param = new HashMap<>();
-            param.put("scene", ConstantUtil.secret);//秘钥
-            param.put("page", null); //二维码指向的地址
+           Map<String,Object> param = new HashMap<>();
+            //秘钥
+            param.put("scene", ConstantUtil.secret);
+            //二维码指向的地址
+            param.put("page", null);
             param.put("width", 430);
             param.put("auto_color", false);
             //param.put("is_hyaline", true);//去掉二维码底色
-            Map<String, Object> line_color = new HashMap<>();
+            Map<String,Object> line_color = new HashMap<>();
             line_color.put("r", 0);
             line_color.put("g", 0);
             line_color.put("b", 0);
             param.put("line_color", line_color);
 
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<String,String>();
             // 头部信息
             List<String> list = new ArrayList<String>();
             list.add("Content-Type");
@@ -73,13 +74,11 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
             inputStream = new ByteArrayInputStream(result);
 
+            File file = new File("e:/file/img/"+System.currentTimeMillis()+".png");
 
-            File file = new File("e:/file/img/" + System.currentTimeMillis() + ".png");
-
-            if (!file.exists()) {
+            if (!file.exists()){
                 file.createNewFile();
             }
-            //统计输出流将二维码图片写入本地
             outputStream = new FileOutputStream(file);
             int len = 0;
             byte[] buf = new byte[1024];
@@ -88,22 +87,18 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             }
             outputStream.flush();
 
-            time = System.currentTimeMillis() / 1000 + 13 + "";
+            time=System.currentTimeMillis()/1000+13+"";
 
 
             //生成海报
-            String posterUrlGreatMaster = WxPoster.getPosterUrlGreatMaster("e:/file/img/dashi.jpg", file.getPath(), "e:/file/img/" + time + ".png", headUrl, postImg);
+            String posterUrlGreatMaster = WxPoster.getPosterUrlGreatMaster("e:/file/img/yi.jpg", file.getPath(), "e:/file/img/" + time + ".png", headUrl, postImg,postContent);
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
             posterList.add(newGreat);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-
-        return null;
+        return posterList;
     }
 
 }

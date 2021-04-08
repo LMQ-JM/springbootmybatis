@@ -30,7 +30,7 @@ public class CircleFriendsController {
     @ApiOperation(value = "得到朋友圈分享图",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectCircleFriendsFigure")
-    public List<String> selectCircleFriendsFigure(String headUrl,String postImg,String postContent,String userName)  {
-       return iCircleFriendsService.selectCircleFriendsFigure(headUrl,postImg,postContent,userName);
+    public List<String> selectCircleFriendsFigure(String headUrl,String postImg,String postContent,String userName,String pageUrl)  {
+       return iCircleFriendsService.selectCircleFriendsFigure(headUrl,postImg,postContent,userName,pageUrl);
     }
 }

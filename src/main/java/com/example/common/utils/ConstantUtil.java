@@ -2,6 +2,9 @@ package com.example.common.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.sun.deploy.config.ClientConfig;
+import org.apache.catalina.WebResource;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -83,6 +86,9 @@ public class ConstantUtil {
 	         String token=accessTokenObj.toString().split(",")[0].split(":")[0];
 	         return token;
 	    }
+
+
+
 	    
 	    
 	    /**
