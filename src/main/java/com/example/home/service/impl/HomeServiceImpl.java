@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -375,7 +376,10 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public ResourcesVo selectSingleResourcePost(int id,int userId) throws ParseException {
 
+
         ResourcesVo resourcesVo = homeMapper.selectSingleResourcePost(id);
+
+
 
         //在用户登录的情况下 增加帖子浏览记录
         if(userId!=0){
@@ -453,6 +457,116 @@ public class HomeServiceImpl implements IHomeService {
         resourcesVo.setBrowse(browse);
 
         return resourcesVo;
+    }
+
+    @Override
+    public List<ResourcesVo> queryAllVideosPrimaryTagId(int id, Paging paging,int userId) throws ParseException {
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String pagings="limit "+page+","+paging.getLimit()+"";
+
+        //是否收藏
+        int selectWhetherCollection=0;
+
+        //List存储数据顺序与插入数据顺序一致，存在先进先出的概念。
+        List<ResourcesVo> resourcesVoa=new ArrayList<>();
+
+        //根据id查询单个帖子
+        ResourcesVo resourcesVo = homeMapper.selectSingleResourcePost(id);
+        //得到这个帖子的观看数量
+        int countPostNum = browseMapper.countPostNum(resourcesVo.getId());
+        resourcesVo.setBrowse(countPostNum);
+
+        //得到收藏数量
+        int selectCollectNumber = collectionMapper.selectCollectNumber(resourcesVo.getId());
+        resourcesVo.setCollect(selectCollectNumber);
+
+        //查看是否收藏
+        selectWhetherCollection= collectionMapper.selectWhetherCollection(userId, resourcesVo.getId());
+        if(selectWhetherCollection>0){
+            resourcesVo.setWhetherCollection(1);
+        }
+        resourcesVoa.add(resourcesVo);
+
+
+
+        //根据一级标签id查询所有视频
+        List<ResourcesVo> resourcesVos1 = homeMapper.queryAllVideosPrimaryTagId(resourcesVo.getTagsOne(),pagings);
+
+        //去除一样的
+        List<ResourcesVo> resourcesVos = resourcesVos1.stream().filter(u -> u.getId() != resourcesVo.getId()).collect(Collectors.toList());
+        for (int i =0;i<resourcesVos.size();i++){
+
+            //查看是否收藏
+             selectWhetherCollection = collectionMapper.selectWhetherCollection(userId, resourcesVos.get(i).getId());
+            if(selectWhetherCollection>0){
+                resourcesVos.get(i).setWhetherCollection(1);
+            }
+
+            //得到当前时间戳和过去时间戳比较相隔多少分钟或者多少小时或者都少天或者多少年
+            String time = DateUtils.getTime(resourcesVos.get(i).getCreateAt());
+            resourcesVos.get(i).setCreateAt(time);
+
+            //得到上一次观看帖子的时间
+            Browse browse = new Browse();
+            String s = browseMapper.selectCreateAt(resourcesVos.get(i).getId(), userId);
+            if(s==null){
+                //增加浏览记录
+                browse.setCreateAt(System.currentTimeMillis()/1000+"");
+                browse.setUId(userId);
+                browse.setZqId(resourcesVos.get(i).getId());
+                browse.setType(0);
+
+                //增加浏览记录
+                int iq = browseMapper.addBrowse(browse);
+                if(iq<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"增加浏览记录错误");
+                }
+
+                //修改帖子浏览数量
+                int i1 = homeMapper.updateBrowse(resourcesVos.get(i).getId());
+                if(i1<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+            }else{
+                //得到过去时间和现在的时间是否相隔1440分钟 如果相隔了 就添加新的浏览记录
+                long minutesApart = TimeUtil.getMinutesApart(s);
+                if(minutesApart>=1440){
+                    //增加浏览记录
+                    browse.setCreateAt(System.currentTimeMillis()/1000+"");
+                    browse.setUId(userId);
+                    browse.setZqId(resourcesVos.get(i).getId());
+                    browse.setType(0);
+
+                    //增加浏览记录
+                    int ie = browseMapper.addBrowse(browse);
+                    if(ie<=0){
+                        throw new ApplicationException(CodeType.SERVICE_ERROR,"增加浏览记录错误");
+                    }
+
+                    //修改帖子浏览数量
+                    int i1 = homeMapper.updateBrowse(resourcesVos.get(i).getId());
+                    if(i1<=0){
+                        throw new ApplicationException(CodeType.SERVICE_ERROR);
+                    }
+
+                }
+            }
+
+            //得到这个帖子的观看数量
+            int i2 = browseMapper.countPostNum(resourcesVos.get(i).getId());
+            resourcesVos.get(i).setBrowse(i2);
+
+            //得到收藏数量
+            int i1 = collectionMapper.selectCollectNumber(resourcesVos.get(i).getId());
+            resourcesVos.get(i).setCollect(i1);
+
+            //将查询出来的帖子视屏存放打list中
+            resourcesVoa.add(resourcesVos.get(i));
+        }
+
+
+
+        return resourcesVoa;
     }
 
     @Override
@@ -660,15 +774,20 @@ public class HomeServiceImpl implements IHomeService {
 
         List<HomeClassificationVo> homeClassificationVos1 = homeMapper.selectPostByTagOne(idArr, sql);
         if(homeClassificationVos1==null || homeClassificationVos1.size()==0){
-             //混乱的意思
-             Collections.shuffle(homeClassificationVos);
 
-             return homeClassificationVos;
+            //查询合作 资源 学习的帖子
+            homeClassificationVos= homeMapper.selectRandom(sql);
+
+            //混乱的意思
+            Collections.shuffle(homeClassificationVos);
+
+            return homeClassificationVos;
         }
 
          //使用stream流筛选不等于当前用户id的数据
          List<HomeClassificationVo> collect = homeClassificationVos1.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
-         //混乱的意思
+
+        //混乱的意思
          Collections.shuffle(collect);
 
          return collect;
@@ -873,21 +992,33 @@ public class HomeServiceImpl implements IHomeService {
         return tags;
     }
 
+
+
     @Override
-    public int updatePostInformation(Resources resources) {
-        System.out.println("123");
-        System.out.println(resources.getContent()+"=="+resources.getTagsOne()+"=="+resources.getTagsTwo()+"==aa"+resources.getCover()+"==aa"+resources.getImg());
-        System.out.println(2456);
-        String str="";
+    public void deleteFile(int type, String imgUrl) {
 
-        if(!resources.getTagsTwo().equals(null)){
-            System.out.println("不等于空");
-        }
-        if(!resources.getTagsOne().equals(null)){
-            System.out.println("不等于空");
+        String substring = imgUrl.substring(imgUrl.lastIndexOf("/"));
+
+        String documentType="";
+        //0代表是图片
+        if(type==0){
+            documentType="img";
         }
 
-        return 0;
+        //1代表是视屏
+        if(type==1){
+            documentType="video";
+        }
+        File file = new File("e://file/"+documentType+""+substring+"");
+        //判断文件是否存在
+        if (file.exists()){
+            boolean delete = file.delete();
+            if(!delete){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"删除服务器文件错误!");
+            }
+        }else{
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"图片不存在!");
+        }
     }
 
 

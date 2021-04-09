@@ -72,7 +72,15 @@ public interface IHomeService {
      * @param userId 用户id
      * @return
      */
-    ResourcesVo selectSingleResourcePost(int id,int userId) throws ParseException;
+    ResourcesVo selectSingleResourcePost(int id, int userId) throws ParseException;
+
+    /**
+     * 根据一级标签id查询所有视频
+     * @param id 一级标签id
+     * @param paging 分页
+     * @return
+     */
+    List<ResourcesVo> queryAllVideosPrimaryTagId(int id, Paging paging,int userId) throws ParseException;
 
     /**
      * 根据二级标签id查询推荐数据
@@ -158,10 +166,13 @@ public interface IHomeService {
     List<Tag> queryMiddleSecondaryTagHomePage(int tagId,int userId);
 
 
+
+
     /**
-     * 修改帖子信息
-     * @param resources
+     * 删除服务器图片
+     * @param type 0 代表是要删除图片  1删除视频
+     * @param imgUrl 图片路劲
      */
-    int updatePostInformation(Resources resources);
+    void deleteFile(int type,String imgUrl);
 
 }

@@ -76,6 +76,9 @@ public class UserServiceImpl implements IUserService {
 
         //得到用户的唯一id
         String openid = jsonObject.getString("openid");
+        if(openid==null){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"openid为空");
+        }
 
         //根据openid查询数据库是否存在
         User user = userMapper.selectUserByOpenId(openid);

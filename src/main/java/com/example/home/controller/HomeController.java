@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +138,18 @@ public class HomeController {
     }
 
     /**
+     * 根据一级标签id查询所有视频
+     * @param id 一级标签id
+     * @return
+     */
+    @ApiOperation(value = "根据一级标签id查询所有视频",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryAllVideosPrimaryTagId")
+    public List<ResourcesVo> queryAllVideosPrimaryTagId(int id, Paging paging,int userId) throws ParseException {
+        return iHomeService.queryAllVideosPrimaryTagId(id,paging,userId);
+    }
+
+    /**
      * 根据二级标签id查询推荐数据 点进帖子详情 触发
      * @param id 二级标签id
      * @return
@@ -184,26 +195,6 @@ public class HomeController {
         return iHomeService.selectResourcesAllPosting(resources, page, limit, startTime, endTime,userName);
     }
 
-    /**
-     *  后台
-     *  修改帖子信息
-     * @return
-     */
-    @ApiOperation(value = "修改帖子信息",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/updatePostInformation")
-    public int updatePostInformation(Resources resources) throws Exception {
-
-        if (resources.getId()==0){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR);
-        }
-
-         iHomeService.updatePostInformation(resources);
-        return 0;
-    }
-
-
-
 
     /**
      * 后台
@@ -242,11 +233,7 @@ public class HomeController {
         return this.upload.upload(file);
     }
 
-    /**
-     *
-     * @param type 0 代表是要删除图片  1删除视频
-     * @param imgUrl 图片路劲
-     */
+
     @ApiOperation(value = "删除服务器图片", notes = "删除服务器图片")
     @ResponseBody
     @PostMapping("/deleteFile")
@@ -254,29 +241,7 @@ public class HomeController {
         if(type>1){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        String substring = imgUrl.substring(imgUrl.lastIndexOf("/"));
-
-        String documentType="";
-        //0代表是图片
-        if(type==0){
-            documentType="img";
-        }
-
-        //1代表是视屏
-        if(type==1){
-            documentType="video";
-        }
-        File file = new File("e://file/"+documentType+""+substring+"");
-        //判断文件是否存在
-        if (file.exists()){
-            boolean delete = file.delete();
-            if(!delete){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"删除服务器文件错误!");
-            }
-        }else{
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"图片不存在!");
-        }
-
+       iHomeService.deleteFile(type,imgUrl);
     }
 
 

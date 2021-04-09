@@ -30,7 +30,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
 
     @Override
-    public List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName,String pageUrl) {
+    public List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName,String pageUrl,String title) {
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -90,8 +90,9 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             time=System.currentTimeMillis()/1000+13+"";
 
 
+            WxPoster wxPoster=new WxPoster();
             //生成海报
-            String posterUrlGreatMaster = WxPoster.getPosterUrlGreatMaster("e:/file/img/yi.jpg", file.getPath(), "e:/file/img/" + time + ".png", headUrl, postImg,postContent);
+            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/shiwu.jpg", file.getPath(), "e:/file/img/" + time + ".png", headUrl, postImg,postContent,userName,title);
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
             posterList.add(newGreat);
         } catch (Exception e) {

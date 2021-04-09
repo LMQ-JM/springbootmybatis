@@ -37,10 +37,10 @@ public class WxPoster {
 
 
  
-
+	//包含Font.PLAIN，Font.BOLD，Font.ITALIC三种，分别对应平体、加粗和斜体
 	private Font font = new Font("微软雅黑", Font.BOLD, 80); // 添加字体的属性设置
 
-	private Graphics2D g = null;
+	private static Graphics2D g = null;
 
 	private int fontsize = 0;
 
@@ -48,7 +48,7 @@ public class WxPoster {
 
 	private int y = 0;
 
- 
+
 
 	/**
 
@@ -71,44 +71,9 @@ public class WxPoster {
 		return null;
 
 	}
-	
-	
-	
-	/*public BufferedImage loadImageLocals(String imgName) {
 
-		try {
-			BufferedImage read = ImageIO.read(new File(imgName));
-			BufferedImage rotateImage = rotateImage(read);
-			return rotateImage;
-
-		} catch (IOException e) {
-         e.printStackTrace();
-			System.out.println(e.getMessage());
-
-		}
-
-		return null;
-
-	}
-
-	
-	
-	public BufferedImage rotateImage(BufferedImage image) {    
-	    int w = image.getWidth();    
-	    int h = image.getHeight();    
-	    BufferedImage result = new BufferedImage(w, h, image.getType());  
-	    Graphics2D g2 = result.createGraphics();  
-	    g2.setColor(new Color(2,2,2));
-	    g2.setStroke(new BasicStroke(1));
-	    g2.fillRect(0, 0, w, h);
-	    g2.drawImage(image,null,0,0);
-	    return result;   
-	}  
-*/
 	/**
-
 	 * 导入网络图片到缓冲区
-
 	 */
 
 	public BufferedImage loadImageUrl(String imgName) {
@@ -305,22 +270,12 @@ public class WxPoster {
  
 
 	/**
-
 	 * 修改图片,返回修改后的图片缓冲区（只输出一行文本）
-
-	 * 
-
 	 * 时间:2007-10-8
-
-	 * 
-
 	 * @param img
-
 	 * @return
-
 	 */
-
-	public BufferedImage modifyImageYe(BufferedImage img,String userName,int w,int h) {
+	public BufferedImage modifyImageYe(BufferedImage img,String userName,int w,int h,Font font) {
 
  
 
@@ -336,7 +291,7 @@ public class WxPoster {
 			
 			g.setColor(Color.black);// 设置字体颜色
 			if (this.font != null) {
-				g.setFont(this.font);
+				g.setFont(font);
 			}
 			g.drawString(userName, w, h);
 			g.dispose();
@@ -348,9 +303,7 @@ public class WxPoster {
 		return img;
 
 	}
-	
 
- 
 	/**
 	 * 设置小程序码的大小
 	 * @param b
@@ -544,178 +497,7 @@ public class WxPoster {
 		}
 
 	}
-	
-	
-	/**
-	 * 
-	 * @param leftUrl 背景图
-	 * @param rightUrl 二维码
-	 * @return
-	 */
-	/*public String getPosterUrlPendant(String leftUrl,String headUrl)  {
-		
-		String currentTimeMillis = System.currentTimeMillis()+"";
-		
-		String loadUrl="e:/file/img/"+currentTimeMillis+".png";
-		
-		try {
-			WxPoster tt = new WxPoster();
 
-			//背景图
-			BufferedImage j = tt.loadImageLocals(leftUrl);
-			
-			//二维码
-			BufferedImage k = getRemoteBufferedImage(headUrl);
-			BufferedImage convertCircular1 = convertCircular(k);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular1, j,45, 45,110,110));
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++");
-		}
-		 //必须要从新用一个string对象接收替换后的值
-        String newintroduction = loadUrl.replace("e:/file/img/", "https://www.gofatoo.com/img/");
-		return newintroduction;
-
-	}*/
-	
-	
-	
-
- 
-	/**
-	 * 入门
-	 * @param leftUrl 背景图
-	 * @param rightUrl 二维码
-	 * @param loadUrl 合成图的地址  （自定义）
-	 * @param headUrl 头像地址
-	 * @param contentUrl 帖子图片地址
-	 * @return
-	 */
-	public static String getPosterUrl(String leftUrl,String rightUrl,String loadUrl,String headUrl,String contentUrl,String userName)  {
-		
-		try {
-			WxPoster tt = new WxPoster();
-			
-			//背景图
-			BufferedImage j = tt.loadImageLocal(leftUrl);
-			
-			//二维码
-			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,162, 1944,195,195));
-			
-			
-		    //头像
-			//网络图片
-		    BufferedImage remoteBufferedImage = getRemoteBufferedImage(headUrl);
-		    tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage, j,930, 110,195,195));
-		    
-		    //帖子第一张图片的地址
-		    //网络图片
-		    BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(contentUrl);
-		    tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,220, 900,800,600));
-		    
-		    //设置文字
-			 BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,600,2130);
-			 tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,300, 800,0,0));
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++");
-		}
-		
-		return loadUrl;
-
-	}
-	
-	
-	/**
-	 * 基础
-	 * @param leftUrl 背景图
-	 * @param rightUrl 二维码
-	 * @param loadUrl 合成图的地址  （自定义）
-	 * @param headUrl 头像地址
-	 * @param contentUrl 帖子图片地址
-	 * @return
-	 */
-	public static String getPosterUrlBasics(String leftUrl,String rightUrl,String loadUrl,String headUrl,String contentUrl,String userName)  {
-		
-		try {
-			WxPoster tt = new WxPoster();
-			
-			//背景图
-			BufferedImage j = tt.loadImageLocal(leftUrl);
-			
-			//二维码
-			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,904, 1800,275,275));
-			
-			
-		    //头像
-			//网络图片
-			//将头像图改为圆形
-			BufferedImage ka = getRemoteBufferedImage(headUrl);
-			BufferedImage convertCircular1 = convertCircular(ka);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular1, j,980,1875,120,120));
-		    
-		    //帖子第一张图片的地址
-		    //网络图片
-		    BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(contentUrl);
-		    tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,115, 180,1030,1400));
-		    
-		    //设置文字
-			 BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,100,148);
-			 tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,100, 50,0,0));
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++");
-		}
-		
-		return loadUrl;
-
-	}
-	
-	
-	/**
-	 * 精通
-	 * @param leftUrl 背景图
-	 * @param rightUrl 二维码
-	 * @param loadUrl 合成图的地址  （自定义）
-	 * @param headUrl 头像地址
-	 * @param contentUrl 帖子图片地址
-	 * @return
-	 */
-	public static String getPosterUrlMaster(String leftUrl,String rightUrl,String loadUrl,String headUrl,String contentUrl)  {
-		
-		try {
-			WxPoster tt = new WxPoster();
-			
-			//背景图
-			BufferedImage j = tt.loadImageLocal(leftUrl);
-			
-			//二维码
-			BufferedImage k = tt.loadImageLocal(rightUrl);
-			BufferedImage convertCircular = convertCircular(k);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,27, 1795,339,339));
-			
-			//将头像图改为圆形
-			BufferedImage ka = getRemoteBufferedImage(headUrl);
-			BufferedImage convertCircular1 = convertCircular(ka);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular1, j,115, 1880,150,150));
-			
-		    
-		    //帖子第一张图片的地址
-		    //网络图片
-		    BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(contentUrl);
-		    tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,121, 107,1000,1400));
-		    
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++");
-		}
-		
-		return loadUrl;
-
-	}
 	
 	
 	/**
@@ -725,9 +507,11 @@ public class WxPoster {
 	 * @param headUrl 头像地址
 	 * @param postImg 帖子第一张图片
 	 * @param postContent 帖子内容
+	 * @param userName 用户名
+	 * @param title 标题
 	 * @return
 	 */
-	public static String getPosterUrlGreatMaster(String leftUrl,String rightUrl,String loadUrl,String headUrl,String postImg,String postContent)  {
+	public String getPosterUrlGreatMaster(String leftUrl, String rightUrl, String loadUrl, String headUrl, String postImg, String postContent,String userName,String title)  {
 		
 		try {
 			WxPoster tt = new WxPoster();
@@ -737,26 +521,43 @@ public class WxPoster {
 			
 			//二维码
 			BufferedImage k = tt.loadImageLocal(rightUrl);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,500, 1800,300,300));
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(k, j,940, 1920,250,250));
 			
-			/*//将头像图改为圆形
+			//将头像图改为圆形
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
 			//将图片设置为圆形
 			BufferedImage convertCircular = convertCircular(ka);
-
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,203, 1128,858,1010));*/
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,200,200));
 			
 		    //帖子第一张图片的地址
 		    //网络图片
 		    BufferedImage remoteBufferedImage2 = getRemoteBufferedImage(postImg);
-		    tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,225, 130,800,650));
+            tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(remoteBufferedImage2, j,15, 370,1030,750));
+
+			//设置用户名
+			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,260,160,font);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
+
+			//设置标题
+			Font font1 = new Font("微软雅黑", Font.BOLD, 50);
+			g= j.createGraphics();
+			drawStringWithFontStyleLineFeed(g,title,710 , 400, 1640,font1);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
 
 
-			//帖子内容
-			BufferedImage modifyImageYe = tt.modifyImageYe(j,postContent,150,1500);
-			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(modifyImageYe, j,0, 800,0,0));
+			//得到画图
+			g= j.createGraphics();
+			//设置内容  文字换行
+			Font font2 = new Font("微软雅黑", Font.BOLD, 50);
 
-		   
+			/*//利用getBytes将unicode字符串转成UTF-8格式的字节数组
+			byte[] utf8Bytes = postContent.getBytes("GB2312");
+			//然后用utf-8 对这个字节数组解码成新的字符串
+			String utf8Str = new String(utf8Bytes, "GB2312");*/
+
+
+			drawStringWithFontStyleLineFeed(g,postContent ,800 , 60, 2030,font2);
+			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("错误异常++++++++++++++++++++++++++++++++++++++++++++"+e);
@@ -764,14 +565,11 @@ public class WxPoster {
 		
 		return loadUrl;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
 
 	/**
      * 传入的图像必须是正方形的 才会 圆形 如果是长方形的比例则会变成椭圆的
@@ -828,6 +626,82 @@ public class WxPoster {
         }
         return bufferedImage;
     }
+
+	/**
+	 * 根据指定宽度自动换行
+	 * @param g
+	 * @param maxWdith
+	 * @param strContent
+	 * @param loc_X
+	 * @param loc_Y
+	 * @param font
+	 */
+	private  void  drawStringWithFontStyleLineFeed(Graphics g, String strContent,int maxWdith, int loc_X, int loc_Y, Font font){
+		g.setFont(font);
+		g.setColor(new Color(29,29,29));
+		//获取字符串 字符的总宽度
+		int strWidth =getStringLength(g,strContent);
+
+		if(strWidth>1866){
+			String strsub=strContent.substring(0,56);//0到56的字符串
+			strContent=strsub+"......";
+		}
+
+		//每一行字符串宽度
+		int rowWidth=maxWdith;
+		// System.out.println("每行字符宽度:"+rowWidth);
+		//获取字符高度
+		int strHeight=getStringHeight(g);
+		//字符串总个数
+		//  System.out.println("字符串总个数:"+strContent.length());
+		if(strWidth>rowWidth){
+			char[] strContentArr = strContent.toCharArray();
+			int count = 0;
+			int conut_value = 0;
+			int line = 0;
+			int charWidth = 0;
+			for(int j=0;j< strContentArr.length;j++){
+
+				if(conut_value>=rowWidth){
+					conut_value = 0;
+					g.drawString(strContent.substring(count,j),loc_X,loc_Y+strHeight*line);
+					count = j;
+					line++;
+
+				}else{
+					if(j==strContentArr.length - 1){
+						g.drawString(strContent.substring(count,j),loc_X,loc_Y+strHeight*line);
+					}else{
+						charWidth = g.getFontMetrics().charWidth(strContentArr[j]);
+						conut_value = charWidth + conut_value;
+					}
+
+				}
+
+			}
+
+		}else{
+			//直接绘制
+			g.drawString(strContent, loc_X, loc_Y);
+		}
+
+	}
+
+	private int  getStringLength(Graphics g,String str) {
+		char[]  strcha=str.toCharArray();
+		int strWidth = g.getFontMetrics().charsWidth(strcha, 0, str.length());
+		System.out.println("字符总宽度:"+strWidth);
+		return strWidth;
+	}
+
+	private int getStringHeight(Graphics g) {
+		int height = g.getFontMetrics().getHeight();
+		//System.out.println("字符高度:"+height);
+		return height;
+	}
+
+
+
 
 
 

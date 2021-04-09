@@ -17,6 +17,10 @@ public class ResourcesVo {
      */
     private String content;
 
+    /**
+     * 一级标签id
+     */
+    private int tagsOne;
 
     /**
      * 图片地址
@@ -99,4 +103,9 @@ public class ResourcesVo {
      * 观看过人的头像
      */
     private String[] browseAvatar;
+
+    /**
+     * 封面
+     */
+    private String cover;
 }

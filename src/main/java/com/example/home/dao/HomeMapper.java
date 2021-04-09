@@ -55,9 +55,19 @@ public interface HomeMapper {
      * @param id 单个资源帖子id
      * @return
      */
-    @Select("select a.id,a.content,c.avatar,c.id as uId,c.user_name,a.title,a.favour,a.collect,a.browse,a.create_at,a.type,a.video,b.tag_name,b.id as tagId " +
+    @Select("select a.id,a.tags_one,a.content,c.avatar,c.id as uId,c.user_name,a.title,a.favour,a.collect,a.browse,a.create_at,a.type,a.video,b.tag_name,b.id as tagId " +
             "from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.id=${id}")
     ResourcesVo selectSingleResourcePost(@Param("id") int id);
+
+    /**
+     * 根据一级标签id查询所有视频
+     * @param tagsOne 一级标签id
+     * @param paging 分页
+     * @return
+     */
+    @Select("select a.id,a.cover,a.tags_one,a.content,c.avatar,c.id as uId,c.user_name,a.title,a.favour,a.collect,a.browse,a.create_at,a.type,a.video,b.tag_name,b.id as tagId" +
+            " from tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.tags_one=${tagsOne} and a.type=1 and a.is_delete=1 ${paging}")
+    List<ResourcesVo> queryAllVideosPrimaryTagId(@Param("tagsOne") int tagsOne,@Param("paging") String paging);
 
    /**
     * 根据帖子id查询当前帖子图片
