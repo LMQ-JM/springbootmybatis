@@ -51,4 +51,9 @@ public class Community {
      * 0资源圈子 1圈子的圈子
      */
     private int type;
+
+    /**
+     * 标签id 对应tb_tags表中的id
+     */
+    private int tagId;
 }

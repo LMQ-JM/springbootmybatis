@@ -164,7 +164,7 @@ public class HomeController {
 
     /**
      *
-     *  增加资源帖子  后台
+     * 增加资源帖子  后台
      * @return
      */
     @ApiOperation(value = "增加资源帖子",notes = "成功返回数据 反则为空")
@@ -249,7 +249,7 @@ public class HomeController {
     @ResponseBody
     @PostMapping("/selectRecommendPost")
     public List<HomeClassificationVo> selectRecommendPost(int userId,Paging paging) {
-            return iHomeService.selectRecommendPost(userId, paging);
+        return iHomeService.selectRecommendPost(userId, paging);
     }
 
 
@@ -277,5 +277,11 @@ public class HomeController {
         return iHomeService.queryMiddleSecondaryTagHomePage(tagId,userId);
     }
 
+    @ApiOperation(value = "删除帖子", notes = "成功返回1 失败0")
+    @ResponseBody
+    @PostMapping("/deletePosts")
+    public void deletePosts(int type,int id) {
+         iHomeService.deletePosts(type,id);
+    }
 
 }

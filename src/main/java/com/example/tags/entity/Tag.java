@@ -15,7 +15,7 @@ public class Tag {
     private int id;
 
     /**
-     * 名称
+     * 标签名称
      */
     private String tagName;
 

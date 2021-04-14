@@ -2,9 +2,10 @@ package com.example.common.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
-import com.sun.deploy.config.ClientConfig;
-import org.apache.catalina.WebResource;
+import com.example.common.constanct.CodeType;
+import com.example.common.exception.ApplicationException;
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -86,6 +87,36 @@ public class ConstantUtil {
 	         String token=accessTokenObj.toString().split(",")[0].split(":")[0];
 	         return token;
 	    }
+
+	/**
+	 * 获取access_token
+	 * @param appSecret
+	 * @param appId
+	 */
+	public Map<String, String> getAccessToken(String appId,String appSecret){
+		Map<String,String> result = new HashedMap();
+		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx6f3fbf1454d85747"+"&secret=3d39711670edf5003814761764f0c350";
+		String wxJson = new RestTemplate().getForEntity(url, String.class).getBody();
+		com.alibaba.fastjson.JSONObject parseObject = JSON.parseObject(wxJson);
+		System.out.println("accessTokenOut========="+parseObject.toJSONString());
+
+		String errcode = parseObject.getString("errcode");
+		String accessToken = parseObject.getString("access_token");
+		String expiresIn = parseObject.getString("expires_in");
+		Integer restTime = Integer.parseInt(expiresIn);
+		//TODO 7200秒之内刷新token
+		if (restTime == 0) {
+			getAccessToken(appid,secret);
+		}
+		result.put("accessToken",accessToken);
+
+		//获取access_token码失败
+		if (StringUtils.isNotBlank(errcode)) {
+			throw new ApplicationException(CodeType.SERVICE_ERROR,"获取token失败");
+		}
+		return result;
+	}
+
 
 
 

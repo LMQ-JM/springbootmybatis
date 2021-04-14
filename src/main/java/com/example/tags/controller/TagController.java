@@ -1,13 +1,16 @@
 package com.example.tags.controller;
 
+import com.example.home.entity.Community;
 import com.example.tags.entity.Tag;
 import com.example.tags.service.ITagService;
+import com.example.tags.vo.AllTagVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -40,7 +43,7 @@ public class TagController {
 
 
     /**
-     *  根据一级标签id查询二级标签
+     * 根据一级标签id查询二级标签
      * @return
      */
     @ApiOperation(value = "根据一级标签id查询二级标签",notes = "成功返回数据 反则为空")
@@ -48,8 +51,31 @@ public class TagController {
     @PostMapping("/selectResourcesAllTags")
     public List<Tag> selectResourcesAllTags(int tid) {
         List<Tag> tags = iTagService.selectResourcesAllTags(tid);
-
         return tags;
+    }
+
+
+    /**
+     * 查询所有一级标签和二级标签
+     * @return
+     */
+    @ApiOperation(value = " 查询所有一级标签和二级标签",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryAllPrimaryAndSecondaryTags")
+    public List<AllTagVo> queryAllPrimaryAndSecondaryTags() {
+        return iTagService.queryAllPrimaryAndSecondaryTags();
+    }
+
+
+    /**
+     * 添加二级标签
+     * @return
+     */
+    @ApiOperation(value = "添加二级标签",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/addTag")
+    public void addTag(Tag tag, Community community) throws ParseException {
+        iTagService.addTag(tag,community);
     }
 
 }

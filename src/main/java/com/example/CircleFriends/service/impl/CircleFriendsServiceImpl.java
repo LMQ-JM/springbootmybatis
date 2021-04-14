@@ -1,6 +1,8 @@
 package com.example.CircleFriends.service.impl;
 
 import com.example.CircleFriends.service.ICircleFriendsService;
+import com.example.common.constanct.CodeType;
+import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.WxPoster;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,10 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
     @Override
     public List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName,String pageUrl,String title) {
+        if(postImg.equals("undefined")){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR);
+        }
+
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;

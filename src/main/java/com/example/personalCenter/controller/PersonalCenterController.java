@@ -60,8 +60,6 @@ public class PersonalCenterController {
         return iPersonalCenterService.selectFriend(userId);
     }
 
-
-
     @ApiOperation(value = "查询我收藏的帖子", notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryFavoritePosts")
@@ -76,7 +74,7 @@ public class PersonalCenterController {
     @ResponseBody
     @PostMapping("/queryHavePostedPosts")
     public Object queryHavePostedPosts(int othersId,int userId,int type, Paging paging) {
-        if(userId==0 || othersId==0){
+        if(othersId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
         return iPersonalCenterService.queryHavePostedPosts(othersId,userId,type,paging);
@@ -91,9 +89,6 @@ public class PersonalCenterController {
         }
         return iPersonalCenterService.myCircleAndCircleJoined(userId,type,paging);
     }
-
-
-
 
     @ApiOperation(value = "修改单个介绍", notes = "成功返回数据 反则为空")
     @ResponseBody

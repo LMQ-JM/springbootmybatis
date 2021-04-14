@@ -1,6 +1,10 @@
 package com.example.tags.dao;
 
+import com.example.home.entity.Community;
 import com.example.tags.entity.Tag;
+import com.example.tags.vo.AllTagVo;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
@@ -58,14 +62,55 @@ public interface TagMapper {
      * @param tableName 表名
      * @return
      */
-    /*@Select({"<script>" +
-            "select count(*) as num,b.id,b.tag_name,b.img_url from ${tableName} a right JOIN tb_tags b on a.tags_two=b.id " +
-            " WHERE a.tags_two in " +
-            "<foreach item = 'item' index = 'index' collection = 'list' open='(' separator=',' close=')'>" +
-            "${item}" +
-            "</foreach> GROUP BY a.tags_two" +
-            "</script>"})*/
     @Select("select COALESCE(count(a.tags_two),0) from ${tableName} a  where a.tags_two=${id} and a.is_delete=1")
     int selectTagsNum(@Param("id") int id, @Param("tableName") String tableName);
+
+    /**
+     * 查询所有标签
+     * @return
+     */
+    @Select("select * from tb_tag")
+    List<AllTagVo> queryAllTag();
+
+    /**
+     * 根据一级标签查询所有二级标签下面的帖子数量
+     * @param id 一级标签id
+     * @param str 表明
+     * @return
+     */
+    @Select("SELECT d.id,d.tag_name,d.img_url,IFNULL(t1.count1, 0) AS num FROM tb_tags d  LEFT JOIN " +
+            "(SELECT tags_two,COUNT(*) AS count1 FROM ${str} where is_delete=1 GROUP BY tags_two) t1" +
+            " on d.id=t1.tags_two where d.t_id=${id} ORDER BY d.id;")
+    List<Tag> queryHowManyPostsAreInEachCell(@Param("str") String str, @Param("id") int id);
+
+
+    /**
+     * 添加二级标签
+     * @param tag
+     * @return
+     */
+    @Insert("insert into tb_tags (tag_name,t_id,type,create_at,img_url)values(#{tag.tagName},${tag.tId},${tag.type},#{tag.createAt},#{tag.imgUrl})")
+    @Options(useGeneratedKeys=true, keyProperty="tag.id", keyColumn="id")
+    int addTag(@Param("tag") Tag tag);
+
+
+    /**
+     * 添加社区
+     * @param community
+     */
+    @Insert("insert into tb_community(community_name,posters,user_id,introduce,announcement,create_at,type,tag_id)" +
+            "values(#{community.communityName},#{community.posters},${community.userId},#{community.introduce},#{community.announcement}" +
+            ",#{community.createAt},#{community.type},#{community.tagId})")
+    int addCommunity(@Param("community") Community community);
+
+    /**
+     * 添加标签和导航栏的中间表
+     * @param tagId 标签id 对应tb_tags表中的id
+     * @param haplontId 单元体id 对应 tb_haplont表中的id
+     * @return
+     */
+    @Insert("insert into tb_tag_haplont(tag_id,haplont_id)values(${tagId},${haplontId})")
+    int addTagHaplont(@Param("tagId") int tagId,@Param("haplontId") int haplontId);
+
 
 }

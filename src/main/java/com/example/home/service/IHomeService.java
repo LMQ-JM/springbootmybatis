@@ -165,14 +165,18 @@ public interface IHomeService {
      */
     List<Tag> queryMiddleSecondaryTagHomePage(int tagId,int userId);
 
-
-
-
     /**
      * 删除服务器图片
      * @param type 0 代表是要删除图片  1删除视频
      * @param imgUrl 图片路劲
      */
     void deleteFile(int type,String imgUrl);
+
+    /**
+     * 删除圈子和资源帖
+     * @param type 类型 0资源 1圈子
+     * @param id 帖子id
+     */
+    void deletePosts(int type,int id);
 
 }

@@ -219,5 +219,14 @@ public interface HomeMapper {
     @Select("select * from tb_tags where t_id=13 or t_id=12")
     List<Tag> queryMiddleSecondaryTagHomePage();
 
+    /**
+     * 删除资源 圈子
+     * @param str 表名
+     * @param id 帖id
+     * @return
+     */
+    @Update("update ${str} set is_delete=0 where id=${id}")
+    int deletePosts(@Param("str") String str,@Param("id") int id);
+
 
 }

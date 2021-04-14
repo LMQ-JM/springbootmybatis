@@ -538,24 +538,17 @@ public class WxPoster {
 			BufferedImage modifyImageYe = tt.modifyImageYe(j,userName,260,160,font);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
 
-			//设置标题
+
 			Font font1 = new Font("微软雅黑", Font.BOLD, 50);
 			g= j.createGraphics();
+			//设置标题 文字换行
 			drawStringWithFontStyleLineFeed(g,title,710 , 400, 1640,font1);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
-
 
 			//得到画图
 			g= j.createGraphics();
 			//设置内容  文字换行
 			Font font2 = new Font("微软雅黑", Font.BOLD, 50);
-
-			/*//利用getBytes将unicode字符串转成UTF-8格式的字节数组
-			byte[] utf8Bytes = postContent.getBytes("GB2312");
-			//然后用utf-8 对这个字节数组解码成新的字符串
-			String utf8Str = new String(utf8Bytes, "GB2312");*/
-
-
 			drawStringWithFontStyleLineFeed(g,postContent ,800 , 60, 2030,font2);
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(null, j,225, 130,800,650));
 		} catch (Exception e) {
@@ -643,7 +636,7 @@ public class WxPoster {
 		int strWidth =getStringLength(g,strContent);
 
 		if(strWidth>1866){
-			String strsub=strContent.substring(0,56);//0到56的字符串
+			String strsub=strContent.substring(0,45);//0到56的字符串
 			strContent=strsub+"......";
 		}
 

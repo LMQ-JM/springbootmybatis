@@ -376,10 +376,7 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public ResourcesVo selectSingleResourcePost(int id,int userId) throws ParseException {
 
-
         ResourcesVo resourcesVo = homeMapper.selectSingleResourcePost(id);
-
-
 
         //在用户登录的情况下 增加帖子浏览记录
         if(userId!=0){
@@ -487,8 +484,6 @@ public class HomeServiceImpl implements IHomeService {
         }
         resourcesVoa.add(resourcesVo);
 
-
-
         //根据一级标签id查询所有视频
         List<ResourcesVo> resourcesVos1 = homeMapper.queryAllVideosPrimaryTagId(resourcesVo.getTagsOne(),pagings);
 
@@ -563,8 +558,6 @@ public class HomeServiceImpl implements IHomeService {
             //将查询出来的帖子视屏存放打list中
             resourcesVoa.add(resourcesVos.get(i));
         }
-
-
 
         return resourcesVoa;
     }
@@ -706,17 +699,18 @@ public class HomeServiceImpl implements IHomeService {
             if(imgUrl!=null || !"undefined".equals(imgUrl)){
                 split=imgUrl.split(",");
             }
-
         }
 
         //系统默认封面
         if(whetherCover==0){
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
-                split=imgUrl.split(",");
-                resources.setCover(split[0]);
-            }else{
+            //视频
+            if(resources.getType()==1){
                 String videoCover = FfmpegUtil.getVideoCover(resources.getVideo());
                 resources.setCover(videoCover);
+                //图片
+            }else if(resources.getType()==0){
+                split=imgUrl.split(",");
+                resources.setCover(split[0]);
             }
         }
 
@@ -727,8 +721,7 @@ public class HomeServiceImpl implements IHomeService {
 
 
 
-        if(imgUrl!=null || !"undefined".equals(imgUrl)){
-
+        if(resources.getType()==0){
             int addImg = homeMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
             if(addImg<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
@@ -1019,6 +1012,25 @@ public class HomeServiceImpl implements IHomeService {
         }else{
             throw new ApplicationException(CodeType.SERVICE_ERROR,"图片不存在!");
         }
+    }
+
+    @Override
+    public void deletePosts(int type, int id) {
+        String str="";
+
+        if(type==0){
+            str="tb_resources";
+        }
+
+        if(type==1){
+            str="tb_circles";
+        }
+
+        int i = homeMapper.deletePosts(str, id);
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"删除失败");
+        }
+
     }
 
 
