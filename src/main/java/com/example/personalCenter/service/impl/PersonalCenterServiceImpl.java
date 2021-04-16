@@ -64,16 +64,16 @@ public class PersonalCenterServiceImpl implements IPersonalCenterService {
     private RecruitMapper recruitMapper;
 
     @Override
-    public InquireFollowersLikesVo queryInquireFollowersLikes(int userId) {
+    public InquireFollowersLikesVo queryInquireFollowersLikes(int othersId) {
 
         //关注
-        int i = personalCenterMapper.selectFollowNum(userId);
+        int i = personalCenterMapper.selectFollowNum(othersId);
 
         //粉丝
-        int i1 = personalCenterMapper.selectFansNum(userId);
+        int i1 = personalCenterMapper.selectFansNum(othersId);
 
         //获赞
-        int i2 = personalCenterMapper.selectGiveNum(userId);
+        int i2 = personalCenterMapper.selectGiveNum(othersId);
 
 
         InquireFollowersLikesVo inquireFollowersLikesVo=new InquireFollowersLikesVo();

@@ -43,11 +43,11 @@ public class PersonalCenterController {
     @ApiOperation(value = "查询关注 粉丝  获赞数量",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryInquireFollowersLikes")
-    public InquireFollowersLikesVo queryInquireFollowersLikes(int userId){
-        if(userId==0){
+    public InquireFollowersLikesVo queryInquireFollowersLikes(int othersId,int userId){
+        if(userId==0 && othersId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iPersonalCenterService.queryInquireFollowersLikes(userId);
+        return  iPersonalCenterService.queryInquireFollowersLikes(othersId);
     }
 
     @ApiOperation(value = "查询好友", notes = "成功返回数据 反则为空")

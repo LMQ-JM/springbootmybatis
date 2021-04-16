@@ -150,5 +150,13 @@ public interface UserMapper {
     @Select("select id,user_name,avatar,introduce from tb_user where user_name like CONCAT('%',#{userName},'%') ${paging}")
     List<UserHtVo> queryFuzzyUser(@Param("userName") String userName, @Param("paging") String paging);
 
+    /**
+     * 查询用户头像和用户名
+     * @param userId
+     * @return
+     */
+    @Select("select avatar,user_name from tb_user where id=${userId}")
+    User queryUserAvatarUserName(@Param("userId") int userId);
+
 }
 

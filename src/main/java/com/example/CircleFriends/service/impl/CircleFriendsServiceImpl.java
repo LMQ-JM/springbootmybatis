@@ -33,7 +33,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
     @Override
     public List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName,String pageUrl,String title) {
-        if(postImg.equals("undefined")){
+        if(postImg.equals("") || postContent.equals("")){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
@@ -55,7 +55,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             //秘钥
             param.put("scene", ConstantUtil.secret);
             //二维码指向的地址
-            param.put("page", null);
+            param.put("page", pageUrl);
             param.put("width", 430);
             param.put("auto_color", false);
             //param.put("is_hyaline", true);//去掉二维码底色

@@ -1,9 +1,9 @@
 package com.example.weChatPay.service.impl;
 
+import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.IdGenerator;
 import com.example.weChatPay.service.IOrdersService;
 import com.example.weChatPay.util.PayUtil;
-import com.example.weChatPay.util.WeChatPayConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,13 +63,13 @@ public class OrdersServiceImpl implements IOrdersService {
         String orderId=idGenerator.getOrderCode();
 
         // 商家平台ID
-        paraMap.put("appid", WeChatPayConfig.appid);
+        paraMap.put("appid", ConstantUtil.appid);
 
         // 商家名称-销售商品类目、String(128)
         paraMap.put("body", body);
 
         // 商户ID
-        paraMap.put("mch_id", WeChatPayConfig.MCHID);
+        paraMap.put("mch_id", ConstantUtil.MCHID);
 
         // UUID
         paraMap.put("nonce_str", nonceStr);
@@ -87,10 +87,10 @@ public class OrdersServiceImpl implements IOrdersService {
         paraMap.put("total_fee", payment);
 
         // 支付类型
-        paraMap.put("trade_type", WeChatPayConfig.TRADETYPE);
+        paraMap.put("trade_type", ConstantUtil.TRADETYPE);
 
         // 此路径是微信服务器调用支付结果通知路径随意写
-        paraMap.put("notify_url", WeChatPayConfig.notifyUrl);
+        paraMap.put("notify_url", ConstantUtil.notifyUrl);
 
         // 除去数组中的空值和签名参数
         paraMap = PayUtil.paraFilter(paraMap);
@@ -99,20 +99,20 @@ public class OrdersServiceImpl implements IOrdersService {
         String prestr = PayUtil.createLinkString(paraMap);
 
         // MD5运算生成签名，这里是第一次签名，用于调用统一下单接口
-        String mysign = PayUtil.sign(prestr, WeChatPayConfig.PATERNERKEY, "utf-8").toUpperCase();
+        String mysign = PayUtil.sign(prestr, ConstantUtil.PATERNERKEY, "utf-8").toUpperCase();
         System.out.println("第一次签名+="+mysign);
 
         // 拼接统一下单接口使用的xml数据，要将上一步生成的签名一起拼接进去
-        String xml = "<xml>" + "<appid>" + WeChatPayConfig.appid + "</appid>" + "<body><![CDATA[" + body + "]]></body>"
-                + "<mch_id>" + WeChatPayConfig.MCHID + "</mch_id>" + "<nonce_str>" + nonceStr + "</nonce_str>"
-                + "<notify_url>" + WeChatPayConfig.notifyUrl + "</notify_url>" + "<openid>" + openid + "</openid>"
+        String xml = "<xml>" + "<appid>" + ConstantUtil.appid + "</appid>" + "<body><![CDATA[" + body + "]]></body>"
+                + "<mch_id>" + ConstantUtil.MCHID + "</mch_id>" + "<nonce_str>" + nonceStr + "</nonce_str>"
+                + "<notify_url>" + ConstantUtil.notifyUrl + "</notify_url>" + "<openid>" + openid + "</openid>"
                 + "<out_trade_no>" + orderId + "</out_trade_no>" + "<spbill_create_ip>" + ip
                 + "</spbill_create_ip>" + "<total_fee>" + payment + "</total_fee>" + "<trade_type>"
-                + WeChatPayConfig.TRADETYPE + "</trade_type>" + "<sign>" + mysign + "</sign>" + "</xml>";
+                + ConstantUtil.TRADETYPE + "</trade_type>" + "<sign>" + mysign + "</sign>" + "</xml>";
 
 
         // 调用统一下单接口，并接受返回的结果
-        String result = PayUtil.httpRequest(WeChatPayConfig.payUrl, "POST", xml);
+        String result = PayUtil.httpRequest(ConstantUtil.payUrl, "POST", xml);
         System.out.println("======"+result);
 
 
@@ -138,11 +138,11 @@ public class OrdersServiceImpl implements IOrdersService {
             // 这边要将返回的时间戳转化成字符串，不然小程序端调用wx.requestPayment方法会报签名错误
             response.put("timeStamp", timeStamp);
 
-            String stringSignTemp = "appId=" + WeChatPayConfig.appid + "&nonceStr=" + nonceStr + "&package=prepay_id="
-                    + prepay_id + "&signType=" + WeChatPayConfig.SIGNTYPE + "&timeStamp=" + timeStamp;
+            String stringSignTemp = "appId=" + ConstantUtil.appid + "&nonceStr=" + nonceStr + "&package=prepay_id="
+                    + prepay_id + "&signType=" + ConstantUtil.SIGNTYPE + "&timeStamp=" + timeStamp;
 
             // 再次签名，这个签名用于小程序端调用wx.requesetPayment方法
-            String paySign = PayUtil.sign(stringSignTemp, WeChatPayConfig.PATERNERKEY, "utf-8").toUpperCase();
+            String paySign = PayUtil.sign(stringSignTemp, ConstantUtil.PATERNERKEY, "utf-8").toUpperCase();
             log.info("=======================第二次签名：" + paySign + "=====================");
 
             response.put("paySign", paySign);
@@ -183,7 +183,7 @@ public class OrdersServiceImpl implements IOrdersService {
             String validStr = PayUtil.createLinkString(validParams);
 
             //拼装生成服务器端验证的签名
-            String sign = PayUtil.sign(validStr, WeChatPayConfig.PATERNERKEY, "utf-8").toUpperCase();
+            String sign = PayUtil.sign(validStr, ConstantUtil.PATERNERKEY, "utf-8").toUpperCase();
 
             // 验证签名是否正确
             if (sign.equals(map.get("sign"))) {

@@ -1,6 +1,5 @@
 package com.example.gold.dao;
 
-import com.example.gold.entity.Gold;
 import com.example.gold.entity.PostExceptional;
 import com.example.gold.entity.UserGoldCoins;
 import org.apache.ibatis.annotations.Insert;
@@ -18,25 +17,20 @@ import java.util.List;
 @Component
 public interface GoldMapper {
 
-    /**
-     * 查询金币
-     * @return
-     */
-    @Select("select * from tb_gold")
-    List<Gold> queryGold();
+
 
     /**
      * 根据用户id查询自己的总金币数量
      * @param userId 用户id
      * @return
      */
-    @Select("select can_withdraw_gold_coins,may_not_withdraw_gold_coins from tb_user_gold_coins where user_id=${userId}")
+    @Select("select can_withdraw_gold_coins,may_not_withdraw_gold_coins,sign_in_get_gold_coins,consecutive_number from tb_user_gold_coins where user_id=${userId}")
     UserGoldCoins queryUserGoldNumber(@Param("userId") int userId);
 
     /**
      * 根据用户id修改用户金币数量
-     * @param str
-     * @param userId
+     * @param str 表明
+     * @param userId 用户名
      * @return
      */
     @Update("update tb_user_gold_coins set ${str} where user_id=${userId}")
@@ -47,8 +41,31 @@ public interface GoldMapper {
      * @param postExceptional
      * @return
      */
-    @Insert("insert into tb_post_exceptional(t_id,amount_gold_coins,u_id)values(${postExceptional.tId},${postExceptional.amountGoldCoins},${postExceptional.uId},#{postExceptional.createAt})")
+    @Insert("insert into tb_post_exceptional(t_id,amount_gold_coins,u_id,create_at)values(${postExceptional.tId},${postExceptional.amountGoldCoins},${postExceptional.uId},#{postExceptional.createAt})")
     int addPostExceptional(@Param("postExceptional") PostExceptional postExceptional);
 
+    /**
+     * 根据用户id查询金币的的数量
+     * @param userId 用户id
+     * @return
+     */
+    @Select("select gold_number from tb_user_sign_in where user_id=${userId}")
+    List<Integer> queryUserSignInByUserId(@Param("userId") Integer userId);
+
+    /**
+     * 初始化 签到数据
+     * @param testLists
+     * @param userId
+     * @return
+     */
+    @Insert({
+            "<script>",
+            "insert into tb_user_sign_in(gold_number, user_id,create_at) values ",
+            "<foreach collection='testLists' item='item' index='index' separator=','>",
+            "(${item}, ${userId},#{createAt})",
+            "</foreach>",
+            "</script>"
+    })
+    int addSignIn(@Param("testLists") List<Integer> testLists,@Param("userId") int userId,@Param("createAt") String createAt);
 
 }

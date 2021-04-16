@@ -32,9 +32,9 @@ public class FfmpegUtil {
 		   commend.add("-r");
 		   commend.add("24");
 		   commend.add("-ss");
-		   commend.add("00:00:04");
+		   commend.add("00:00:02");
 		   commend.add("-t");
-		   commend.add("00:00:05");
+		   commend.add("00:00:03");
 		   commend.add("-vf");
 		   commend.add("scale=295:400");
 		   commend.add("E:\\file\\img\\"+a+".png"); //截取的图片放的位置

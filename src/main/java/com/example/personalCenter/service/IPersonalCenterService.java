@@ -22,10 +22,10 @@ public interface IPersonalCenterService {
 
     /**
      * 查询关注 粉丝  获赞数量
-     * @param userId 用户id
+     * @param othersId 用户id
      * @return
      */
-    InquireFollowersLikesVo queryInquireFollowersLikes(int userId);
+    InquireFollowersLikesVo queryInquireFollowersLikes(int othersId);
 
 
     /**

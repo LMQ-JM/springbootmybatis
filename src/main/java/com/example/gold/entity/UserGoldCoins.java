@@ -23,6 +23,21 @@ public class UserGoldCoins {
     private int mayNotWithdrawGoldCoins;
 
     /**
+     * 签到得到的金币数量
+     */
+    private int signInGetGoldCoins;
+
+    /**
+     * 连续签到天数
+     */
+    private int consecutiveNumber;
+
+    /**
+     * 上一次签到时间
+     */
+    private String lastCheckinTime;
+
+    /**
      * 用户id
      */
     private int userId;

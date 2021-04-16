@@ -2,15 +2,13 @@ package com.example.gold.entity;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 /**
  * @author MQ
  * @date 2021/4/13 14:25
  * 金币实体类
  */
 @Data
-public class Gold {
+public class UserSignIn {
 
     private int id;
 
@@ -20,7 +18,17 @@ public class Gold {
     private int goldNumber;
 
     /**
-     * 金币对应的价格
+     * 用户id
      */
-    private BigDecimal goldPrices;
+    private Integer userId;
+
+    /**
+     * 签到状态 0未签到 1已签到
+     */
+    private int type;
+
+    /**
+     * 创建时间
+     */
+    private String createAt;
 }

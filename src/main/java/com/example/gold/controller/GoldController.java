@@ -3,16 +3,14 @@ package com.example.gold.controller;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ResultUtil;
-import com.example.gold.entity.Gold;
 import com.example.gold.entity.PostExceptional;
 import com.example.gold.service.IGoldService;
+import com.example.gold.vo.UserSignInVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @author MQ
@@ -29,8 +27,6 @@ public class GoldController {
     private IGoldService iGoldService;
 
 
-
-
     /**
      * 打赏帖子
      * @return
@@ -39,24 +35,12 @@ public class GoldController {
     @ResponseBody
     @PostMapping("/postExceptional")
     public ResultUtil postExceptional(int rewardedUserId,PostExceptional postExceptional){
-        if(rewardedUserId==0 || postExceptional.getUserId()==0){
+        if(rewardedUserId==0 || postExceptional.getUId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
         ResultUtil resultUtil = iGoldService.postExceptional(rewardedUserId, postExceptional);
         return resultUtil;
-    }
-
-
-    /**
-     * 查询金币
-     * @return
-     */
-    @ApiOperation(value = "查询金币",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/queryGold")
-    public List<Gold> queryGold(){
-        return iGoldService.queryGold();
     }
 
     /**
@@ -70,6 +54,15 @@ public class GoldController {
          iGoldService.signIn(userId,goldNumber);
     }
 
-
+    /**
+     * 查询签到的数据
+     * @return
+     */
+    @ApiOperation(value = "查询签到的数据",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCheckedInData")
+    public UserSignInVo queryCheckedInData(Integer userId){
+        return  iGoldService.queryCheckedInData(userId);
+    }
 
 }

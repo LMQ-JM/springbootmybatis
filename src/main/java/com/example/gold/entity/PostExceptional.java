@@ -25,7 +25,7 @@ public class PostExceptional {
     /**
      * 打赏人id
      */
-    private int userId;
+    private int uId;
 
     /**
      * 创建时间

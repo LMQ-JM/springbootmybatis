@@ -1,8 +1,9 @@
 package com.example.gold.service;
 
 import com.example.common.utils.ResultUtil;
-import com.example.gold.entity.Gold;
 import com.example.gold.entity.PostExceptional;
+import com.example.gold.entity.UserSignIn;
+import com.example.gold.vo.UserSignInVo;
 
 import java.util.List;
 
@@ -12,11 +13,7 @@ import java.util.List;
  */
 public interface IGoldService {
 
-    /**
-     * 查询金币
-     * @return
-     */
-    List<Gold> queryGold();
+
 
     /**
      * 打赏帖子
@@ -32,4 +29,11 @@ public interface IGoldService {
      * @param goldNumber 签到得到的金币数量
      */
     void signIn(int userId,int goldNumber);
+
+    /**
+     * 查询签到的数据
+     * @param userId 用户id
+     * @return
+     */
+    UserSignInVo queryCheckedInData(Integer userId);
 }
