@@ -40,7 +40,7 @@ public class UserGoldCoins {
     /**
      * 用户id
      */
-    private int userId;
+    private String openId;
 
 
 }

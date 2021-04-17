@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,13 +44,25 @@ public class OrdersController {
     @ApiOperation(value = "微信浏览器内微信支付/公众号支付(JSAPI)",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/orders")
-    public Map<String,Object> orders(String openid,HttpServletRequest request,BigDecimal price,String body) throws Exception {
+    public Map<String,Object> orders(String openid,HttpServletRequest request,BigDecimal price,String body,int userId) throws Exception {
         if("undefined".equals(openid)){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
-        return iOrdersService.orders(openid,request,price,body);
+        return iOrdersService.orders(openid,request,price,body,userId);
     }
+
+    /**
+     * 微信支付成功回调
+     * @return
+     */
+    @ApiOperation(value = "微信支付成功回调",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/weChatNotify")
+    public void weChatNotify(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        iOrdersService.weChatNotify(request,response);
+    }
+
 
     @ApiOperation(value = "企业转账到零钱", httpMethod = "POST", produces = "application/json;charset=UTF-8")
     @ApiImplicitParams(value = {
@@ -146,7 +159,6 @@ public class OrdersController {
         packageParams.put("spbill_create_ip", spbillCreateIp);
 
         try {
-
             // 3.0 利用上面的参数，先去生成自己的签名 paternerkey
             String sign = WXPayUtil.generateSignature(packageParams, ConstantUtil.PATERNERKEY);
 

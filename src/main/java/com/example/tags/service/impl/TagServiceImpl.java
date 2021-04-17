@@ -90,6 +90,7 @@ public class TagServiceImpl implements ITagService {
 
     @Override
     public void addTag(Tag tag, Community community) throws ParseException {
+
         //获取token
         String token = ConstantUtil.getToken();
         String identifyTextContent = ConstantUtil.identifyText(tag.getTagName(), token);

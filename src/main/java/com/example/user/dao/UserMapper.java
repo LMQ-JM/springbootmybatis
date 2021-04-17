@@ -158,5 +158,13 @@ public interface UserMapper {
     @Select("select avatar,user_name from tb_user where id=${userId}")
     User queryUserAvatarUserName(@Param("userId") int userId);
 
+    /**
+     * 根据openid查询用户id
+     * @param openid
+     * @return
+     */
+    @Select("select id from tb_user where open_id=#{openid}")
+    Integer queryUserIdByOpenId(@Param("openid") String openid);
+
 }
 

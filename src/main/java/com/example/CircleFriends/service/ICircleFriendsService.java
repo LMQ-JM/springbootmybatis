@@ -15,6 +15,7 @@ public interface ICircleFriendsService {
      * @param postContent 帖子内容
      * @param userName 用户名
      * @param pageUrl  二维码指向地址
+     * @param title  标题
      * @return
      */
     List<String> selectCircleFriendsFigure(String headUrl, String postImg, String postContent, String userName,String pageUrl,String title);

@@ -1,7 +1,13 @@
 package com.example.weChatPay.service.impl;
 
+import com.example.common.constanct.CodeType;
+import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.IdGenerator;
+import com.example.gold.dao.GoldMapper;
+import com.example.user.dao.UserMapper;
+import com.example.weChatPay.dao.OrderMapper;
+import com.example.weChatPay.entity.GoldCoinOrders;
 import com.example.weChatPay.service.IOrdersService;
 import com.example.weChatPay.util.PayUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +38,17 @@ public class OrdersServiceImpl implements IOrdersService {
     @Autowired
     private IdGenerator idGenerator;
 
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private GoldMapper goldMapper;
+
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
-    public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body) throws Exception {
+    public Map<String, Object> orders(String openid, HttpServletRequest request, BigDecimal price, String body,int userId) throws Exception {
         System.out.println("================="+openid);
         // 支付金额，单位：分，这边需要转成字符串类型，否则后面的签名会失败
         String payment =""+((price.multiply(new BigDecimal("100")).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()));
@@ -60,6 +76,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
         String nonceStr=idGenerator.getUuid();
 
+        //获取订单号
         String orderId=idGenerator.getOrderCode();
 
         // 商家平台ID
@@ -120,18 +137,17 @@ public class OrdersServiceImpl implements IOrdersService {
         Map map = PayUtil.doXMLParse(result);
 
         // 返回状态码
-        String return_code = (String) map.get("return_code");
+        String returnCode = (String) map.get("return_code");
 
         // 返回给移动端需要的参数
         Map<String, Object> response = new HashMap<String, Object>();
-        if (return_code == "SUCCESS" || return_code.equals(return_code)) {
+        if (returnCode == "SUCCESS" || returnCode.equals(returnCode)) {
             // 业务结果
             // 返回的预支付id
-            String prepay_id = (String) map.get("prepay_id");
-
+            String prepayId = (String) map.get("prepay_id");
 
             response.put("nonceStr", nonceStr);
-            response.put("package", "prepay_id=" + prepay_id);
+            response.put("package", "prepay_id=" + prepayId);
 
             String timeStamp = System.currentTimeMillis() / 1000+"";
 
@@ -139,17 +155,26 @@ public class OrdersServiceImpl implements IOrdersService {
             response.put("timeStamp", timeStamp);
 
             String stringSignTemp = "appId=" + ConstantUtil.appid + "&nonceStr=" + nonceStr + "&package=prepay_id="
-                    + prepay_id + "&signType=" + ConstantUtil.SIGNTYPE + "&timeStamp=" + timeStamp;
+                    + prepayId + "&signType=" + ConstantUtil.SIGNTYPE + "&timeStamp=" + timeStamp;
 
             // 再次签名，这个签名用于小程序端调用wx.requesetPayment方法
             String paySign = PayUtil.sign(stringSignTemp, ConstantUtil.PATERNERKEY, "utf-8").toUpperCase();
             log.info("=======================第二次签名：" + paySign + "=====================");
 
             response.put("paySign", paySign);
-            // 更新订单信息
+             //添加订单
+            GoldCoinOrders goldCoinOrders=new GoldCoinOrders();
+            goldCoinOrders.setCreateAt(System.currentTimeMillis()/1000+"");
+            goldCoinOrders.setOrderNumber(paraMap.get("out_trade_no"));
+            goldCoinOrders.setGoodsNo(0);
+            goldCoinOrders.setOrderStatus(0);
+            goldCoinOrders.setUserId(userId);
+            int i = orderMapper.addOrder(goldCoinOrders);
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"订单生成失败");
+            }
 
-
-            // 业务逻辑代码
+            //业务逻辑代码
         }
 
         return response;
@@ -158,7 +183,7 @@ public class OrdersServiceImpl implements IOrdersService {
 
 
     @Override
-    public void WeChatNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void weChatNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream()));
         String line = null;
         StringBuilder sb = new StringBuilder();
@@ -169,8 +194,7 @@ public class OrdersServiceImpl implements IOrdersService {
         // sb为微信返回的xml
         String notityXml = sb.toString();
 
-
-        // 将解析结果存储在HashMap中
+        //将解析结果存储在HashMap中
         Map map = PayUtil.doXMLParse(notityXml);
 
         String returnCode = (String) map.get("return_code");
@@ -193,11 +217,43 @@ public class OrdersServiceImpl implements IOrdersService {
                 //String transaction_id = map.get("transaction_id").toString();
 
                 //订单号
-                String out_trade_no = map.get("out_trade_no").toString();
-                System.out.println("订单号=="+out_trade_no);
-                // shoppingService.updateOrderStateByOrderId(map.get("out_trade_no").toString(), 12, map.get("transaction_id").toString());
-                /** 此处添加自己的业务逻辑代码end **/
+                String outTradeNo = map.get("out_trade_no").toString();
+                String totalFee = map.get("total_fee").toString();
+                System.out.println("金钱"+totalFee);
+                System.out.println("订单号=="+outTradeNo);
 
+                //分转元
+                String s = fenToYuan(totalFee);
+                System.out.println("分转元"+s);
+
+                Integer integer = Integer.valueOf(s);
+                Integer money=integer*100;
+                System.out.println("算好得到的金币的数量"+money);
+
+                //修改订单状态为 已支付
+                int i = orderMapper.updateOrderStatus(1, outTradeNo);
+                if(i<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"订单修改失败");
+                }
+                //得到openid
+                String openid = map.get("openid").toString();
+                if(openid==null){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"openId等于空");
+                }
+
+                //得到用户id
+                Integer userId = userMapper.queryUserIdByOpenId(openid);
+                if (userId.equals("null") || userId.equals("0") || userId.equals("")){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR);
+                }
+
+                //修改用户可提现金币
+                int i2 = goldMapper.updateUserGold("can_withdraw_gold_coins=can_withdraw_gold_coins+" + money,userId);
+                if(i2<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"修改金币失败");
+                }
+
+                /** 此处添加自己的业务逻辑代码end **/
                 // 通知微信服务器已经支付成功
                 response.getWriter().write("<xml><return_code><![CDATA[SUCCESS]]></return_code></xml>");
                 response.getWriter().flush();
@@ -212,6 +268,27 @@ public class OrdersServiceImpl implements IOrdersService {
             response.getWriter().flush();
             response.getWriter().close();
         }
+    }
+
+
+    /**
+     * 分转元
+     * @param amount 分
+     * @return
+     */
+    private String fenToYuan(String amount){
+        NumberFormat format = NumberFormat.getInstance();
+        try{
+            Number number = format.parse(amount);
+            double temp = number.doubleValue() / 100.0;
+            format.setGroupingUsed(false);
+            // 设置返回的小数部分所允许的最大位数
+            format.setMaximumFractionDigits(2);
+            amount = format.format(temp);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return amount;
     }
 
 

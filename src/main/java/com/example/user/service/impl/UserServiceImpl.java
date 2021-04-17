@@ -99,6 +99,9 @@ public class UserServiceImpl implements IUserService {
 
             int i1 = userMapper.selectMaxId()+1;
             user1.setMCode("gft"+i1);
+
+            
+
             int i = userMapper.addUser(user1);
             if(i<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);

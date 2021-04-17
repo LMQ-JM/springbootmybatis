@@ -12,13 +12,16 @@ import java.util.Map;
 public interface IOrdersService {
 
     /**
-     *
-     * @param openId 微信code
+     * 微信支付 （公众号支付(JSAPI)）
+     * @param openId 微信openid
      * @param request
-
+     * @param price 金额
+     * @param body 商家名称-销售商品类目
+     * @param userId 用户id
      * @return
+     * @throws Exception
      */
-    Map<String,Object> orders(String openId, HttpServletRequest request,  BigDecimal price, String body) throws Exception;
+    Map<String,Object> orders(String openId, HttpServletRequest request,BigDecimal price, String body,int userId) throws Exception;
 
     /**
      * 支付成功回调
@@ -26,5 +29,5 @@ public interface IOrdersService {
      * @param response
      * @throws Exception
      */
-    void WeChatNotify(HttpServletRequest request, HttpServletResponse response)throws Exception;
+    void weChatNotify(HttpServletRequest request, HttpServletResponse response)throws Exception;
 }
