@@ -21,7 +21,7 @@ public interface IUserService {
      * @param code 前段获得的code码
      * @return
      */
-    User wxLogin(String code, String userName, String avatar, String address,String sex);
+    User wxLogin(String code, String userName, String avatar, String address, String sex);
 
     /**
      * 后台查询所有后台

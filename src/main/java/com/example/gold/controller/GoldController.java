@@ -5,12 +5,14 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ResultUtil;
 import com.example.gold.entity.PostExceptional;
 import com.example.gold.service.IGoldService;
-import com.example.gold.vo.UserSignInVo;
+import com.example.gold.vo.UserGoldCoinsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 /**
  * @author MQ
@@ -61,8 +63,8 @@ public class GoldController {
     @ApiOperation(value = "查询签到的数据",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryCheckedInData")
-    public UserSignInVo queryCheckedInData(Integer userId){
-        return  iGoldService.queryCheckedInData(userId);
+    public UserGoldCoinsVo queryCheckedInData(Integer userId) throws ParseException {
+        return iGoldService.queryCheckedInData(userId);
     }
 
 }

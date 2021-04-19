@@ -2,6 +2,8 @@ package com.example.weChatPay.entity;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @author MQ
  * @date 2021/4/17 14:32
@@ -30,6 +32,11 @@ public class GoldCoinOrders {
      * 下单人用户id
      */
     private int userId;
+
+    /**
+     * 订单金额
+     */
+    private BigDecimal money;
 
     /**
      * 创建时间

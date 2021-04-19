@@ -6,6 +6,12 @@ spring:
     username: root
     password: root99
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      max-lifetime: 60000
+      idle-timeout: 60000
+      connection-timeout: 50000
+      maximum-pool-size: 60
+      minimum-idle: 10
   # HTTP ENCODING
   servlet:
     multipart:

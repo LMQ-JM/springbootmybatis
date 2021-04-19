@@ -2,10 +2,9 @@ package com.example.gold.service;
 
 import com.example.common.utils.ResultUtil;
 import com.example.gold.entity.PostExceptional;
-import com.example.gold.entity.UserSignIn;
-import com.example.gold.vo.UserSignInVo;
+import com.example.gold.vo.UserGoldCoinsVo;
 
-import java.util.List;
+import java.text.ParseException;
 
 /**
  * @author MQ
@@ -35,5 +34,5 @@ public interface IGoldService {
      * @param userId 用户id
      * @return
      */
-    UserSignInVo queryCheckedInData(Integer userId);
+    UserGoldCoinsVo queryCheckedInData(Integer userId) throws ParseException;
 }

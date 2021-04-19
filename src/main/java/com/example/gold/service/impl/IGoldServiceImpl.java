@@ -3,20 +3,18 @@ package com.example.gold.service.impl;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ResultUtil;
+import com.example.common.utils.TimeUtil;
 import com.example.gold.dao.GoldMapper;
 import com.example.gold.entity.PostExceptional;
 import com.example.gold.entity.UserGoldCoins;
 import com.example.gold.service.IGoldService;
-import com.example.gold.vo.UserSignInVo;
-import com.example.user.dao.UserMapper;
-import com.example.user.entity.User;
+import com.example.gold.vo.UserGoldCoinsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
 
 /**
  * @author MQ
@@ -29,9 +27,6 @@ public class IGoldServiceImpl implements IGoldService {
 
     @Autowired
     private GoldMapper goldMapper;
-
-    @Autowired
-    private UserMapper userMapper;
 
 
     @Override
@@ -66,8 +61,6 @@ public class IGoldServiceImpl implements IGoldService {
             }
 
             return ResultUtil.success(i1,"成功",200);
-
-
         }
 
         //修改用户可提现金币
@@ -93,52 +86,27 @@ public class IGoldServiceImpl implements IGoldService {
 
     @Override
     public void signIn(int userId,int goldNumber) {
-        //添加不可提现金币数量
-        int i2 = goldMapper.updateUserGold("may_not_withdraw_gold_coins=may_not_withdraw_gold_coins+"+goldNumber,userId);
-        if(i2<=0){
-            throw new ApplicationException(CodeType.SERVICE_ERROR,"修改金币失败");
+        int i = goldMapper.updateUserGoldSignIn(userId,goldNumber,System.currentTimeMillis()/1000+"");
+        if(i<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"签到失败");
         }
-
-
     }
 
     @Override
-    public UserSignInVo queryCheckedInData(Integer userId) {
-        UserSignInVo userSignInVo=new UserSignInVo();
+    public UserGoldCoinsVo queryCheckedInData(Integer userId) throws ParseException {
+        UserGoldCoinsVo userGoldCoinsVo=new UserGoldCoinsVo();
 
-        //查询用户头像和名字
-        User user = userMapper.queryUserAvatarUserName(userId);
-        userSignInVo.setAvatar(user.getAvatar());
-        userSignInVo.setUserName(user.getUserName());
-
-
-        //查询用户金币和签到相关信息
+        //查询用户连续签到天数和上一次签到时间
         UserGoldCoins userGoldCoins = goldMapper.queryUserGoldNumber(userId);
-        userSignInVo.setUserGoldCoins(userGoldCoins);
+        userGoldCoinsVo.setConsecutiveNumber(userGoldCoins.getConsecutiveNumber());
 
-        //根据用户查询签到列表
-        List<Integer> integers = goldMapper.queryUserSignInByUserId(userId);
-        //如果等于空 就初始化 签到数据
-        if(integers.size()==0 || integers==null){
-            List<Integer> goldList=new ArrayList<>();
-            goldList.add(10);
-            goldList.add(30);
-            goldList.add(50);
-            goldList.add(60);
-            goldList.add(70);
-            goldList.add(80);
-            goldList.add(100);
-            int i = goldMapper.addSignIn(goldList, userId,System.currentTimeMillis()/1000+"");
-            if(i<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR,"初始化签到数据失败");
-            }
-            //初始化后再查询一遍
-            integers= goldMapper.queryUserSignInByUserId(userId);
+        //得到用户上一次签到是否超过24小时
+        long minutesApart = TimeUtil.getMinutesApart(userGoldCoins.getLastCheckinTime());
+        userGoldCoinsVo.setWhetherCanCheckIn(0);
+        if(minutesApart>1440){
+            userGoldCoinsVo.setWhetherCanCheckIn(1);
         }
 
-        //set签到数据
-        userSignInVo.setListGold(integers);
-
-        return userSignInVo;
+        return userGoldCoinsVo;
     }
 }

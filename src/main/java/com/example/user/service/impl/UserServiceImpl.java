@@ -7,6 +7,7 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.ReturnVo;
 import com.example.common.utils.SHA1Util;
+import com.example.gold.dao.GoldMapper;
 import com.example.home.dao.HomeMapper;
 import com.example.personalCenter.dao.PersonalCenterMapper;
 import com.example.user.dao.UserMapper;
@@ -54,8 +55,11 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private ViewingRecordMapper viewingRecordMapper;
 
+    @Autowired
+    private GoldMapper goldMapper;
+
     @Override
-    public User wxLogin(String code,String userName,String avatar,String address,String sex) {
+    public User wxLogin(String code, String userName, String avatar, String address, String sex) {
         //微信登录的code值
         String wxCode = code;
 
@@ -87,6 +91,11 @@ public class UserServiceImpl implements IUserService {
             if(user.getIsDelete()==0){
                 return null;
             }
+            //算出总金币数量
+            /*int gold=user.getCanWithdrawGoldCoins()+user.getMayNotWithdrawGoldCoins();
+            System.out.println("==============="+gold);
+            user.setSumGoldNumber(gold);*/
+
             return user;
         }else{
             //增加新用户信息
@@ -96,15 +105,20 @@ public class UserServiceImpl implements IUserService {
             user1.setUserName(userName);
             user1.setUserSex(sex);
             user1.setCreateAt(System.currentTimeMillis()/1000+"");
-
+            user1.setCanWithdrawGoldCoins(0);
+            user1.setMayNotWithdrawGoldCoins(0);
+            user1.setSumGoldNumber(0);
             int i1 = userMapper.selectMaxId()+1;
             user1.setMCode("gft"+i1);
-
-            
 
             int i = userMapper.addUser(user1);
             if(i<=0){
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
+
+            int i2 = goldMapper.addUserGoldCoins(user1.getId());
+            if(i2<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"初始化金币数据失败");
             }
             return user1;
         }

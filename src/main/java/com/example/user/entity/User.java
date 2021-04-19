@@ -89,6 +89,21 @@ public class User {
 	 */
 	int  isDelete;
 
+	/**
+	 * 可提现金币
+	 */
+	private int canWithdrawGoldCoins;
+
+	/**
+	 * 不可提现金币
+	 */
+	private int mayNotWithdrawGoldCoins;
+
+	/**
+	 * 总金币数量
+	 */
+	private int sumGoldNumber;
+
 
 
 

@@ -157,7 +157,7 @@ public class OrdersServiceImpl implements IOrdersService {
             String stringSignTemp = "appId=" + ConstantUtil.appid + "&nonceStr=" + nonceStr + "&package=prepay_id="
                     + prepayId + "&signType=" + ConstantUtil.SIGNTYPE + "&timeStamp=" + timeStamp;
 
-            // 再次签名，这个签名用于小程序端调用wx.requesetPayment方法
+            //再次签名，这个签名用于小程序端调用wx.requesetPayment方法
             String paySign = PayUtil.sign(stringSignTemp, ConstantUtil.PATERNERKEY, "utf-8").toUpperCase();
             log.info("=======================第二次签名：" + paySign + "=====================");
 
@@ -168,6 +168,10 @@ public class OrdersServiceImpl implements IOrdersService {
             goldCoinOrders.setOrderNumber(paraMap.get("out_trade_no"));
             goldCoinOrders.setGoodsNo(0);
             goldCoinOrders.setOrderStatus(0);
+            //分转元
+            String s = fenToYuan(payment);
+            BigDecimal bd=new BigDecimal(s);
+            goldCoinOrders.setMoney(bd);
             goldCoinOrders.setUserId(userId);
             int i = orderMapper.addOrder(goldCoinOrders);
             if(i<=0){
@@ -237,13 +241,10 @@ public class OrdersServiceImpl implements IOrdersService {
                 }
                 //得到openid
                 String openid = map.get("openid").toString();
-                if(openid==null){
-                    throw new ApplicationException(CodeType.SERVICE_ERROR,"openId等于空");
-                }
 
                 //得到用户id
                 Integer userId = userMapper.queryUserIdByOpenId(openid);
-                if (userId.equals("null") || userId.equals("0") || userId.equals("")){
+                if ("null".equals(userId) || userId.equals("0") || userId.equals("")){
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
                 }
 

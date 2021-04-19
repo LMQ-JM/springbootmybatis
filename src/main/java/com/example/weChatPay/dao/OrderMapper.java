@@ -18,8 +18,8 @@ public interface OrderMapper {
      * @param goldCoinOrders 订单对象
      * @return
      */
-    @Insert("insert into tb_gold_coin_orders(order_number,goods_no,order_status,user_id,create_at)" +
-            "values(${goldCoinOrders.orderNumber},${goldCoinOrders.goodsNo},${goldCoinOrders.orderStatus},${goldCoinOrders.userId},${goldCoinOrders.createAt})")
+    @Insert("insert into tb_gold_coin_orders(order_number,goods_no,order_status,user_id,money,create_at)" +
+            "values(${goldCoinOrders.orderNumber},${goldCoinOrders.goodsNo},${goldCoinOrders.orderStatus},${goldCoinOrders.userId},${goldCoinOrders.money},${goldCoinOrders.createAt})")
     int addOrder(@Param("goldCoinOrders") GoldCoinOrders goldCoinOrders);
 
     /**

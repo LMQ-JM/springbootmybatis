@@ -129,7 +129,7 @@ public interface HomeMapper {
      * @param id
      * @return
      */
-    @Update("update tb_resources set is_delete=0  where id = ${id}")
+    @Update("update tb_resources set is_delete=0 where id = ${id}")
     Integer deletes(@Param("id") int id);
 
 

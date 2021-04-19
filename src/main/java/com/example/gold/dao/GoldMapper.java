@@ -17,14 +17,12 @@ import java.util.List;
 @Component
 public interface GoldMapper {
 
-
-
     /**
      * 根据用户id查询自己的总金币数量
      * @param userId 用户id
      * @return
      */
-    @Select("select can_withdraw_gold_coins,may_not_withdraw_gold_coins,sign_in_get_gold_coins,consecutive_number from tb_user_gold_coins where user_id=${userId}")
+    @Select("select can_withdraw_gold_coins,may_not_withdraw_gold_coins,sign_in_get_gold_coins,consecutive_number,Last_check_in_time from tb_user_gold_coins where user_id=${userId}")
     UserGoldCoins queryUserGoldNumber(@Param("userId") int userId);
 
     /**
@@ -35,6 +33,17 @@ public interface GoldMapper {
      */
     @Update("update tb_user_gold_coins set ${str} where user_id=${userId}")
     int updateUserGold(@Param("str") String str,@Param("userId") int userId);
+
+    /**
+     * 根据用户id修改上次签到时间，连续签到天数，签到得到的金币，不可用金币数量
+     * @param userId 用户id
+     * @param goldNumber 签到得到的数量
+     * @param createAt 创建时间
+     * @return
+     */
+    @Update("update tb_user_gold_coins " +
+            "set may_not_withdraw_gold_coins=may_not_withdraw_gold_coins+${goldNumber},consecutive_number=consecutive_number+1,sign_in_get_gold_coins=sign_in_get_gold_coins+${goldNumber},Last_check_in_time=#{createAt} where user_id=${userId}")
+    int updateUserGoldSignIn(@Param("userId") int userId,@Param("goldNumber") int goldNumber,@Param("createAt") String createAt);
 
     /**
      * 添加帖子打赏数据
@@ -67,5 +76,13 @@ public interface GoldMapper {
             "</script>"
     })
     int addSignIn(@Param("testLists") List<Integer> testLists,@Param("userId") int userId,@Param("createAt") String createAt);
+
+    /**
+     * 初始化用户的金币数量和签到部分数据
+     * @param userId
+     * @return
+     */
+    @Insert("insert into tb_user_gold_coins(user_id)values(${userId})")
+    int addUserGoldCoins(@Param("userId") int userId);
 
 }
