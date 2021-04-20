@@ -2,6 +2,7 @@ package com.example.gold.service.impl;
 
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.common.utils.ResultUtil;
 import com.example.common.utils.TimeUtil;
 import com.example.gold.dao.GoldMapper;
@@ -9,12 +10,15 @@ import com.example.gold.entity.PostExceptional;
 import com.example.gold.entity.UserGoldCoins;
 import com.example.gold.service.IGoldService;
 import com.example.gold.vo.UserGoldCoinsVo;
+import com.example.weChatPay.dao.OrderMapper;
+import com.example.weChatPay.entity.GoldCoinChange;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * @author MQ
@@ -27,6 +31,9 @@ public class IGoldServiceImpl implements IGoldService {
 
     @Autowired
     private GoldMapper goldMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
 
     @Override
@@ -60,6 +67,17 @@ public class IGoldServiceImpl implements IGoldService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR,"打赏失败");
             }
 
+            //添加金币变化数据
+            GoldCoinChange goldCoinChange=new GoldCoinChange();
+            goldCoinChange.setCreateAt(System.currentTimeMillis()/1000+"");
+            goldCoinChange.setUserId(rewardedUserId);
+            goldCoinChange.setSourceGoldCoin("打赏");
+            goldCoinChange.setPositiveNegativeGoldCoins("+"+postExceptional.getAmountGoldCoins());
+            int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
+            if(i3<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"金币充值失败");
+            }
+
             return ResultUtil.success(i1,"成功",200);
         }
 
@@ -81,6 +99,17 @@ public class IGoldServiceImpl implements IGoldService {
             throw new ApplicationException(CodeType.SERVICE_ERROR,"打赏失败");
         }
 
+        //添加金币变化数据
+        GoldCoinChange goldCoinChange=new GoldCoinChange();
+        goldCoinChange.setCreateAt(System.currentTimeMillis()/1000+"");
+        goldCoinChange.setUserId(rewardedUserId);
+        goldCoinChange.setSourceGoldCoin("打赏");
+        goldCoinChange.setPositiveNegativeGoldCoins("+"+postExceptional.getAmountGoldCoins());
+        int i3 = orderMapper.addGoldCoinChange(goldCoinChange);
+        if(i3<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"金币充值失败");
+        }
+
         return ResultUtil.success(i1,"成功",200);
     }
 
@@ -90,6 +119,18 @@ public class IGoldServiceImpl implements IGoldService {
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"签到失败");
         }
+
+        //添加金币变化数据
+        GoldCoinChange goldCoinChange=new GoldCoinChange();
+        goldCoinChange.setCreateAt(System.currentTimeMillis()/1000+"");
+        goldCoinChange.setUserId(userId);
+        goldCoinChange.setSourceGoldCoin("签到");
+        goldCoinChange.setPositiveNegativeGoldCoins("+"+goldNumber);
+        int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
+        if(i1<=0){
+            throw new ApplicationException(CodeType.SERVICE_ERROR,"签到失败");
+        }
+
     }
 
     @Override
@@ -100,13 +141,23 @@ public class IGoldServiceImpl implements IGoldService {
         UserGoldCoins userGoldCoins = goldMapper.queryUserGoldNumber(userId);
         userGoldCoinsVo.setConsecutiveNumber(userGoldCoins.getConsecutiveNumber());
 
-        //得到用户上一次签到是否超过24小时
-        long minutesApart = TimeUtil.getMinutesApart(userGoldCoins.getLastCheckinTime());
-        userGoldCoinsVo.setWhetherCanCheckIn(0);
-        if(minutesApart>1440){
+        long l = Long.parseLong(userGoldCoins.getLastCheckinTime());
+        boolean thisTime = TimeUtil.getThisTime(l);
+        if(thisTime==true){
+            userGoldCoinsVo.setWhetherCanCheckIn(0);
+        }else {
             userGoldCoinsVo.setWhetherCanCheckIn(1);
         }
 
         return userGoldCoinsVo;
+    }
+
+    @Override
+    public List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging) {
+        Integer page=(paging.getPage()-1)*paging.getLimit();
+        String sql="limit "+page+","+paging.getLimit()+"";
+
+        List<GoldCoinChange> goldCoinChanges = goldMapper.queryGoldCoinChange(userId, sql);
+        return goldCoinChanges;
     }
 }

@@ -91,10 +91,7 @@ public class UserServiceImpl implements IUserService {
             if(user.getIsDelete()==0){
                 return null;
             }
-            //算出总金币数量
-            /*int gold=user.getCanWithdrawGoldCoins()+user.getMayNotWithdrawGoldCoins();
-            System.out.println("==============="+gold);
-            user.setSumGoldNumber(gold);*/
+
 
             return user;
         }else{
@@ -310,10 +307,6 @@ public class UserServiceImpl implements IUserService {
         return i1;
     }
 
-
-
-
-
     @Override
     public int selectWhetherHaveLabel(int userId) {
         int i = userMapper.selectWhetherHaveLabel(userId);
@@ -322,7 +315,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User selectUserById(int userId) {
-        return userMapper.selectUserById(userId);
+        User user = userMapper.selectUserById(userId);
+        //得到可用金币和不可用金币和
+        int i = user.getMayNotWithdrawGoldCoins() + user.getCanWithdrawGoldCoins();
+        user.setSumGoldNumber(i);
+        return user;
     }
 
     @Override
@@ -334,7 +331,6 @@ public class UserServiceImpl implements IUserService {
             User user = userMapper.selectUserById(bUserId);
             return user;
         }
-
 
         if(gUserId!=0){
             int i = viewingRecordMapper.addViewingRecord(bUserId, gUserId, System.currentTimeMillis() / 1000 + "");
@@ -356,8 +352,6 @@ public class UserServiceImpl implements IUserService {
         }else{
             status=1;
         }
-
-
 
         int i = userMapper.sealUserNumber(userId, status);
         if(i<=0){

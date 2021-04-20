@@ -2,6 +2,7 @@ package com.example.gold.dao;
 
 import com.example.gold.entity.PostExceptional;
 import com.example.gold.entity.UserGoldCoins;
+import com.example.weChatPay.entity.GoldCoinChange;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -84,5 +85,14 @@ public interface GoldMapper {
      */
     @Insert("insert into tb_user_gold_coins(user_id)values(${userId})")
     int addUserGoldCoins(@Param("userId") int userId);
+
+    /**
+     * 查询金币变化数据
+     * @param userId 当前用户id
+     * @param sql 分页
+     * @return
+     */
+    @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId} ${sql}")
+    List<GoldCoinChange> queryGoldCoinChange(@Param("userId") Integer userId, @Param("sql") String sql);
 
 }

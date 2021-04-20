@@ -1,5 +1,6 @@
 package com.example.weChatPay.dao;
 
+import com.example.weChatPay.entity.GoldCoinChange;
 import com.example.weChatPay.entity.GoldCoinOrders;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -30,4 +31,13 @@ public interface OrderMapper {
      */
     @Update("update tb_gold_coin_orders set order_status=1 where order_number=#{orderNumber}")
     int updateOrderStatus(@Param("orderStatus") int orderStatus, @Param("orderNumber") String orderNumber);
+
+    /**
+     * 添加用户金币变化
+     * @param goldCoinChange
+     * @return
+     */
+    @Insert("insert into tb_gold_coin_change(user_id,source_gold_coin,positive_negative_gold_coins,create_at)" +
+            "values(${goldCoinChange.userId},#{goldCoinChange.sourceGoldCoin},#{goldCoinChange.positiveNegativeGoldCoins},#{goldCoinChange.createAt})")
+    int addGoldCoinChange(@Param("goldCoinChange") GoldCoinChange goldCoinChange);
 }
