@@ -69,8 +69,11 @@ public class OrdersController {
             @ApiImplicitParam(value = "*用户token", name = "token",defaultValue ="", dataType = "String",paramType="header"),
             @ApiImplicitParam(value = "金额", name = "money",defaultValue ="", dataType = "String",paramType="query")
     })
-    @PostMapping("/wxpay/transfer")
+    @PostMapping("/transfer")
     public ResultUtil transfer(HttpServletRequest request, BigDecimal money, String openID) {
+        if(openID.equals("null")){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"openId等于空");
+        }
 
         // 拼接统一下单地址参数
         Map<String, String> paraMap = new HashMap<String, String>(15);
@@ -176,7 +179,7 @@ public class OrdersController {
             System.out.println("发送前的xml为：" + xml);
 
             // 7,向微信发送请求转账请求
-            String returnXml = CertHttpUtil.postData(wxUrl, xml, ConstantUtil.MCHID, "11");
+            String returnXml = CertHttpUtil.postData(wxUrl, xml, ConstantUtil.MCHID, "e:\\file\\apiclient_cert.p12");
 
             System.out.println("返回的returnXml为:" + returnXml);
 

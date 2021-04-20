@@ -1,10 +1,13 @@
 package com.example.gold.service;
 
+import com.example.common.utils.Paging;
 import com.example.common.utils.ResultUtil;
 import com.example.gold.entity.PostExceptional;
 import com.example.gold.vo.UserGoldCoinsVo;
+import com.example.weChatPay.entity.GoldCoinChange;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * @author MQ
@@ -35,4 +38,11 @@ public interface IGoldService {
      * @return
      */
     UserGoldCoinsVo queryCheckedInData(Integer userId) throws ParseException;
+
+    /**
+     * 查询金币变化数据
+     * @param userId 当前用户id
+     * @return
+     */
+    List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging);
 }

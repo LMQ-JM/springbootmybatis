@@ -7,6 +7,7 @@ import com.example.common.utils.IdGenerator;
 import com.example.gold.dao.GoldMapper;
 import com.example.user.dao.UserMapper;
 import com.example.weChatPay.dao.OrderMapper;
+import com.example.weChatPay.entity.GoldCoinChange;
 import com.example.weChatPay.entity.GoldCoinOrders;
 import com.example.weChatPay.service.IOrdersService;
 import com.example.weChatPay.util.PayUtil;
@@ -223,16 +224,15 @@ public class OrdersServiceImpl implements IOrdersService {
                 //订单号
                 String outTradeNo = map.get("out_trade_no").toString();
                 String totalFee = map.get("total_fee").toString();
-                System.out.println("金钱"+totalFee);
-                System.out.println("订单号=="+outTradeNo);
+
 
                 //分转元
                 String s = fenToYuan(totalFee);
-                System.out.println("分转元"+s);
 
                 Integer integer = Integer.valueOf(s);
-                Integer money=integer*100;
-                System.out.println("算好得到的金币的数量"+money);
+
+                //得到算过后得到的金币数量
+                Integer gold=integer*100;
 
                 //修改订单状态为 已支付
                 int i = orderMapper.updateOrderStatus(1, outTradeNo);
@@ -248,10 +248,21 @@ public class OrdersServiceImpl implements IOrdersService {
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
                 }
 
-                //修改用户可提现金币
-                int i2 = goldMapper.updateUserGold("can_withdraw_gold_coins=can_withdraw_gold_coins+" + money,userId);
+                //修改不可提现金币数量
+                int i2 = goldMapper.updateUserGold("may_not_withdraw_gold_coins=may_not_withdraw_gold_coins+" + gold,userId);
                 if(i2<=0){
                     throw new ApplicationException(CodeType.SERVICE_ERROR,"修改金币失败");
+                }
+
+                //添加金币变化数据
+                GoldCoinChange goldCoinChange=new GoldCoinChange();
+                goldCoinChange.setCreateAt(System.currentTimeMillis()/1000+"");
+                goldCoinChange.setUserId(userId);
+                goldCoinChange.setSourceGoldCoin("充值");
+                goldCoinChange.setPositiveNegativeGoldCoins("+"+gold);
+                int i1 = orderMapper.addGoldCoinChange(goldCoinChange);
+                if(i1<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"金币充值失败");
                 }
 
                 /** 此处添加自己的业务逻辑代码end **/

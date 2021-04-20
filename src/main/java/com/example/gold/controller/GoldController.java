@@ -2,10 +2,12 @@ package com.example.gold.controller;
 
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.common.utils.Paging;
 import com.example.common.utils.ResultUtil;
 import com.example.gold.entity.PostExceptional;
 import com.example.gold.service.IGoldService;
 import com.example.gold.vo.UserGoldCoinsVo;
+import com.example.weChatPay.entity.GoldCoinChange;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * @author MQ
@@ -65,6 +68,21 @@ public class GoldController {
     @PostMapping("/queryCheckedInData")
     public UserGoldCoinsVo queryCheckedInData(Integer userId) throws ParseException {
         return iGoldService.queryCheckedInData(userId);
+    }
+
+
+    /**
+     * 查询金币变化数据
+     * @return
+     */
+    @ApiOperation(value = "查询金币变化数据",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryGoldCoinChange")
+    public List<GoldCoinChange> queryGoldCoinChange(Integer userId, Paging paging) {
+        if(paging.getPage()==0){
+            throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0传1");
+        }
+        return iGoldService.queryGoldCoinChange(userId,paging);
     }
 
 }

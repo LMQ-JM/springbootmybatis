@@ -64,7 +64,7 @@ public interface UserMapper {
      * @param Id
      * @return
      */
-    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where id=${id}")
+    @Select("select a.id,a.user_name,a.user_sex,a.avatar,a.introduce,a.open_id,b.can_withdraw_gold_coins,b.may_not_withdraw_gold_coins from tb_user a inner join tb_user_gold_coins b on a.id=b.user_id where a.id=${Id}")
     User selectUserById(@Param("Id") int Id);
 
     /**
