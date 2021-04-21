@@ -225,7 +225,6 @@ public class OrdersServiceImpl implements IOrdersService {
                 String outTradeNo = map.get("out_trade_no").toString();
                 String totalFee = map.get("total_fee").toString();
 
-
                 //分转元
                 String s = fenToYuan(totalFee);
 
