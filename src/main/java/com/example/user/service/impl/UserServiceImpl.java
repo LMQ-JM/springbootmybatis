@@ -60,7 +60,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User wxLogin(String code, String userName, String avatar, String address, String sex) {
-        System.out.println("-----------+++++++++++++++----------");
         //微信登录的code值
         String wxCode = code;
 
@@ -87,7 +86,6 @@ public class UserServiceImpl implements IUserService {
 
         //根据openid查询数据库是否存在
         User user = userMapper.selectUserByOpenId(openid);
-        System.out.println("---------------------"+user);
         if(user!=null){
             //如果用户是封号状态就返回null
             if(user.getIsDelete()==0){
