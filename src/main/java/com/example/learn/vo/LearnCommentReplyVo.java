@@ -1,6 +1,5 @@
-package com.example.learn.Vo;
+package com.example.learn.vo;
 
-import com.example.circle.vo.PostReplyVo;
 import lombok.Data;
 
 import java.util.List;
@@ -58,7 +57,7 @@ public class LearnCommentReplyVo {
     /**
      * 二级评论集合
      */
-    List<PostReplyVo> postReplyList;
+    List<LearnPostReplyVo> postReplyList;
 
     /**
      * 二级评论数量

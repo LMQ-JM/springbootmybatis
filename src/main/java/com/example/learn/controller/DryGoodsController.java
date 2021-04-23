@@ -3,7 +3,7 @@ package com.example.learn.controller;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
-import com.example.learn.Vo.DryGoodsTagVo;
+import com.example.learn.vo.DryGoodsTagVo;
 import com.example.learn.entity.DryGoods;
 import com.example.learn.service.IDryGoodsService;
 import io.swagger.annotations.Api;
@@ -43,6 +43,13 @@ public class DryGoodsController {
         return iDryGoodsService.queryLearnList(type,paging);
     }
 
+    /**
+     * 根据id查询干货详情
+     * @param id
+     * @param userId
+     * @return
+     * @throws ParseException
+     */
     @ApiOperation(value = "根据id查询干货详情",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryDryGoodsById")

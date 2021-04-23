@@ -1,7 +1,7 @@
 package com.example.learn.service;
 
 import com.example.common.utils.Paging;
-import com.example.learn.Vo.DryGoodsTagVo;
+import com.example.learn.vo.DryGoodsTagVo;
 import com.example.learn.entity.DryGoods;
 
 /**

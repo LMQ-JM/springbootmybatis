@@ -1,7 +1,7 @@
 package com.example.learn.dao;
 
-import com.example.learn.Vo.DryGoodsTagVo;
-import com.example.learn.Vo.DryGoodsVo;
+import com.example.learn.vo.DryGoodsTagVo;
+import com.example.learn.vo.DryGoodsVo;
 import com.example.learn.entity.DryGoods;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;

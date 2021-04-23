@@ -1,12 +1,12 @@
 package com.example.learn.controller;
 
-import com.example.circle.entity.Comment;
-import com.example.circle.entity.CommentGive;
-import com.example.circle.entity.PostReply;
-import com.example.circle.service.ICommentService;
-import com.example.circle.vo.CommentReplyVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
+import com.example.learn.entity.LearnComment;
+import com.example.learn.entity.LearnCommentGive;
+import com.example.learn.entity.LearnPostReply;
+import com.example.learn.service.ICommentLearnService;
+import com.example.learn.vo.LearnCommentReplyVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ import java.util.List;
 public class CommentLearnController {
 
     @Autowired
-    private ICommentService iCommentService;
+    private ICommentLearnService iCommentLearnService;
 
     /**
      *
@@ -38,11 +38,11 @@ public class CommentLearnController {
     @ApiOperation(value = "添加评论",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addComment")
-    public int addComment(Comment comment) throws ParseException {
-        if(comment.getPId()==0 || comment.getBId()==0){
+    public int addComment(LearnComment learnComment) throws ParseException {
+        if(learnComment.getPId()==0 || learnComment.getBId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCommentService.addComment(comment);
+        return iCommentLearnService.addComment(learnComment);
     }
 
     /**
@@ -53,11 +53,11 @@ public class CommentLearnController {
     @ApiOperation(value = "添加二级评论",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addSecondLevelComment")
-    public int addSecondLevelComment(PostReply postReply) throws ParseException {
+    public int addSecondLevelComment(LearnPostReply postReply) throws ParseException {
         if(postReply.getBhId()==0 || postReply.getHId()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCommentService.addSecondLevelComment(postReply);
+        return iCommentLearnService.addSecondLevelComment(postReply);
     }
 
     /**
@@ -68,11 +68,11 @@ public class CommentLearnController {
     @ApiOperation(value = "根据帖子id查询评论",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryComments")
-    public List<CommentReplyVo> queryComments(int tId, int userId){
+    public List<LearnCommentReplyVo> queryComments(int tId, int userId, int tType){
         if(tId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCommentService.queryComments(tId,userId);
+        return  iCommentLearnService.queryComments(tId,userId,tType);
     }
 
 
@@ -84,10 +84,10 @@ public class CommentLearnController {
     @ApiOperation(value = "评论点赞",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/addCommentGive")
-    public int addCommentGive(CommentGive commentGive){
+    public int addCommentGive(LearnCommentGive commentGive){
         if(commentGive.getDId()==0 || commentGive.getBdId()==0 || commentGive.getType()>1){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return  iCommentService.addCommentGive(commentGive);
+        return  iCommentLearnService.addCommentGive(commentGive);
     }
 }

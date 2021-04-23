@@ -1,8 +1,8 @@
 package com.example.learn.dao;
 
 
-import com.example.learn.Vo.LearnCommentReplyVo;
-import com.example.learn.Vo.LearnCommentUserVo;
+import com.example.learn.vo.LearnCommentReplyVo;
+import com.example.learn.vo.LearnCommentUserVo;
 import com.example.learn.entity.LearnComment;
 import com.example.learn.entity.LearnCommentGive;
 import org.apache.ibatis.annotations.Insert;
@@ -49,7 +49,7 @@ public interface LearnCommentMapper {
     /**
      * 根据帖子id查询评论
      * @param tId 帖子id
-     * @param tType
+     * @param tType 帖子类型
      * @return
      */
     @Select("select a.*,b.id as userId,b.user_name,b.avatar from tb_learn_comment a INNER JOIN tb_user b on a.p_id=b.id where a.t_id=${tId} and a.t_type=${tType} and a.is_delete=1 order by a.create_at desc")
