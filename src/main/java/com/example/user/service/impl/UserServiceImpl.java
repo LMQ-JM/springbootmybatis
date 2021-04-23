@@ -93,8 +93,6 @@ public class UserServiceImpl implements IUserService {
             if(user.getIsDelete()==0){
                 return null;
             }
-
-
             return user;
         }else{
             //增加新用户信息
