@@ -36,11 +36,11 @@ public class DryGoodsController {
     @ApiOperation(value = "根据状态查询学习信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/queryLearnList")
-    public Object queryLearnList(int type, Paging paging){
+    public Object queryLearnList(int type, Paging paging, int orderRule){
         if(paging.getPage()==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR,"page不要传0 或者参数错误");
         }
-        return iDryGoodsService.queryLearnList(type,paging);
+        return iDryGoodsService.queryLearnList(type,paging,orderRule);
     }
 
     /**

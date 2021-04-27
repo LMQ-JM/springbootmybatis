@@ -12,11 +12,12 @@ public interface IDryGoodsService {
 
     /**
      * 根据状态查询学习信息
-     * @param type 0:提问； 1:干货; 2:公开课
+     * @param type 0:提问; 1:干货; 2:公开课
      * @param paging 分页
+     * @param orderRule 排序规则 0:推荐  1:最新  2:最热
      * @return
      */
-    Object queryLearnList(int type, Paging paging);
+    Object queryLearnList(int type, Paging paging, int orderRule);
 
     /**
      * 根据id查询干货详情
