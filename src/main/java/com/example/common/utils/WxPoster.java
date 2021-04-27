@@ -1,5 +1,8 @@
 package com.example.common.utils;
 
+import com.example.common.constanct.CodeType;
+import com.example.common.exception.ApplicationException;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -512,7 +515,14 @@ public class WxPoster {
 	 * @return
 	 */
 	public String getPosterUrlGreatMaster(String leftUrl, String rightUrl, String loadUrl, String headUrl, String postImg, String postContent,String userName,String title)  {
-		
+		System.out.println("=="+leftUrl);
+		System.out.println("=="+rightUrl);
+		System.out.println("=="+loadUrl);
+		System.out.println("=="+headUrl);
+		System.out.println("=="+postImg);
+		System.out.println("=="+postContent);
+		System.out.println("=="+userName);
+		System.out.println("=="+title);
 		try {
 			WxPoster tt = new WxPoster();
 			
@@ -525,8 +535,14 @@ public class WxPoster {
 			
 			//将头像图改为圆形
 			BufferedImage ka = getRemoteBufferedImage(headUrl);
+			if(ka==null){
+				throw new ApplicationException(CodeType.SERVICE_ERROR);
+			}
 			//将图片设置为圆形
 			BufferedImage convertCircular = convertCircular(ka);
+			if(convertCircular==null){
+				throw new ApplicationException(CodeType.SERVICE_ERROR,"错了");
+			}
 			tt.writeImageLocal(loadUrl, tt.modifyImagetogeter(convertCircular, j,20, 20,200,200));
 			
 		    //帖子第一张图片的地址

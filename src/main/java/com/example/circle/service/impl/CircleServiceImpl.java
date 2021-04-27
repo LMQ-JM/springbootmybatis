@@ -544,7 +544,7 @@ public class CircleServiceImpl implements ICircleService {
 
         //自己选封面
         if(whetherCover==1){
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            if(circle.getType()==0){
                 split=imgUrl.split(",");
             }
 
@@ -552,7 +552,7 @@ public class CircleServiceImpl implements ICircleService {
 
         //系统默认封面
         if(whetherCover==0){
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            if(circle.getType()==0){
                 split=imgUrl.split(",");
                 circle.setCover(split[0]);
             }else{
@@ -568,7 +568,7 @@ public class CircleServiceImpl implements ICircleService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
 
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            if(circle.getType()==0){
                 int addImg = homeMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
                 if(addImg<=0){
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
@@ -588,7 +588,7 @@ public class CircleServiceImpl implements ICircleService {
                 throw new ApplicationException(CodeType.SERVICE_ERROR);
             }
 
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            if(circle.getType()==0){
                 int addImg = homeMapper.addImg(resources.getId(), split, System.currentTimeMillis() / 1000 + "", postType);
                 if(addImg<=0){
                     throw new ApplicationException(CodeType.SERVICE_ERROR);
