@@ -3,10 +3,7 @@ package com.example.learn.dao;
 import com.example.learn.vo.DryGoodsTagVo;
 import com.example.learn.vo.DryGoodsVo;
 import com.example.learn.entity.DryGoods;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,5 +42,21 @@ public interface DryGoodsMapper {
     @Options(useGeneratedKeys=true, keyProperty="dryGoods.id",keyColumn="id")
     int addDryGoods(@Param("dryGoods") DryGoods dryGoods);
 
-    int giveLike(@Param("") int id);
+    /**
+     * 修改帖子点赞数
+     * @param id
+     * @param math
+     * @return
+     */
+    @Update("update tb_dry_goods set favour = favour ${math} 1 where id = ${id}")
+    int updateDryGoodsGive(@Param("id") int id,@Param("math") String math);
+
+    /**
+     * 修改帖子收藏数
+     * @param id
+     * @param math
+     * @return
+     */
+    @Update("update tb_dry_goods set collect = collect ${math} 1 where id = ${id}")
+    int updateDryGoodsCollect(@Param("id") int id,@Param("math") String math);
 }

@@ -15,6 +15,10 @@ public class DryGoodsTagVo {
      */
     private int uId;
     /**
+     * 发帖人名称
+     */
+    private String uName;
+    /**
      * 标题
      */
     private String title;
