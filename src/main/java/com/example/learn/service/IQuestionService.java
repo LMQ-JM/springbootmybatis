@@ -9,7 +9,7 @@ import com.example.learn.entity.Question;
 public interface IQuestionService {
 
     /**
-     *
+     * 发布提问帖
      * @param question
      * @return
      */
