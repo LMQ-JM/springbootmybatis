@@ -46,4 +46,5 @@ public class ApplicationAdviceHandle extends ResponseEntityExceptionHandler {
         e.printStackTrace();
         return new ApplicationException(CodeType.UNKNOWN_ERROR);
     }
+
 }
