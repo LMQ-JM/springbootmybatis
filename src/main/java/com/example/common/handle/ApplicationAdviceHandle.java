@@ -2,11 +2,15 @@ package com.example.common.handle;
 
 
 import com.example.common.constanct.CodeType;
+import com.example.common.data.Result;
 import com.example.common.exception.ApplicationException;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -45,5 +49,10 @@ public class ApplicationAdviceHandle extends ResponseEntityExceptionHandler {
         response.setStatus(CodeType.UNKNOWN_ERROR.getHttpStatus());
         e.printStackTrace();
         return new ApplicationException(CodeType.UNKNOWN_ERROR);
+    }
+
+    @ExceptionHandler(value = MultipartException.class)
+    Result arithmeticExceptionException(MultipartException e, HttpServletRequest request) {
+        return new Result(-1,"上传单个文件大小只能上传30M","");
     }
 }
