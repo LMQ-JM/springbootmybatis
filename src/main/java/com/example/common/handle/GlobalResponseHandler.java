@@ -4,12 +4,19 @@ package com.example.common.handle;
 import com.example.common.anntation.IgnoreResponseAdvice;
 import com.example.common.data.Result;
 import com.example.common.exception.ApplicationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.io.IOException;
 
 /**
  * 全局统一返回
@@ -19,7 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @RestControllerAdvice
 public class GlobalResponseHandler implements ResponseBodyAdvice {
-
+    static final Logger logger = LoggerFactory.getLogger(GlobalResponseHandler.class);
 
     @Override
     public boolean supports(MethodParameter methodParameter, Class aClass) {
@@ -52,4 +59,15 @@ public class GlobalResponseHandler implements ResponseBodyAdvice {
 
         return Result.SUCCESS(o);
     }
+
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ModelAndView uploadException(MaxUploadSizeExceededException e) throws IOException {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("msg", "最大上传文件为30M，上传文件大小超出限制!");
+        mv.setViewName("error");
+        return mv;
+    }
+
+
 }
