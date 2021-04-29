@@ -3,6 +3,7 @@ package com.example.learn.service.impl;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.Paging;
+import com.example.learn.dao.QuestionMapper;
 import com.example.learn.vo.DryGoodsTagVo;
 import com.example.learn.vo.DryGoodsVo;
 import com.example.learn.dao.DryGoodsCollectMapper;
@@ -12,6 +13,7 @@ import com.example.learn.entity.Collect;
 import com.example.learn.entity.DryGoods;
 import com.example.learn.entity.Give;
 import com.example.learn.service.IDryGoodsService;
+import com.example.learn.vo.QuestionVo;
 import com.example.user.dao.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
 
     @Autowired
     private DryGoodsMapper dryGoodsMapper;
+
+    @Autowired
+    private QuestionMapper questionMapper;
 
     @Autowired
     private DryGoodsGiveMapper dryGoodsGiveMapper;
@@ -59,7 +64,19 @@ public class DryGoodsServiceImpl implements IDryGoodsService {
 
         //提问
         if(type == 0){
-
+            String sql2 = "";
+            if (orderRule == 0){
+                sql2 = "order by a.collect DESC ";
+            }
+            if (orderRule == 1){
+                sql2 = "order by a.create_at DESC ";
+            }
+            if (orderRule == 2){
+                sql2 = "order by a.favour DESC ";
+            }
+            sql2 = sql2 + "limit "+page+","+paging.getLimit()+"";
+            List<QuestionVo> questionVos = questionMapper.queryQuestionList(sql2);
+            return questionVos;
         }
         //干货
         if(type == 1){
