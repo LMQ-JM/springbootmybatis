@@ -696,7 +696,7 @@ public class HomeServiceImpl implements IHomeService {
 
         //自己选封面
         if(whetherCover==1){
-            if(imgUrl!=null || !"undefined".equals(imgUrl)){
+            if(resources.getType()==0){
                 split=imgUrl.split(",");
             }
         }

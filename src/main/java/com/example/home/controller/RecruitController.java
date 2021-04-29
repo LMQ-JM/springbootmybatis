@@ -84,11 +84,11 @@ public class RecruitController {
     @ApiOperation(value = "根据用户id查询发布的招聘信息",notes = "成功返回数据 反则为空")
     @ResponseBody
     @PostMapping("/selectPostingBasedUserID")
-    public List<RecruitVo> selectPostingBasedUserID (int userId, Paging paging)  {
-        if(userId==0){
+    public List<RecruitVo> selectPostingBasedUserID (int othersId, Paging paging)  {
+        if(othersId==0){
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
-        return iRecruitService.selectPostingBasedUserID(userId,paging);
+        return iRecruitService.selectPostingBasedUserID(othersId,paging);
     }
 
 
