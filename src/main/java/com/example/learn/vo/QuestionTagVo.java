@@ -1,19 +1,27 @@
-package com.example.learn.entity;
+package com.example.learn.vo;
 
 import lombok.Data;
 
 /**
  * @author JC
- * @date 2021/4/28 13:55
+ * @date 2021/4/29 14:24
  */
 @Data
-public class Question {
+public class QuestionTagVo {
 
     private int id;
     /**
      * 发问人id
      */
     private int uId;
+    /**
+     * 发问人名称
+     */
+    private String uName;
+    /**
+     * 发问人头像
+     */
+    private String avatar;
     /**
      * 标题
      */
@@ -74,4 +82,20 @@ public class Question {
      * 发布时间
      */
     private String createAt;
+    /**
+     * 提问tagsTwo对应的tagName
+     */
+    private String tagName;
+    /**
+     * 收到金币数量
+     */
+    private int goldNum;
+    /**
+     * 看贴人对该帖子的点赞状态 0:未点赞； 1:已点赞
+     */
+    private int whetherGive;
+    /**
+     * 看贴人对该帖子的收藏状态 0:未收藏； 1:已收藏
+     */
+    private int whetherCollect;
 }
