@@ -29,7 +29,7 @@ public interface DryGoodsMapper {
      * @return
      */
     @Select("select a.*,b.tag_name,COALESCE(SUM(c.gold_num),0) as goldNum from tb_dry_goods a INNER JOIN tb_tags b " +
-            "on a.tags_two = b.id LEFT JOIN tb_learn_post_exceptional c on a.id = c.t_id " +
+            "on a.tags_two = b.id LEFT JOIN tb_learn_post_exceptional c on a.id = c.t_id and c.type = 1 " +
             "where a.id = ${id} and a.is_delete = 1")
     DryGoodsTagVo queryDryGoodsById(@Param("id") int id);
 

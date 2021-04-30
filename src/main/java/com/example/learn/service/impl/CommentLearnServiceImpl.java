@@ -5,6 +5,7 @@ import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ConstantUtil;
 import com.example.learn.dao.LearnCommentMapper;
 import com.example.learn.dao.PostReplyLearnMapper;
+import com.example.learn.dao.QuestionMapper;
 import com.example.learn.entity.LearnComment;
 import com.example.learn.entity.LearnCommentGive;
 import com.example.learn.entity.LearnPostReply;
@@ -38,6 +39,9 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private QuestionMapper questionMapper;
+
     @Override
     public int addComment(LearnComment comment) throws ParseException {
         //获取token
@@ -53,6 +57,13 @@ public class CommentLearnServiceImpl implements ICommentLearnService {
         int i = learnCommentMapper.addComment(comment);
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR);
+        }
+        //如果新增的是提问回答，写入提问表
+        if(comment.getTType() == 0){
+            int j = questionMapper.updateQuestionComment(comment.getTId(),"+");
+            if(j <= 0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR);
+            }
         }
         return i;
     }
