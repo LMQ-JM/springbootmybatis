@@ -4,7 +4,6 @@ package com.example.common.handle;
 import com.example.common.constanct.CodeType;
 import com.example.common.data.Result;
 import com.example.common.exception.ApplicationException;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
