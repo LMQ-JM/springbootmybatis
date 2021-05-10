@@ -9,7 +9,6 @@ import com.example.circle.entity.Give;
 import com.example.circle.entity.Img;
 import com.example.circle.service.ICircleService;
 import com.example.circle.vo.CircleClassificationVo;
-import com.example.circle.vo.CircleLabelVo;
 import com.example.circle.vo.CommentUserVo;
 import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
@@ -32,7 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,14 +73,120 @@ public class CircleServiceImpl implements ICircleService {
     private BrowseMapper browseMapper;
 
     @Override
-    public ReturnVo queryAllCircles() {
-        List<CircleLabelVo> circles = circleMapper.queryAllCircles();
-        Integer integer = circleMapper.countAllCircles();
+    public List<CircleClassificationVo> queryImagesOrVideos(int type,Paging paging,int userId) {
+        Integer pages=(paging.getPage()-1)*paging.getLimit();
+        String pagings=" limit "+pages+","+paging.getLimit()+"";
 
-        ReturnVo returnVo=new ReturnVo();
-        returnVo.setList(circles);
-        returnVo.setCount(integer);
-        return returnVo;
+        List<CircleClassificationVo> circles = circleMapper.queryImagesOrVideos(type, pagings);
+        for (int i=0;i<circles.size();i++){
+
+            //得到图片组
+            String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+            circles.get(i).setImg(strings);
+
+            //得到点过赞人的头像
+            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+            circles.get(i).setGiveAvatar(strings1);
+
+            //得到点赞数量
+            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+            circles.get(i).setGiveNumber(integer1);
+
+
+            //等于0在用户没有到登录的情况下 直接设置没有点赞
+            if(userId==0){
+                circles.get(i).setWhetherGive(0);
+                circles.get(i).setWhetherAttention(0);
+            }else{
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                if(i1>0){
+                    circles.get(i).setWhetherAttention(1);
+                }
+
+                //查询是否对帖子点了赞   0没有 1有
+                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                if(integer>0){
+                    circles.get(i).setWhetherGive(1);
+                }
+            }
+
+
+            //得到帖子评论数量
+            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+            circles.get(i).setNumberPosts(integer2);
+
+            //得到评论数据
+            List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+            circles.get(i).setComments(comments);
+
+            //将时间戳转换为多少天或者多少个小时和多少年
+            String time = DateUtils.getTime(circles.get(i).getCreateAt());
+            circles.get(i).setCreateAt(time);
+        }
+
+        return circles;
+    }
+
+
+    @Override
+    public List<CircleClassificationVo> queryCircleRecommendationData(int userId,Paging paging) {
+        Integer pages=(paging.getPage()-1)*paging.getLimit();
+        String pagings=" limit "+pages+","+paging.getLimit()+"";
+
+        List<CircleClassificationVo> circleLabelVos = circleMapper.queryAllCircles(pagings);
+
+        //得到用户id不等于userId的帖子数据
+        List<CircleClassificationVo> circles = circleLabelVos.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
+        for (int i=0;i<circles.size();i++){
+
+            //得到图片组
+            String[] strings = homeMapper.selectImgByPostId(circles.get(i).getId());
+            circles.get(i).setImg(strings);
+
+            //得到点过赞人的头像
+            String[] strings1 = circleGiveMapper.selectCirclesGivePersonAvatar(circles.get(i).getId());
+            circles.get(i).setGiveAvatar(strings1);
+
+            //得到点赞数量
+            Integer integer1 = circleGiveMapper.selectGiveNumber(circles.get(i).getId());
+            circles.get(i).setGiveNumber(integer1);
+
+
+            //等于0在用户没有到登录的情况下 直接设置没有点赞
+            if(userId==0){
+                circles.get(i).setWhetherGive(0);
+                circles.get(i).setWhetherAttention(0);
+            }else{
+                //查看我是否关注了此人
+                int i1 = attentionMapper.queryWhetherAttention(userId, circles.get(i).getUId());
+                if(i1>0){
+                    circles.get(i).setWhetherAttention(1);
+                }
+
+                //查询是否对帖子点了赞   0没有 1有
+                Integer integer = circleGiveMapper.whetherGive(userId, circles.get(i).getId());
+                if(integer>0){
+                    circles.get(i).setWhetherGive(1);
+                }
+            }
+
+
+            //得到帖子评论数量
+            Integer integer2 = commentMapper.selectCommentNumber(circles.get(i).getId());
+            circles.get(i).setNumberPosts(integer2);
+
+            //得到评论数据
+            List<CommentUserVo> comments = commentMapper.selectComment(circles.get(i).getId());
+            circles.get(i).setComments(comments);
+
+            //将时间戳转换为多少天或者多少个小时和多少年
+            String time = DateUtils.getTime(circles.get(i).getCreateAt());
+            circles.get(i).setCreateAt(time);
+        }
+        Collections.shuffle(circles);
+
+        return circles;
     }
 
     @Override
@@ -94,18 +199,6 @@ public class CircleServiceImpl implements ICircleService {
         }
 
         if(circle.getType()==0) {
-           /* String[] split = urlImg.split(",");
-
-            //排序
-            String img = ConstantUtil.getImg(split);
-            split= img.split(",");
-
-            int addImg = homeMapper.addImg(circle.getId(), split, System.currentTimeMillis() / 1000 + "", 1);
-            if(addImg<=0){
-                throw new ApplicationException(CodeType.SERVICE_ERROR);
-            }*/
-
-
             //添加图片组
             Img img = new Img();
             img.setType(1);
@@ -124,46 +217,7 @@ public class CircleServiceImpl implements ICircleService {
         return 1;
     }
 
-    @Override
-    public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime,String userName) throws ParseException {
-        String sql="";
-        Integer pages=(page-1)*limit;
-        if(!circle.getTitle().equals("undefined") && !circle.getTitle().equals("")){
-            sql+=" and a.title like '%"+circle.getTitle()+"%'";
-        }
 
-        //如果发帖人不为空 ，根据发帖人查询帖子
-        if(!userName.equals("undefined") && !userName.equals("")){
-            sql+="and c.user_name like '%"+userName+"%'";
-        }
-
-        //将时间格式转换为时间戳
-        //开始时间
-        if(!startTime.equals("undefined") && !endTime.equals("undefined") && !startTime.equals("null") && !endTime.equals("null")){
-            if(!startTime.equals("") && !endTime.equals("")){
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String startTimes=String.valueOf(sdf.parse(startTime).getTime() / 1000);
-
-                //结束时间
-                SimpleDateFormat sdftwo = new SimpleDateFormat("yyyy-MM-dd");
-                String endTimes=String.valueOf(sdftwo.parse(endTime).getTime() / 1000);
-
-                if(!"undefined".equals(startTime) && !endTime.equals("undefined") ){
-                    sql+="and a.create_at>= "+startTimes+" and a.create_at<="+endTimes+"";
-                }
-            }
-        }
-        String paging=" limit "+pages+","+limit+"";
-        List<CircleLabelVo> circleLabelVos = circleMapper.selectAllPosting(sql, paging);
-        //根据不同条件得到不同帖子数量
-        Integer integer = circleMapper.selectAllPostingCount(sql);
-
-        ReturnVo returnVo=new ReturnVo();
-        returnVo.setCount(integer);
-        returnVo.setList(circleLabelVos);
-
-        return returnVo;
-    }
 
     @Override
     public Integer deletes(Integer[] id) {

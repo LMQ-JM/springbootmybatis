@@ -115,6 +115,9 @@ public class IGoldServiceImpl implements IGoldService {
 
     @Override
     public void signIn(int userId,int goldNumber) {
+
+
+        //修改用户金币数据
         int i = goldMapper.updateUserGoldSignIn(userId,goldNumber,System.currentTimeMillis()/1000+"");
         if(i<=0){
             throw new ApplicationException(CodeType.SERVICE_ERROR,"签到失败");
@@ -135,6 +138,15 @@ public class IGoldServiceImpl implements IGoldService {
 
     @Override
     public UserGoldCoinsVo queryCheckedInData(Integer userId) throws ParseException {
+        //查询当前用户的签到天数 如果等于7天 就将签到天数修改为0 从第一天开始签到
+        int i2 = goldMapper.queryConsecutiveNumberById(userId);
+        if(i2==7){
+            int i = goldMapper.updateConsecutiveNumberById(userId);
+            if(i<=0){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"签到失败错误！");
+            }
+        }
+
         UserGoldCoinsVo userGoldCoinsVo=new UserGoldCoinsVo();
 
         //查询用户连续签到天数和上一次签到时间

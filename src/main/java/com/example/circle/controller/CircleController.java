@@ -42,17 +42,28 @@ public class CircleController {
 
 
     /**
-     *  后台
-     *  查询所有圈子的数据
+     * 查询视频或者图片
      * @return
      */
-    @ApiOperation(value = "查询所有圈子的数据",notes = "成功返回数据 反则为空")
+    @ApiOperation(value = "查询视频或者图片",notes = "成功返回数据 反则为空")
     @ResponseBody
-    @PostMapping("/queryAllCircles")
-    public ReturnVo queryAllCircles() throws ParseException {
-        ReturnVo returnVo = iCircleService.queryAllCircles();
-        return returnVo;
+    @PostMapping("/queryImagesOrVideos")
+    public List<CircleClassificationVo> queryImagesOrVideos(int type,Paging paging,int userId)  {
+        return iCircleService.queryImagesOrVideos(type,paging,userId);
     }
+
+    /**
+     * 查询推荐数据
+     * @return
+     */
+    @ApiOperation(value = "查询推荐数据",notes = "成功返回数据 反则为空")
+    @ResponseBody
+    @PostMapping("/queryCircleRecommendationData")
+    public List<CircleClassificationVo> queryCircleRecommendationData(int userId,Paging paging)  {
+        return iCircleService.queryCircleRecommendationData(userId,paging);
+    }
+
+
 
     /**
      *
@@ -85,22 +96,6 @@ public class CircleController {
     }
 
 
-    /**
-     * 后台
-     * 查询所有圈子的数据
-     * @return
-     */
-    @ApiOperation(value = "查询所有圈子的数据",notes = "成功返回数据 反则为空")
-    @ResponseBody
-    @PostMapping("/selectAllPosting")
-    public ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime,String userName) throws Exception {
-        if(page==null || limit==null){
-            throw new ApplicationException(CodeType.PARAMETER_ERROR);
-        }
-        ReturnVo returnVo = iCircleService.selectAllPosting(circle, page, limit, startTime, endTime,userName);
-
-        return returnVo;
-    }
 
 
     /**

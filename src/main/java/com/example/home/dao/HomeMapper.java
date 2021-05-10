@@ -178,7 +178,7 @@ public interface HomeMapper {
          "<script>" +
                  "select a.id,c.id as uId,c.avatar,c.user_name,a.title,a.browse,a.type,a.video,a.cover,b.tag_name,b.id as tagId from" +
                  "  tb_resources a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id where a.is_delete=1 and a.tags_one in"+
-                 "<foreach item = 'item' index = 'index' collection = 'list' open='(' separator=',' close=')'>" +
+                 "<foreach collection = 'list' item = 'item' index = 'index'  open='(' separator=',' close=')'>" +
                  "#{item}" +
                  "</foreach> ORDER BY a.create_at desc ${sql}" +
                  "</script>"})

@@ -752,7 +752,7 @@ public class HomeServiceImpl implements IHomeService {
         UserTag userTag=homeMapper.selectOneselfLabel(userId);
 
         //如果用户没有选中标签就查询出浏览量最多的帖子
-        if(userTag==null){
+        if(userTag==null ){
             homeClassificationVos= homeMapper.selectRandom(sql);
             return homeClassificationVos;
         }
@@ -763,6 +763,10 @@ public class HomeServiceImpl implements IHomeService {
             if(list.get(i).getChecked()=="true"){
                 idArr.add(list.get(i).getTagId());
             }
+        }
+        if(idArr.size()==0){
+            log.info("Logical exception！");
+            throw new ApplicationException(CodeType.SERVICE_ERROR);
         }
 
         List<HomeClassificationVo> homeClassificationVos1 = homeMapper.selectPostByTagOne(idArr, sql);
@@ -780,7 +784,7 @@ public class HomeServiceImpl implements IHomeService {
          //使用stream流筛选不等于当前用户id的数据
          List<HomeClassificationVo> collect = homeClassificationVos1.stream().filter(u -> u.getUId() != userId).collect(Collectors.toList());
 
-        //混乱的意思
+         //混乱的意思
          Collections.shuffle(collect);
 
          return collect;
@@ -990,6 +994,7 @@ public class HomeServiceImpl implements IHomeService {
     @Override
     public void deleteFile(int type, String imgUrl) {
 
+        //得到最后一个斜杆后面的值
         String substring = imgUrl.substring(imgUrl.lastIndexOf("/"));
 
         String documentType="";

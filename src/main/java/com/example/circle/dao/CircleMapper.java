@@ -3,7 +3,6 @@ package com.example.circle.dao;
 import com.example.circle.entity.Circle;
 import com.example.circle.entity.Img;
 import com.example.circle.vo.CircleClassificationVo;
-import com.example.circle.vo.CircleLabelVo;
 import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
 import com.example.tags.entity.Tag;
@@ -20,12 +19,23 @@ import java.util.List;
 public interface CircleMapper {
 
     /**
-     *
-     * 查询所有圈子的数据
+     * 查询图文或者视频
+     * @param type 类型（0 图文  1视频）
+     * @param paging 分页
+     * @return List<CircleClassificationVo>
+     */
+    @Select("select a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name " +
+            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tags b on a.tags_two=b.id  " +
+            "where a.type=${type} and a.is_delete=1 order by a.create_at desc ${paging}")
+    List<CircleClassificationVo> queryImagesOrVideos(@Param("type") int type, @Param("paging") String paging);
+
+    /**
+     *  查询所有圈子的数据 (推荐) 后期修改
+     * @param paging 分页
      * @return
      */
-    @Select("SELECT a.id,a.content,b.tag_name,a.img,a.type,a.video,a.favour,a.collect,a.browse FROM tb_circles a inner JOIN tb_tags b on a.tags_two=b.id where  a.is_delete=1")
-    List<CircleLabelVo> queryAllCircles();
+    @Select("SELECT a.*,b.tag_name,b.id as tagId,c.avatar,c.id as uId,c.user_name FROM tb_circles a inner JOIN tb_tags b on a.tags_two=b.id inner JOIN tb_user c on a.u_id=c.id where  a.is_delete=1 ${paging}")
+    List<CircleClassificationVo> queryAllCircles(@Param("paging") String paging);
 
     /**
      * 统计圈子数据
@@ -59,24 +69,8 @@ public interface CircleMapper {
     @Insert("update tb_circles set browse=browse+1 where id=${id} ")
     int updateBrowse(@Param("id") int id);
 
-    /**
-     * 根据条件查询所有圈子
-     * @param sql 条件拼接
-     * @param paging 分页拼接
-     * @return
-     */
-    @Select("select a.id,a.content,b.tag_name,a.type,a.video,a.favour,a.collect,a.browse,a.title,a.create_at,c.avatar,c.id as uId,c.user_name " +
-            "from tb_circles a INNER JOIN tb_user c on a.u_id=c.id INNER JOIN tb_tag b on a.tags_one=b.id " +
-            "where a.is_delete=1 ${sql} ORDER BY a.create_at desc ${paging}")
-    List<CircleLabelVo> selectAllPosting(@Param("sql") String sql,@Param("paging") String paging);
 
-    /**
-     * 根据条件统计数量
-     * @param sql
-     * @return
-     */
-    @Select("select COALESCE(count(*),0) from tb_circles a INNER JOIN tb_tags b on a.tags_two=b.id INNER JOIN tb_user c on a.u_id=c.id where a.is_delete=1 ${sql}")
-    Integer selectAllPostingCount(@Param("sql") String sql);
+
 
     /**
      * 批量删除
@@ -183,4 +177,6 @@ public interface CircleMapper {
             "(SELECT tags_two,COUNT(*) AS count1 FROM tb_circles where is_delete=1 GROUP BY tags_two) t1" +
             " on d.id=t1.tags_two where d.t_id=${id} ORDER BY d.id;")
     List<Tag> queryHowManyPostsAreInEachCell(@Param("id") int id);
+
+
 }

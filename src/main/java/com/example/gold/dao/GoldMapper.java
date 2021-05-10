@@ -95,4 +95,20 @@ public interface GoldMapper {
     @Select("select source_gold_coin,positive_negative_gold_coins,create_at from tb_gold_coin_change where user_id=${userId} ${sql}")
     List<GoldCoinChange> queryGoldCoinChange(@Param("userId") Integer userId, @Param("sql") String sql);
 
+    /**
+     * 查询当前签到天数
+     * @param userId
+     * @return
+     */
+    @Select("select consecutive_number from tb_user_gold_coins where user_id=${userId}")
+    int queryConsecutiveNumberById(@Param("userId") int userId);
+
+    /**
+     * 修改签到天数为0
+     * @param userId
+     * @return
+     */
+    @Update("update tb_user_gold_coins set consecutive_number=0 where user_id=${userId}")
+    int updateConsecutiveNumberById(@Param("userId") int userId);
+
 }

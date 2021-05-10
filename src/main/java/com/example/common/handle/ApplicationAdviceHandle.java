@@ -50,8 +50,14 @@ public class ApplicationAdviceHandle extends ResponseEntityExceptionHandler {
         return new ApplicationException(CodeType.UNKNOWN_ERROR);
     }
 
+    /**
+     * 文件上传异常
+     * @param e
+     * @param request
+     * @return
+     */
     @ExceptionHandler(value = MultipartException.class)
-    Result arithmeticExceptionException(MultipartException e, HttpServletRequest request) {
+    Result arithmeticExceptionException(final MultipartException e, HttpServletRequest request) {
         return new Result(-1,"上传单个文件大小只能上传30M","");
     }
 }

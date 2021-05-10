@@ -3,7 +3,6 @@ package com.example.circle.service;
 import com.example.circle.entity.Circle;
 import com.example.circle.vo.CircleClassificationVo;
 import com.example.common.utils.Paging;
-import com.example.common.utils.ReturnVo;
 import com.example.home.entity.CommunityUser;
 import com.example.home.vo.CommunityVo;
 import com.example.tags.entity.Tag;
@@ -16,11 +15,21 @@ import java.util.List;
  * @date 2021/1/19 16:10
  */
 public interface ICircleService {
+
     /**
-     * 查询所有圈子的数据
+     * 查询图片或者视频
+     * @param type 0图片 ，1视频
      * @return
      */
-    ReturnVo queryAllCircles();
+    List<CircleClassificationVo> queryImagesOrVideos(int type,Paging paging,int userId);
+
+
+    /**
+     * 查询推荐数据
+     * @param userId 用户id
+     * @return
+     */
+    List<CircleClassificationVo> queryCircleRecommendationData(int userId,Paging paging);
 
     /**
      * 添加圈子
@@ -29,17 +38,7 @@ public interface ICircleService {
      */
     int addCirclePost(Circle circle);
 
-    /**
-     * 查询所有圈子的和资源数据
-     * @param circle
-     * @param page
-     * @param limit
-     * @param startTime
-     * @param endTime
-     * @return
-     * @throws ParseException
-     */
-    ReturnVo selectAllPosting(Circle circle,Integer page,Integer limit,String startTime,String endTime,String userName) throws ParseException;
+
 
     /**
      * 批量删除帖子
@@ -73,6 +72,8 @@ public interface ICircleService {
      * @return
      */
     CircleClassificationVo querySingleCircle(int id,int userId) throws ParseException;
+
+
 
     /**
      * 发布
