@@ -22,6 +22,7 @@ import com.example.home.entity.CommunityUser;
 import com.example.home.entity.Haplont;
 import com.example.home.entity.Resources;
 import com.example.home.vo.CommunityVo;
+import com.example.learn.dao.QuestionMapper;
 import com.example.tags.dao.TagMapper;
 import com.example.tags.entity.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,9 @@ public class CircleServiceImpl implements ICircleService {
 
     @Autowired
     private BrowseMapper browseMapper;
+
+    @Autowired
+    private QuestionMapper questionMapper;
 
     @Override
     public List<CircleClassificationVo> queryImagesOrVideos(int type,Paging paging,int userId) {
@@ -568,15 +572,40 @@ public class CircleServiceImpl implements ICircleService {
         int tagsOne = tagMapper.queryLabelAccordingSecondaryId(circle.getTagsTwo());
         circle.setTagsOne(tagsOne);
 
+
+
+
         //资源帖子
         if(postType==0){
+            //获取token
+            String token1 = ConstantUtil.getToken();
+            String identifyTextContent1 = ConstantUtil.identifyText(circle.getTitle(), token1);
+            if(identifyTextContent1.equals("87014")){
+                throw new ApplicationException(CodeType.SERVICE_ERROR,"内容违规");
+            }
+
             issue(circle,imgUrl,postType,whetherCover);
         }
 
         //圈子帖子
         if(postType==1){
+            //10是提问 添加到提问表
+            /*if(circle.getHaplontType()==10){
+                question.setDescription(circle.getContent());
+                question.setTagsOne(tagsOne);
+                question.setTagsTwo(circle.getTagsTwo());
+                //添加提问信息
+                int i = questionMapper.addQuestion(question);
+                if(i<=0){
+                    throw new ApplicationException(CodeType.SERVICE_ERROR,"添加提问信息失败");
+                }
+                return i;
+            }*/
+
             issue(circle,imgUrl,postType,whetherCover);
+
         }
+
 
     }
 

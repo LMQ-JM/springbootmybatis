@@ -228,7 +228,7 @@ public class CircleController {
     @ResponseBody
     @PostMapping("/internalRelease")
     public void internalRelease(Circle circle, String imgUrl, int postType, int whetherCover)throws Exception  {
-         iCircleService.internalRelease(circle,imgUrl,postType,whetherCover);
+          iCircleService.internalRelease(circle,imgUrl,postType,whetherCover);
     }
 
     /**
