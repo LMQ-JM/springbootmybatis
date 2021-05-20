@@ -69,9 +69,6 @@ public interface CircleMapper {
     @Insert("update tb_circles set browse=browse+1 where id=${id} ")
     int updateBrowse(@Param("id") int id);
 
-
-
-
     /**
      * 批量删除
      * @param id

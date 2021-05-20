@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -24,11 +25,13 @@ public class InformServiceImpl implements IInformService {
     private InformMapper informMapper;
 
     @Override
-    public List<InformUserVo> queryCommentsNotice(int userId,int type, Paging paging) {
+    public Map<String,Object> queryCommentsNotice(int userId, int type, Paging paging) {
         Integer page=(paging.getPage()-1)*paging.getLimit();
         String pagings="limit "+page+","+paging.getLimit()+"";
 
         List<InformUserVo> informUserVos = informMapper.queryCommentsNotice(userId, type, pagings);
-        return informUserVos;
+
+
+        return null;
     }
 }

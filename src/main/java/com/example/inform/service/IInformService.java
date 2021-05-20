@@ -1,9 +1,8 @@
 package com.example.inform.service;
 
 import com.example.common.utils.Paging;
-import com.example.inform.vo.InformUserVo;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author MQ
@@ -18,5 +17,5 @@ public interface IInformService {
      * @param paging 分页
      * @return
      */
-    List<InformUserVo> queryCommentsNotice(int userId,int type, Paging paging);
+    Map<String,Object> queryCommentsNotice(int userId, int type, Paging paging);
 }

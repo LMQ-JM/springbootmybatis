@@ -25,4 +25,7 @@ public interface InformMapper {
             "from tb_inform a INNER JOIN tb_circles c on a.t_id=c.id INNER JOIN tb_user b on a.notifier_id=b.id " +
             "where a.is_delete=1 and a.type=${type} and a.notified_party_id=${userId} and c.is_delete=1 order by a.create_at desc")
     List<InformUserVo> queryCommentsNotice(@Param("userId") int userId,@Param("type") int type, @Param("paging") String paging);
+
+
+
 }

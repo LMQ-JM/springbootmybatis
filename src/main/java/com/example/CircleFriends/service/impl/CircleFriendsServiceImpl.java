@@ -5,6 +5,7 @@ import com.example.common.constanct.CodeType;
 import com.example.common.exception.ApplicationException;
 import com.example.common.utils.ConstantUtil;
 import com.example.common.utils.WxPoster;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,7 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
             throw new ApplicationException(CodeType.PARAMETER_ERROR);
         }
 
+
         RestTemplate rest = new RestTemplate();
         InputStream inputStream = null;
         OutputStream outputStream = null;
@@ -51,14 +53,14 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
         try {
             String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+token;
 
-           Map<String,Object> param = new HashMap<>();
+            Map<String,Object> param = new HashMap<>();
             //秘钥
             param.put("scene", ConstantUtil.secret);
             //二维码指向的地址
             param.put("page", pageUrl);
             param.put("width", 430);
             param.put("auto_color", false);
-            //param.put("is_hyaline", true);//去掉二维码底色
+            param.put("is_hyaline", true);//去掉二维码底色
             Map<String,Object> line_color = new HashMap<>();
             line_color.put("r", 0);
             line_color.put("g", 0);
@@ -97,8 +99,8 @@ public class CircleFriendsServiceImpl implements ICircleFriendsService {
 
 
             WxPoster wxPoster=new WxPoster();
-            //生成海报
-            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/shiwu.jpg", file.getPath(), "e:/file/img/" + time + ".png", headUrl, postImg,postContent,userName,title);
+            //生成海报5
+            String posterUrlGreatMaster = wxPoster.getPosterUrlGreatMaster("e:/file/img/2021515.jpg", file.getPath(), "e:/file/img/" + time + ".png", headUrl, postImg,postContent,userName,title);
             String newGreat = posterUrlGreatMaster.replace("e:/file/img/", "https://www.gofatoo.com/img/");
             posterList.add(newGreat);
         } catch (Exception e) {
